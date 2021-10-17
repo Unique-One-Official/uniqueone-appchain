@@ -16,3 +16,10 @@
 .direnv
 
 Cargo.lock
+
+scripts/*.sh
+scripts/chainspec/
+
+# NixOS development environment
+.envrc
+shell.nix
