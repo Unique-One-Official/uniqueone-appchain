@@ -9,7 +9,7 @@ use sp_runtime::traits::{IdentifyAccount, Verify};
 
 use uniqueone_appchain_runtime::BeefyConfig;
 use uniqueone_appchain_runtime::{
-	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, UNET,
+	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, OrmlNFTConfig, UNET,
 };
 use uniqueone_appchain_runtime::{OctopusAppchainConfig, OctopusLposConfig};
 use beefy_primitives::crypto::AuthorityId as BeefyId;
@@ -225,5 +225,6 @@ fn testnet_genesis(
 			asset_id_by_name: vec![("usdc.testnet".to_string(), 0)],
 			validators,
 		},
+		orml_nft: OrmlNFTConfig { tokens: vec![] },
 	}
 }

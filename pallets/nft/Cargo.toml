@@ -1,0 +1,60 @@
+[package]
+authors = ['Unique One <hello@uniqueone.network>']
+description = 'Unique One NFT Pallet'
+edition = '2018'
+homepage = 'https://uniqueone.network'
+license = 'Unlicense'
+name = 'pallet-nft'
+readme = 'README.md'
+repository = 'https://github.com/Unique-One-Official/uonenet-node'
+version = '1.0.0'
+
+[package.metadata.docs.rs]
+targets = ['x86_64-unknown-linux-gnu']
+
+[dependencies]
+serde = { version = "1.0.124", optional = true }
+codec = { default-features = false, features = ['derive'], package = 'parity-scale-codec', version = '2.0.0' }
+enumflags2 = { version = "0.6.3" }
+
+max-encoded-len = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8", default-features = false }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-benchmarking = { default-features = false, optional = true, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-proxy = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8", default-features = false }
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+orml-nft = { path = "../../vendors/orml/nft", default-features = false }
+orml-traits = { path = "../../vendors/orml/traits", default-features = false }
+
+[dev-dependencies]
+sp-core = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-balances = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8" }
+pallet-utility = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8" }
+
+orml-tokens = { path = "../../vendors/orml/tokens" }
+
+[features]
+default = ['std']
+std = [
+    'serde',
+	'codec/std',
+    "enumflags2/serde",
+	'frame-support/std',
+	'frame-system/std',
+	'frame-benchmarking/std',
+    "pallet-proxy/std",
+	'sp-std/std',
+    'sp-runtime/std',
+    'orml-nft/std',
+    'orml-traits/std',
+]
+runtime-benchmarks = [
+	'frame-benchmarking',
+	'frame-support/runtime-benchmarks',
+	'frame-system/runtime-benchmarks',
+]
+# Note: frame-support `try-runtime` feature is released after v3.
+#   Uncomment the following line when `frame-support` version > `3.0.0`.
+# try-runtime = ['frame-support/try-runtime']

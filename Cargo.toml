@@ -1,7 +1,31 @@
-[workspace]
-members = [
-    'node',
-    'runtime',
-]
 [profile.release]
 panic = 'unwind'
+
+[workspace]
+members = [
+    "node",    
+	"pallets/template",
+	"pallets/nft",
+	"vendors/orml/auction",
+	"vendors/orml/authority",
+	"vendors/orml/bencher",
+	"vendors/orml/benchmarking",
+	"vendors/orml/currencies",
+	"vendors/orml/gradually-update",
+	"vendors/orml/nft",
+	"vendors/orml/oracle",
+	"vendors/orml/oracle/rpc",
+ 	"vendors/orml/oracle/rpc/runtime-api",
+	"vendors/orml/rewards",
+	"vendors/orml/tokens",
+	"vendors/orml/traits",
+	"vendors/orml/utilities",
+	"vendors/orml/vesting",
+	"vendors/orml/weight-gen",
+	"vendors/orml/weight-meter",
+	"vendors/orml/xcm",
+	"vendors/orml/xtokens",
+	"vendors/orml/xcm-support",
+	"vendors/orml/unknown-tokens",	
+	"runtime",
+]

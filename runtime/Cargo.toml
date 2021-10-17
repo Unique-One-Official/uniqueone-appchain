@@ -14,6 +14,7 @@ targets = ['x86_64-unknown-linux-gnu']
 
 [dependencies]
 log = { version = "0.4.14", default-features = false }
+max-encoded-len = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8", default-features = false }
 
 frame-election-provider-support = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 pallet-assets = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
@@ -21,6 +22,7 @@ pallet-authorship = { branch = 'polkadot-v0.9.8', default-features = false, git 
 pallet-im-online = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 pallet-mmr = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 pallet-session = { branch = 'polkadot-v0.9.8', features = ["historical"], git = "https://github.com/paritytech/substrate.git", default-features = false }
+pallet-proxy = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8", default-features = false }
 sp-staking = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 
 beefy-primitives = { version = "0.1.0", git = "https://github.com/octopus-network/grandpa-bridge-gadget", branch = "dev", default-features = false }
@@ -178,6 +180,24 @@ default-features = false
 git = 'https://github.com/paritytech/substrate.git'
 branch = 'polkadot-v0.9.8'
 
+[dependencies.pallet-template]
+default-features = false
+path = '../pallets/template'
+version = '3.0.0'
+
+[dependencies.pallet-nft]
+default-features = false
+path = '../pallets/nft'
+version = '1.0.0'
+
+[dependencies.orml-traits]
+default-features = false
+path = '../vendors/orml/traits'
+
+[dependencies.orml-nft]
+default-features = false
+path = '../vendors/orml/nft'
+
 [features]
 default = ['std']
 runtime-benchmarks = [
@@ -222,6 +242,7 @@ std = [
     'pallet-im-online/std',
     'pallet-mmr/std',
     'pallet-session/std',
+    'pallet-proxy/std',
     'sp-staking/std',
     'beefy-primitives/std',
     'pallet-beefy/std',
@@ -229,4 +250,8 @@ std = [
     'pallet-octopus-lpos/std',
     'pallet-octopus-upward-messages/std',
     'pallet-identity/std',
+    'pallet-template/std',
+    'pallet-nft/std',
+    'orml-traits/std',
+    'orml-nft/std',
 ]
