@@ -6,7 +6,7 @@ homepage = 'https://uniqueone.network/'
 license = 'Apache-2.0'
 name = 'uniqueone-appchain'
 publish = false
-repository = 'https://github.com/octopus-network/barnacle/'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
 version = '1.0.1'
 build = 'build.rs'
 

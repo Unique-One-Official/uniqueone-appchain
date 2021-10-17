@@ -3,10 +3,10 @@ authors = ['Unique One <hello@uniqueone.network>']
 description = 'Unique One NFT Pallet'
 edition = '2018'
 homepage = 'https://uniqueone.network'
-license = 'Unlicense'
+license = 'Apache-2.0'
 name = 'pallet-nft'
 readme = 'README.md'
-repository = 'https://github.com/Unique-One-Official/uonenet-node'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
 version = '1.0.0'
 
 [package.metadata.docs.rs]
