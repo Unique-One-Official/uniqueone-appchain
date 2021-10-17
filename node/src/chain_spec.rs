@@ -1,3 +1,4 @@
+use hex_literal::hex;
 use uniqueone_appchain_runtime::{
 	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig,
 	SystemConfig, WASM_BINARY,
