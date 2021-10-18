@@ -89,17 +89,17 @@ pub fn new_partial(
 	sp_consensus::DefaultImportQueue<Block, FullClient>,
 	sc_transaction_pool::FullPool<Block, FullClient>,
 	(
-		impl Fn(
-			crate::rpc::DenyUnsafe,
-			sc_rpc::SubscriptionTaskExecutor,
-		) -> crate::rpc::IoHandler,
+		//impl Fn(
+		//	crate::rpc::DenyUnsafe,
+		//	sc_rpc::SubscriptionTaskExecutor,
+		//) -> crate::rpc::IoHandler,
 		(
 			sc_consensus_babe::BabeBlockImport<Block, FullClient, FullGrandpaBlockImport>,
 			grandpa::LinkHalf<Block, FullClient, FullSelectChain>,
 			sc_consensus_babe::BabeLink<Block>,
 			beefy_gadget::notification::BeefySignedCommitmentSender<Block>,
 		),
-		grandpa::SharedVoterState,
+		//grandpa::SharedVoterState,
 		PendingTransactions,
 		Option<FilterPool>,
 		Arc<fc_db::Backend<Block>>,
@@ -203,6 +203,7 @@ pub fn new_partial(
 
 	let import_setup = (block_import, grandpa_link, babe_link, beefy_link);
 
+	/*
 	let (rpc_extensions_builder, rpc_setup) = {
 		let (_, grandpa_link, babe_link, _) = &import_setup;
 
@@ -255,6 +256,7 @@ pub fn new_partial(
 
 		(rpc_extensions_builder, rpc_setup)
 	};
+	*/
 
 	Ok(sc_service::PartialComponents {
 		client,
@@ -264,7 +266,7 @@ pub fn new_partial(
 		select_chain,
 		import_queue,
 		transaction_pool,
-		other: (rpc_extensions_builder, import_setup, rpc_setup, pending_transactions, filter_pool, frontier_backend, telemetry),
+		other: (/*rpc_extensions_builder,*/ import_setup, /*rpc_setup,*/ pending_transactions, filter_pool, frontier_backend, telemetry),
 	})
 }
 
@@ -278,6 +280,7 @@ pub struct NewFullBase {
 /// Creates a full service from the configuration.
 pub fn new_full_base(
 	mut config: Configuration,
+	cli: &Cli,
 	with_startup_data: impl FnOnce(
 		&sc_consensus_babe::BabeBlockImport<Block, FullClient, FullGrandpaBlockImport>,
 		&sc_consensus_babe::BabeLink<Block>,
@@ -291,10 +294,10 @@ pub fn new_full_base(
 		keystore_container,
 		select_chain,
 		transaction_pool,
-		other: (rpc_extensions_builder, import_setup, rpc_setup, pending_transactions, filter_pool, frontier_backend, mut telemetry),
+		other: (/*rpc_extensions_builder,*/ import_setup, /*rpc_setup,*/ pending_transactions, filter_pool, frontier_backend, mut telemetry),
 	} = new_partial(&config)?;
 
-	let shared_voter_state = rpc_setup;
+	//let shared_voter_state = rpc_setup;
 
 	config.network.extra_sets.push(grandpa::grandpa_peers_set_config());
 	config.network.extra_sets.push(beefy_gadget::beefy_peers_set_config());
@@ -333,6 +336,89 @@ pub fn new_full_base(
 	let name = config.network.node_name.clone();
 	let enable_grandpa = !config.disable_grandpa;
 	let prometheus_registry = config.prometheus_registry().cloned();
+
+	let (rpc_extensions_builder, rpc_setup) = {
+		let (_, grandpa_link, babe_link, _) = &import_setup;
+
+		let justification_stream = grandpa_link.justification_stream();
+		let shared_authority_set = grandpa_link.shared_authority_set().clone();
+		let shared_voter_state = grandpa::SharedVoterState::empty();
+		let rpc_setup = shared_voter_state.clone();
+
+		let finality_proof_provider = grandpa::FinalityProofProvider::new_for_service(
+			backend.clone(),
+			Some(shared_authority_set.clone()),
+		);
+
+		let babe_config = babe_link.config().clone();
+		let shared_epoch_changes = babe_link.epoch_changes().clone();
+
+		let client = client.clone();
+		let pool = transaction_pool.clone();
+		let select_chain = select_chain.clone();
+		let keystore = keystore_container.sync_keystore();
+		let chain_spec = config.chain_spec.cloned_box();
+		
+		let is_authority = role.is_authority();
+		let network = network.clone();
+		let pending = pending_transactions;
+		let filter_pool = filter_pool;
+		let frontier_backend = frontier_backend.clone();
+		let max_past_logs = cli.run.max_past_logs;
+		let subscription_task_executor =
+			sc_rpc::SubscriptionTaskExecutor::new(task_manager.spawn_handle());
+
+		let rpc_extensions_builder = move |deny_unsafe, subscription_executor: sc_rpc::SubscriptionTaskExecutor| {
+			let deps = crate::rpc::FullDeps {
+				client: client.clone(),
+				pool: pool.clone(),
+				select_chain: select_chain.clone(),
+				chain_spec: chain_spec.cloned_box(),
+				deny_unsafe,
+				babe: crate::rpc::BabeDeps {
+					babe_config: babe_config.clone(),
+					shared_epoch_changes: shared_epoch_changes.clone(),
+					keystore: keystore.clone(),
+				},
+				grandpa: crate::rpc::GrandpaDeps {
+					shared_voter_state: shared_voter_state.clone(),
+					shared_authority_set: shared_authority_set.clone(),
+					justification_stream: justification_stream.clone(),
+					subscription_executor: subscription_executor.clone(),
+					finality_provider: finality_proof_provider.clone(),
+				},
+				beefy: crate::rpc::BeefyDeps {
+					signed_commitment_stream: signed_commitment_stream.clone(),
+					subscription_executor,
+				},
+				is_authority,
+				network: network.clone(),
+				pending_transactions: pending.clone(),
+				filter_pool: filter_pool.clone(),
+				backend: frontier_backend.clone(),
+				max_past_logs,
+
+			};
+
+			crate::rpc::create_full(deps, subscription_task_executor.clone())
+		};
+
+		(rpc_extensions_builder, rpc_setup)
+	};
+
+	task_manager.spawn_essential_handle().spawn(
+		"frontier-mapping-sync-worker",
+		MappingSyncWorker::new(
+			client.import_notification_stream(),
+			Duration::new(6, 0),
+			client.clone(),
+			backend.clone(),
+			frontier_backend,
+		)
+		.for_each(|()| futures::future::ready(())),
+	);
+	
+	let shared_voter_state = rpc_setup;
 
 	let _rpc_handlers = sc_service::spawn_tasks(
 		sc_service::SpawnTasksParams {
@@ -481,8 +567,9 @@ pub fn new_full_base(
 /// Builds a new service for a full client.
 pub fn new_full(
 	config: Configuration,
+	cli: &Cli
 ) -> Result<TaskManager, ServiceError> {
-	new_full_base(config, |_, _| ()).map(|NewFullBase { task_manager, .. }| {
+	new_full_base(config, cli, |_, _| ()).map(|NewFullBase { task_manager, .. }| {
 		task_manager
 	})
 }

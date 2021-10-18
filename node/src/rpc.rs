@@ -239,6 +239,54 @@ where
 			as Box<dyn StorageOverride<_> + Send + Sync>,
 	);
 
+	let overrides = Arc::new(OverrideHandle {
+		schemas: overrides_map,
+		fallback: Box::new(RuntimeApiStorageOverride::new(client.clone())),
+	});
+
+	io.extend_with(EthApiServer::to_delegate(EthApi::new(
+		client.clone(),
+		pool.clone(),
+		uonenet_runtime::TransactionConverter,
+		network.clone(),
+		pending_transactions,
+		signers,
+		overrides.clone(),
+		backend,
+		is_authority,
+		max_past_logs,
+	)));
+
+	if let Some(filter_pool) = filter_pool {
+		io.extend_with(EthFilterApiServer::to_delegate(EthFilterApi::new(
+			client.clone(),
+			filter_pool,
+			500_usize, // max stored filters
+			overrides.clone(),
+			max_past_logs,
+		)));
+	}
+	
+	io.extend_with(NetApiServer::to_delegate(NetApi::new(
+		client.clone(),
+		network.clone(),
+		// Whether to format the `peer_count` response as Hex (default) or not.
+		true,
+	)));
+
+	io.extend_with(Web3ApiServer::to_delegate(Web3Api::new(client.clone())));
+
+	io.extend_with(EthPubSubApiServer::to_delegate(EthPubSubApi::new(
+		pool,
+		client,
+		network,
+		SubscriptionManager::<HexEncodedIdProvider>::with_id_provider(
+			HexEncodedIdProvider::default(),
+			Arc::new(subscription_task_executor),
+		),
+		overrides,
+	)));
+		
 	io
 }
 
