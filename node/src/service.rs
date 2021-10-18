@@ -20,22 +20,34 @@
 
 //! Service implementation. Specialized wrapper over substrate service.
 
-use std::sync::Arc;
-use sc_consensus_babe;
-use uniqueone_appchain_runtime::opaque::Block;
-use uniqueone_appchain_runtime::RuntimeApi;
-use sc_service::{
-	config::Configuration, error::Error as ServiceError, RpcHandlers, TaskManager,
-};
-use sc_network::NetworkService;
-use sp_runtime::traits::Block as BlockT;
-use sc_client_api::{ExecutorProvider, RemoteBackend};
-use sc_telemetry::{Telemetry, TelemetryWorker};
-use sc_consensus_babe::SlotProportion;
+use crate::cli::Cli;
 
+//use std::sync::Arc;
+use std::{
+	collections::{BTreeMap, HashMap},
+	sync::{Arc, Mutex},
+	time::Duration,
+};
+
+use sp_runtime::traits::Block as BlockT;
+use fc_mapping_sync::MappingSyncWorker;
+use fc_rpc_core::types::{FilterPool, PendingTransactions};
+use sc_client_api::{BlockchainEvents, ExecutorProvider, RemoteBackend};
+
+use sc_consensus_babe;
+use sc_consensus_babe::SlotProportion;
 use sc_executor::native_executor_instance;
 pub use sc_executor::NativeExecutor;
 use sc_finality_grandpa as grandpa;
+use sc_network::NetworkService;
+use sc_service::{
+	config::Configuration, error::Error as ServiceError, BasePath, RpcHandlers, TaskManager,
+};
+use sc_telemetry::{Telemetry, TelemetryWorker};
+
+use uniqueone_appchain_runtime::opaque::Block;
+use uniqueone_appchain_runtime::RuntimeApi;
+
 
 // Our native executor instance.
 native_executor_instance!(
@@ -50,7 +62,25 @@ type FullBackend = sc_service::TFullBackend<Block>;
 type FullSelectChain = sc_consensus::LongestChain<FullBackend, Block>;
 type FullGrandpaBlockImport =
 	grandpa::GrandpaBlockImport<FullBackend, Block, FullClient, FullSelectChain>;
+type FullFrontierBlockImport =
+	fc_consensus::FrontierBlockImport<Block, FullGrandpaBlockImport, FullClient>;
+
 type LightClient = sc_service::TLightClient<Block, RuntimeApi, Executor>;
+
+pub fn open_frontier_backend(config: &Configuration) -> Result<Arc<fc_db::Backend<Block>>, String> {
+	let config_dir = config
+		.base_path
+		.as_ref()
+		.map(|base_path| base_path.config_dir(config.chain_spec.id()))
+		.unwrap_or_else(|| {
+			BasePath::from_project("", "", "node").config_dir(config.chain_spec.id())
+		});
+	let database_dir = config_dir.join("frontier").join("db");
+
+	Ok(Arc::new(fc_db::Backend::<Block>::new(&fc_db::DatabaseSettings {
+		source: fc_db::DatabaseSettingsSrc::RocksDb { path: database_dir, cache_size: 0 },
+	})?))
+}
 
 pub fn new_partial(
 	config: &Configuration,
@@ -70,6 +100,9 @@ pub fn new_partial(
 			beefy_gadget::notification::BeefySignedCommitmentSender<Block>,
 		),
 		grandpa::SharedVoterState,
+		PendingTransactions,
+		Option<FilterPool>,
+		Arc<fc_db::Backend<Block>>,
 		Option<Telemetry>,
 	)
 >, ServiceError> {
@@ -112,6 +145,23 @@ pub fn new_partial(
 		telemetry.as_ref().map(|x| x.handle()),
 	)?;
 	let justification_import = grandpa_block_import.clone();
+
+	// Ethereum
+	let pending_transactions: PendingTransactions = Some(Arc::new(Mutex::new(HashMap::new())));
+
+	let filter_pool: Option<FilterPool> = Some(Arc::new(Mutex::new(BTreeMap::new())));
+
+	let frontier_backend = open_frontier_backend(config)?;
+	
+	// Here we inert a piece in the block import pipeline
+	// The old pipeline was Babe -> Grandpa -> Client
+	// The new pipeline is Babe -> Frontier -> Grandpa -> Client
+	let frontier_block_import = fc_consensus::FrontierBlockImport::new(
+		grandpa_block_import,
+		client.clone(),
+		frontier_backend.clone(),
+	);
+	//
 
 	let (block_import, babe_link) = sc_consensus_babe::block_import(
 		sc_consensus_babe::Config::get_or_compute(&*client)?,
@@ -214,7 +264,7 @@ pub fn new_partial(
 		select_chain,
 		import_queue,
 		transaction_pool,
-		other: (rpc_extensions_builder, import_setup, rpc_setup, telemetry),
+		other: (rpc_extensions_builder, import_setup, rpc_setup, pending_transactions, filter_pool, frontier_backend, telemetry),
 	})
 }
 
@@ -241,7 +291,7 @@ pub fn new_full_base(
 		keystore_container,
 		select_chain,
 		transaction_pool,
-		other: (rpc_extensions_builder, import_setup, rpc_setup, mut telemetry),
+		other: (rpc_extensions_builder, import_setup, rpc_setup, pending_transactions, filter_pool, frontier_backend, mut telemetry),
 	} = new_partial(&config)?;
 
 	let shared_voter_state = rpc_setup;

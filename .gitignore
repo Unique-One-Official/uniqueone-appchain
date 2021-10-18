@@ -22,4 +22,3 @@ scripts/chainspec/
 
 # NixOS development environment
 .envrc
-shell.nix

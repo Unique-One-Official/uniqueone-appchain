@@ -4,13 +4,14 @@ use uniqueone_appchain_runtime::{
 	SystemConfig, WASM_BINARY,
 };
 use sc_service::{ChainType, Properties};
-use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public};
+use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public, H160, U256};
 use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::traits::{IdentifyAccount, Verify};
+use std::{collections::BTreeMap, str::FromStr};
 
 use uniqueone_appchain_runtime::BeefyConfig;
 use uniqueone_appchain_runtime::{
-	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, OrmlNFTConfig, UNET,
+	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, OrmlNFTConfig, UNET, EVMConfig
 };
 use uniqueone_appchain_runtime::{OctopusAppchainConfig, OctopusLposConfig};
 use beefy_primitives::crypto::AuthorityId as BeefyId;
@@ -297,5 +298,24 @@ fn testnet_genesis(
 			validators,
 		},
 		orml_nft: OrmlNFTConfig { tokens: vec![] },
+		ethereum: Default::default(),
+		evm: EVMConfig {
+			accounts: {
+				let mut map = BTreeMap::new();
+				map.insert(
+					H160::from_str("7D4a82306Eb4de7C7B1D686AFC56b1E7999ba7F9")
+						.expect("internal H160 is valid; qed"),
+					pallet_evm::GenesisAccount {
+						balance: U256::from_str("0xD3C21BCECCEDA1000000")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
+				map
+			},
+		},
+
 	}
 }
