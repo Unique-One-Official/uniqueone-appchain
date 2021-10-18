@@ -201,7 +201,7 @@ pub fn new_partial(
 	let (beefy_link, signed_commitment_stream) =
 		beefy_gadget::notification::BeefySignedCommitmentStream::channel();
 
-	let import_setup = (block_import, grandpa_link, babe_link, beefy_link);
+	let import_setup = (block_import, grandpa_link, babe_link, beefy_link, signed_commitment_stream);
 
 	/*
 	let (rpc_extensions_builder, rpc_setup) = {
@@ -336,9 +336,10 @@ pub fn new_full_base(
 	let name = config.network.node_name.clone();
 	let enable_grandpa = !config.disable_grandpa;
 	let prometheus_registry = config.prometheus_registry().cloned();
+	let signed_commitment_stream = import_setup.4.clone();
 
 	let (rpc_extensions_builder, rpc_setup) = {
-		let (_, grandpa_link, babe_link, _) = &import_setup;
+		let (_, grandpa_link, babe_link, _, _) = &import_setup;
 
 		let justification_stream = grandpa_link.justification_stream();
 		let shared_authority_set = grandpa_link.shared_authority_set().clone();
@@ -437,7 +438,7 @@ pub fn new_full_base(
 		},
 	)?;
 
-	let (block_import, grandpa_link, babe_link, beefy_link) = import_setup;
+	let (block_import, grandpa_link, babe_link, beefy_link, _) = import_setup;
 
 	(with_startup_data)(&block_import, &babe_link);
 

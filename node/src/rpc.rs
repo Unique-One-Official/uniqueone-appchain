@@ -247,7 +247,7 @@ where
 	io.extend_with(EthApiServer::to_delegate(EthApi::new(
 		client.clone(),
 		pool.clone(),
-		uonenet_runtime::TransactionConverter,
+		uniqueone_appchain_runtime::TransactionConverter,
 		network.clone(),
 		pending_transactions,
 		signers,
