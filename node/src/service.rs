@@ -21,6 +21,7 @@
 //! Service implementation. Specialized wrapper over substrate service.
 
 use crate::cli::Cli;
+use futures::StreamExt;
 
 //use std::sync::Arc;
 use std::{
@@ -30,7 +31,7 @@ use std::{
 };
 
 use sp_runtime::traits::Block as BlockT;
-use fc_mapping_sync::MappingSyncWorker;
+use fc_mapping_sync::{MappingSyncWorker};
 use fc_rpc_core::types::{FilterPool, PendingTransactions};
 use sc_client_api::{BlockchainEvents, ExecutorProvider, RemoteBackend};
 
@@ -64,6 +65,8 @@ type FullGrandpaBlockImport =
 	grandpa::GrandpaBlockImport<FullBackend, Block, FullClient, FullSelectChain>;
 type FullFrontierBlockImport =
 	fc_consensus::FrontierBlockImport<Block, FullGrandpaBlockImport, FullClient>;
+type FullBabeBlockImport =
+	sc_consensus_babe::BabeBlockImport<Block, FullClient, FullFrontierBlockImport>;
 
 type LightClient = sc_service::TLightClient<Block, RuntimeApi, Executor>;
 
@@ -94,10 +97,12 @@ pub fn new_partial(
 		//	sc_rpc::SubscriptionTaskExecutor,
 		//) -> crate::rpc::IoHandler,
 		(
-			sc_consensus_babe::BabeBlockImport<Block, FullClient, FullGrandpaBlockImport>,
+			//sc_consensus_babe::BabeBlockImport<Block, FullClient, FullGrandpaBlockImport>,
+			FullBabeBlockImport,
 			grandpa::LinkHalf<Block, FullClient, FullSelectChain>,
 			sc_consensus_babe::BabeLink<Block>,
 			beefy_gadget::notification::BeefySignedCommitmentSender<Block>,
+			beefy_gadget::notification::BeefySignedCommitmentStream<Block>,
 		),
 		//grandpa::SharedVoterState,
 		PendingTransactions,
@@ -165,7 +170,8 @@ pub fn new_partial(
 
 	let (block_import, babe_link) = sc_consensus_babe::block_import(
 		sc_consensus_babe::Config::get_or_compute(&*client)?,
-		grandpa_block_import,
+		//grandpa_block_import,
+		frontier_block_import,
 		client.clone(),
 	)?;
 
@@ -282,7 +288,7 @@ pub fn new_full_base(
 	mut config: Configuration,
 	cli: &Cli,
 	with_startup_data: impl FnOnce(
-		&sc_consensus_babe::BabeBlockImport<Block, FullClient, FullGrandpaBlockImport>,
+		&FullBabeBlockImport,
 		&sc_consensus_babe::BabeLink<Block>,
 	)
 ) -> Result<NewFullBase, ServiceError> {

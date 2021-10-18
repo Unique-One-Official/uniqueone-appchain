@@ -120,7 +120,7 @@ pub struct FullDeps<C, P, SC, B, BT: BlockT> {
 }
 
 /// A IO handler that uses all Full RPC extensions.
-pub type IoHandler = jsonrpc_core::IoHandler<sc_rpc::Metadata>;
+//pub type IoHandler = jsonrpc_core::IoHandler<sc_rpc::Metadata>;
 
 /// Instantiate all Full RPC extensions.
 pub fn create_full<C, P, SC, B, BT, BE>(
