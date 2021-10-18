@@ -190,7 +190,7 @@ where
 		finality_provider,
 	} = grandpa;
 
-	io.extend_with(SystemApi::to_delegate(FullSystem::new(client.clone(), pool, deny_unsafe)));
+	io.extend_with(SystemApi::to_delegate(FullSystem::new(client.clone(), pool.clone(), deny_unsafe)));
 	// Making synchronous calls in light client freezes the browser currently,
 	// more context: https://github.com/paritytech/substrate/pull/3480
 	// These RPCs should use an asynchronous caller instead.
@@ -215,7 +215,7 @@ where
 	io.extend_with(sc_sync_state_rpc::SyncStateRpcApi::to_delegate(
 		sc_sync_state_rpc::SyncStateRpcHandler::new(
 			chain_spec,
-			client,
+			client.clone(),
 			shared_authority_set,
 			shared_epoch_changes,
 			deny_unsafe,
