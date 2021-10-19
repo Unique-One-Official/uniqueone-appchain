@@ -23,6 +23,12 @@ pallet-im-online = { branch = 'polkadot-v0.9.8', default-features = false, git =
 pallet-mmr = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 pallet-session = { branch = 'polkadot-v0.9.8', features = ["historical"], git = "https://github.com/paritytech/substrate.git", default-features = false }
 pallet-proxy = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8", default-features = false }
+pallet-treasury = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+pallet-democracy = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+pallet-scheduler = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+pallet-collective = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+pallet-society = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+pallet-utility = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
 sp-staking = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 
 beefy-primitives = { version = "0.1.0", git = "https://github.com/octopus-network/grandpa-bridge-gadget", branch = "dev", default-features = false }
@@ -33,6 +39,7 @@ pallet-beefy = { version = "0.1.0", git = "https://github.com/octopus-network/gr
 pallet-octopus-appchain = { git = 'https://github.com/blocksphereid/octopus-pallets.git', branch = 'polkadot-v0.9.8', default-features = false }
 pallet-octopus-lpos = { git = 'https://github.com/blocksphereid/octopus-pallets.git', branch = 'polkadot-v0.9.8', default-features = false }
 pallet-octopus-upward-messages = { git = 'https://github.com/blocksphereid/octopus-pallets.git', branch = 'polkadot-v0.9.8', default-features = false }
+
 
 # Frontier Dependencies
 ## Frontier Primitive Dependencies
@@ -253,6 +260,12 @@ std = [
     'pallet-im-online/std',
     'pallet-mmr/std',
     'pallet-session/std',
+    'pallet-treasury/std',
+    'pallet-collective/std',
+    'pallet-democracy/std',
+    'pallet-scheduler/std',
+    'pallet-society/std',
+    'pallet-utility/std',
     'pallet-proxy/std',
     'sp-staking/std',
     'beefy-primitives/std',
@@ -266,7 +279,7 @@ std = [
 	'pallet-evm-precompile-simple/std',
 	'pallet-evm-precompile-modexp/std',
 	'pallet-evm-precompile-sha3fips/std',
-	'pallet-ethereum/std',    
+	'pallet-ethereum/std',        
     'pallet-template/std',
     'pallet-nft/std',
     'orml-traits/std',

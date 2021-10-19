@@ -1,7 +1,7 @@
 use hex_literal::hex;
 use uniqueone_appchain_runtime::{
-	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig,
-	SystemConfig, WASM_BINARY,
+	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilCollectiveConfig, TechComitteeCollectiveConfig,
+	DemocracyConfig, SchedulerConfig, SystemConfig, WASM_BINARY,
 };
 use sc_service::{ChainType, Properties};
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public, H160, U256};
@@ -91,6 +91,8 @@ pub fn development_config() -> Result<ChainSpec, String> {
 				wasm_binary,
 				// Initial PoA authorities
 				vec![authority_keys_from_seed("Alice")],
+				// Council Members
+				vec![get_account_id_from_seed::<sr25519::Public>("Alice"), get_account_id_from_seed::<sr25519::Public>("Bob")],
 				// Sudo account
 				get_account_id_from_seed::<sr25519::Public>("Alice"),
 				// Pre-funded accounts
@@ -129,6 +131,8 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 				wasm_binary,
 				// Initial PoA authorities
 				vec![authority_keys_from_seed("Alice"), authority_keys_from_seed("Bob")],
+				// Council Members
+				vec![get_account_id_from_seed::<sr25519::Public>("Alice"), get_account_id_from_seed::<sr25519::Public>("Bob")],
 				// Sudo account
 				get_account_id_from_seed::<sr25519::Public>("Alice"),
 				// Pre-funded accounts
@@ -202,6 +206,12 @@ pub fn staging_testnet_config() -> Result<ChainSpec, String> {
 
 					),					
 				],
+				// Council Members
+				// 5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx
+				vec![ 
+					hex!["9c5e883c0a7795c81d354aa2d596364e71f4bb07d047c8dcb67547fbe1114f12"].into() 
+				],
+
 				// Sudo account
 				// 5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx
 				hex!["9c5e883c0a7795c81d354aa2d596364e71f4bb07d047c8dcb67547fbe1114f12"].into(),
@@ -230,6 +240,7 @@ pub fn staging_testnet_config() -> Result<ChainSpec, String> {
 fn testnet_genesis(
 	wasm_binary: &[u8],
 	initial_authorities: Vec<(AccountId, BabeId, GrandpaId, ImOnlineId, BeefyId, OctopusId)>,
+	council_members: Vec<AccountId>,
 	root_key: AccountId,
 	endowed_accounts: Option<Vec<AccountId>>,
 	_enable_println: bool,
@@ -316,6 +327,17 @@ fn testnet_genesis(
 				map
 			},
 		},
+		democracy: DemocracyConfig::default(),
+		scheduler: SchedulerConfig {},		
+		council_collective: CouncilCollectiveConfig {
+			phantom: Default::default(),
+			members: council_members,
+		},
+		tech_comittee_collective: TechComitteeCollectiveConfig {
+			phantom: Default::default(),
+			members: vec![], // TODO : Set members
+		},		
+		treasury: Default::default(),
 
 	}
 }
