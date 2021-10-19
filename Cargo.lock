@@ -4809,7 +4809,7 @@ dependencies = [
  "frame-system 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
  "max-encoded-len 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
  "orml-traits",
- "pallet-elections-phragmen",
+ "pallet-elections-phragmen 4.0.0 (git+https://github.com/paritytech/substrate?rev=1d04678e20555e623c974ee1127bc8a45abcf3d6)",
  "pallet-treasury",
  "parity-scale-codec",
  "serde",
@@ -5090,6 +5090,22 @@ dependencies = [
  "parity-scale-codec",
  "serde",
  "sp-io 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "sp-runtime 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "sp-std 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+]
+
+[[package]]
+name = "pallet-elections-phragmen"
+version = "4.0.0"
+source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8#74101dc21cfffb4c2d014fcc28edc166d5ca1b16"
+dependencies = [
+ "frame-support 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "frame-system 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "log",
+ "parity-scale-codec",
+ "sp-core 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "sp-io 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "sp-npos-elections 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
  "sp-runtime 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
  "sp-std 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
 ]
@@ -10282,6 +10298,7 @@ dependencies = [
  "pallet-beefy",
  "pallet-collective",
  "pallet-democracy",
+ "pallet-elections-phragmen 4.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
  "pallet-ethereum",
  "pallet-evm",
  "pallet-evm-precompile-modexp",
@@ -10320,6 +10337,7 @@ dependencies = [
  "sp-std 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
  "sp-transaction-pool",
  "sp-version 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.8)",
+ "static_assertions",
  "substrate-wasm-builder",
 ]
 

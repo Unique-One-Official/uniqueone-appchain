@@ -15,6 +15,7 @@ targets = ['x86_64-unknown-linux-gnu']
 [dependencies]
 log = { version = "0.4.14", default-features = false }
 max-encoded-len = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.8", default-features = false }
+static_assertions = "1.1.0"
 
 frame-election-provider-support = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
 pallet-assets = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
@@ -27,6 +28,8 @@ pallet-treasury = { git = "https://github.com/paritytech/substrate", default-fea
 pallet-democracy = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
 pallet-scheduler = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
 pallet-collective = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+#pallet-election-provider-multi-phase = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
+pallet-elections-phragmen = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
 pallet-society = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
 pallet-utility = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.8" }
 sp-staking = { branch = 'polkadot-v0.9.8', default-features = false, git = "https://github.com/paritytech/substrate.git" }
@@ -265,6 +268,8 @@ std = [
     'pallet-democracy/std',
     'pallet-scheduler/std',
     'pallet-society/std',
+    #'pallet-election-provider-multi-phase/std',
+    'pallet-elections-phragmen/std',
     'pallet-utility/std',
     'pallet-proxy/std',
     'sp-staking/std',

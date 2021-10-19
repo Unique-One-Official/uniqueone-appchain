@@ -1,6 +1,6 @@
 use hex_literal::hex;
 use uniqueone_appchain_runtime::{
-	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilCollectiveConfig, TechComitteeCollectiveConfig,
+	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilConfig,
 	DemocracyConfig, SchedulerConfig, SystemConfig, WASM_BINARY,
 };
 use sc_service::{ChainType, Properties};
@@ -328,16 +328,15 @@ fn testnet_genesis(
 			},
 		},
 		democracy: DemocracyConfig::default(),
-		scheduler: SchedulerConfig {},		
-		council_collective: CouncilCollectiveConfig {
+		scheduler: SchedulerConfig {},
+		/*
+		council: CouncilConfig {
 			phantom: Default::default(),
 			members: council_members,
-		},
-		tech_comittee_collective: TechComitteeCollectiveConfig {
-			phantom: Default::default(),
-			members: vec![], // TODO : Set members
-		},		
+		},*/
+		council: Default::default(),
 		treasury: Default::default(),
+		phragmen_election: Default::default(),
 
 	}
 }
