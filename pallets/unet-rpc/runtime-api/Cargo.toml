@@ -1,0 +1,27 @@
+[package]
+authors = ['Unique One <hello@uniqueone.network>']
+edition = '2018'
+homepage = 'https://uniqueone.network'
+license = 'Apache-2.0'
+name = 'unet-rpc-runtime-api'
+readme = 'README.md'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
+version = '1.0.0'
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+sp-api = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-core = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+unet-traits = { default-features = false, path = "../../unet-traits" }
+
+[features]
+default = ["std"]
+std = [
+	"sp-api/std",
+	"sp-std/std",
+	"sp-core/std",
+	"unet-traits/std",
+]

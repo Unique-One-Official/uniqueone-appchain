@@ -55,6 +55,7 @@ pallet-evm-precompile-modexp = { git = 'https://github.com/purestake/frontier', 
 pallet-evm-precompile-sha3fips = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.8', default-features = false }
 pallet-ethereum = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.8', default-features = false }
 
+
 [build-dependencies.substrate-wasm-builder]
 git = 'https://github.com/paritytech/substrate.git'
 branch = 'polkadot-v0.9.8'
@@ -206,18 +207,55 @@ default-features = false
 path = '../pallets/template'
 version = '3.0.0'
 
-[dependencies.pallet-nft]
+[dependencies.unet-orml-currencies]
 default-features = false
-path = '../pallets/nft'
+path = '../pallets/unet-orml-currencies'
+version = '0.4.1-dev'
+
+[dependencies.unet-orml-tokens]
+default-features = false
+path = '../pallets/unet-orml-tokens'
+version = '0.4.1-dev'
+
+[dependencies.unet-orml-traits]
+default-features = false
+path = '../pallets/unet-orml-traits'
+version = '0.4.1-dev'
+
+[dependencies.unet-orml-nft]
+default-features = false
+path = '../pallets/unet-orml-nft'
+version = '0.4.1-dev'
+
+[dependencies.unet-traits]
+default-features = false
+path = '../pallets/unet-traits'
 version = '1.0.0'
 
-[dependencies.orml-traits]
+[dependencies.unet-nft]
 default-features = false
-path = '../vendors/orml/traits'
+path = '../pallets/unet-nft'
+version = '1.0.0'
 
-[dependencies.orml-nft]
+[dependencies.unet-order]
 default-features = false
-path = '../vendors/orml/nft'
+path = '../pallets/unet-order'
+version = '1.0.0'
+
+[dependencies.unet-auction]
+default-features = false
+path = '../pallets/unet-auction'
+version = '1.0.0'
+
+[dependencies.unet-config]
+default-features = false
+path = '../pallets/unet-config'
+version = '1.0.0'
+
+[dependencies.unet-rpc-runtime-api]
+default-features = false
+path = '../pallets/unet-rpc/runtime-api'
+version = '1.0.0'
 
 [features]
 default = ['std']
@@ -286,7 +324,14 @@ std = [
 	'pallet-evm-precompile-sha3fips/std',
 	'pallet-ethereum/std',        
     'pallet-template/std',
-    'pallet-nft/std',
-    'orml-traits/std',
-    'orml-nft/std',
+    'unet-orml-currencies/std',
+    'unet-orml-tokens/std',
+    'unet-orml-traits/std',
+    'unet-orml-nft/std',
+    'unet-traits/std',
+    'unet-nft/std',
+    'unet-order/std',
+    'unet-auction/std',
+    'unet-config/std',
+    'unet-rpc-runtime-api/std',
 ]

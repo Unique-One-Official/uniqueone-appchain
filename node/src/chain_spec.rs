@@ -1,17 +1,20 @@
 use hex_literal::hex;
 use uniqueone_appchain_runtime::{
 	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilConfig,
-	DemocracyConfig, SchedulerConfig, SystemConfig, WASM_BINARY,
+	DemocracyConfig, SchedulerConfig, SystemConfig, TokensConfig, UnetConfConfig, UnetNftConfig, WASM_BINARY,
 };
 use sc_service::{ChainType, Properties};
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public, H160, U256};
 use sp_finality_grandpa::AuthorityId as GrandpaId;
-use sp_runtime::traits::{IdentifyAccount, Verify};
+use sp_runtime::{
+	traits::{IdentifyAccount, Verify},
+	PerU16,
+};
 use std::{collections::BTreeMap, str::FromStr};
 
 use uniqueone_appchain_runtime::BeefyConfig;
 use uniqueone_appchain_runtime::{
-	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, OrmlNFTConfig, UNET, EVMConfig
+	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, UNET, EVMConfig
 };
 use uniqueone_appchain_runtime::{OctopusAppchainConfig, OctopusLposConfig};
 use beefy_primitives::crypto::AuthorityId as BeefyId;
@@ -266,6 +269,8 @@ fn testnet_genesis(
 	const ENDOWMENT: Balance = 10_000_000 * UNET;
 	const STASH: Balance = 100 * UNET;
 
+	use sp_core::crypto::Ss58Codec;
+
 	GenesisConfig {
 		system: SystemConfig {
 			// Add Wasm runtime to storage.
@@ -308,7 +313,6 @@ fn testnet_genesis(
 			asset_id_by_name: vec![("usdc.testnet".to_string(), 0)],
 			validators,
 		},
-		orml_nft: OrmlNFTConfig { tokens: vec![] },
 		ethereum: Default::default(),
 		evm: EVMConfig {
 			accounts: {
@@ -337,6 +341,103 @@ fn testnet_genesis(
 		council: Default::default(),
 		treasury: Default::default(),
 		phragmen_election: Default::default(),
+		tokens: TokensConfig {
+			endowed_accounts: endowed_accounts
+				.iter()
+				.flat_map(|x| {
+					vec![
+						(x.clone(), 1, 100 * unet_traits::ACCURACY),
+						(x.clone(), 2, 100 * unet_traits::ACCURACY),
+						(x.clone(), 3, 100 * unet_traits::ACCURACY),
+						(x.clone(), 4, 100 * unet_traits::ACCURACY),
+					]
+				})
+				.collect(),
+		},
+		orml_nft: Default::default(),
+		unet_conf: UnetConfConfig {
+			white_list: endowed_accounts,
+			auction_close_delay: unet_traits::time::MINUTES * 10,
+			category_list: vec![b"saaaa1".to_vec(), b"saaaa2".to_vec(), b"saaaa3".to_vec()],
+			..Default::default()
+		},
+		unet_nft: UnetNftConfig {
+			classes: vec![
+				unet_traits::ClassConfig {
+					class_id: 99,
+					class_metadata: String::from_utf8(
+						br#"{"a":"class-metadata-99", "c":"dd99"}"#.to_vec(),
+					)
+					.unwrap(),
+					category_ids: vec![0],
+					name: String::from_utf8(b"class-name-99".to_vec()).unwrap(),
+					description: String::from_utf8(b"class-description-99".to_vec()).unwrap(),
+					properties: 1 | 2,
+					royalty_rate: PerU16::from_percent(20),
+					admins: vec![
+						AccountId::from_ss58check(
+							"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+						)
+						.unwrap(),
+						AccountId::from_ss58check(
+							"5HGtNjqdYQxn8mhBX22Z6HPjRSSmeb54zTTs3s798yyu4fk9",
+						)
+						.unwrap(),
+						AccountId::from_ss58check(
+							"5G9LtRirf1bVqaVChnZmCXmQ2f4dgFCdjDQsS1eA4sGSE8NS",
+						)
+						.unwrap(),
+					],
+					tokens: vec![
+						unet_traits::TokenConfig {
+							token_id: 48,
+							token_metadata: String::from_utf8(
+								br#"{"a":"token-metadata-48", "e":"aa48"}"#.to_vec(),
+							)
+							.unwrap(),
+							royalty_rate: PerU16::from_percent(10),
+							token_owner: AccountId::from_ss58check(
+								"5HGtNjqdYQxn8mhBX22Z6HPjRSSmeb54zTTs3s798yyu4fk9",
+							)
+							.unwrap(),
+							token_creator: AccountId::from_ss58check(
+								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+							)
+							.unwrap(),
+							royalty_beneficiary: AccountId::from_ss58check(
+								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+							)
+							.unwrap(),
+							quantity: 20,
+						},
+						unet_traits::TokenConfig {
+							token_id: 58,
+							token_metadata: String::from_utf8(
+								br#"{"a":"token-metadata-58", "e":"aa58"}"#.to_vec(),
+							)
+							.unwrap(),
+							royalty_rate: PerU16::zero(),
+							token_owner: AccountId::from_ss58check(
+								"5G9LtRirf1bVqaVChnZmCXmQ2f4dgFCdjDQsS1eA4sGSE8NS",
+							)
+							.unwrap(),
+							token_creator: AccountId::from_ss58check(
+								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+							)
+							.unwrap(),
+							royalty_beneficiary: AccountId::from_ss58check(
+								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+							)
+							.unwrap(),
+							quantity: 5,
+						},
+					],
+				},
+			],
+			..Default::default()			
+		},
+		unet_order: Default::default(),
+		unet_auction: Default::default(),
 
 	}
 }

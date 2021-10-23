@@ -1,0 +1,39 @@
+[package]
+authors = ['Unique One <hello@uniqueone.network>']
+description = "Fungible tokens module that implements `MultiCurrency` trait."
+edition = '2018'
+homepage = 'https://uniqueone.network'
+license = 'Apache-2.0'
+name = 'unet-orml-tokens'
+readme = 'README.md'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
+version = '0.4.1-dev'
+
+[dependencies]
+serde = { version = "1.0.124", optional = true }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
+
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
+
+[dev-dependencies]
+sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-core = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-treasury = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-elections-phragmen = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+
+[features]
+default = ['std']
+std = [
+	"serde",
+	"codec/std",
+	'sp-std/std',
+    "sp-runtime/std",
+    'frame-support/std',
+    'frame-system/std',
+	'unet-orml-traits/std',
+
+]

@@ -62,7 +62,7 @@ use beefy_primitives::{crypto::AuthorityId as BeefyId, ValidatorSet};
 use frame_support::PalletId;
 use sp_runtime::traits::ConvertInto;
 use sp_runtime::traits::Keccak256;
-use pallet_nft::ReserveIdentifier;
+
 use fp_rpc::TransactionStatus;
 
 use pallet_balances::NegativeImbalance;
@@ -405,15 +405,15 @@ parameter_types! {
 	// For weight estimation, we assume that the most locks on an individual account will be 50.
 	// This number may need to be adjusted in the future if this assumption no longer holds true.
 	pub const MaxLocks: u32 = 50;
-	//pub const MaxReserves: u32 = 50;
-	pub const MaxReserves: u32 = ReserveIdentifier::Count as u32;
+	pub const MaxReserves: u32 = 50;
+	//pub const MaxReserves: u32 = ReserveIdentifier::Count as u32;
 }
 
 impl pallet_balances::Config for Runtime {
 	type MaxLocks = MaxLocks;
 	type MaxReserves = MaxReserves;
-	//type ReserveIdentifier = [u8; 8];
-	type ReserveIdentifier = ReserveIdentifier;
+	type ReserveIdentifier = [u8; 8];
+	//type ReserveIdentifier = ReserveIdentifier;
 	/// The type for recording an account's balance.
 	type Balance = Balance;
 	/// The ubiquitous event type.
@@ -697,40 +697,6 @@ impl pallet_octopus_upward_messages::Config for Runtime {
 impl pallet_sudo::Config for Runtime {
 	type Event = Event;
 	type Call = Call;
-}
-
-// Pallet accounts of runtime
-parameter_types! {
-	pub const NftPalletId: PalletId = PalletId(*b"unq/uNFT");
-	pub CreateClassDeposit: Balance = 50 * UNET;
-	pub CreateTokenDeposit: Balance = 200 * MILLIUNET;
-	pub MaxAttributesBytes: u32 = 2048;	
-	pub DataDepositPerByte: Balance = deposit(0, 1);
-}
-
-impl pallet_nft::Config for Runtime {
-	type Event = Event;
-	type Currency = Balances;
-	type CreateClassDeposit = CreateClassDeposit;
-	type CreateTokenDeposit = CreateTokenDeposit;
-	type DataDepositPerByte = DataDepositPerByte;
-	type PalletId = NftPalletId;
-	type MaxAttributesBytes = MaxAttributesBytes;
-	type WeightInfo = weights::pallet_nft::WeightInfo<Runtime>;
-}
-
-parameter_types! {
-	pub MaxClassMetadata: u32 = 1024;
-	pub MaxTokenMetadata: u32 = 1024;
-}
-
-impl orml_nft::Config for Runtime {
-	type ClassId = u32;
-	type TokenId = u64;
-	type ClassData = pallet_nft::ClassData<Balance>;
-	type TokenData = pallet_nft::TokenData<Balance>;
-	type MaxClassMetadata = MaxClassMetadata;
-	type MaxTokenMetadata = MaxTokenMetadata;
 }
 
 parameter_types! {
@@ -1081,6 +1047,97 @@ impl pallet_democracy::Config for Runtime {
 	
 }
 
+unet_orml_traits::parameter_type_with_key! {
+	pub ExistentialDeposits: |currency_id: unet_traits::constants_types::CurrencyId| -> Balance {
+		if currency_id == &unet_traits::constants_types::NATIVE_CURRENCY_ID {
+			ExistentialDeposit::get()
+		} else  {
+			Default::default()
+		}
+	};
+}
+
+impl unet_orml_tokens::Config for Runtime {
+	type Event = Event;
+	type Balance = Balance;
+	type Amount = unet_traits::constants_types::Amount;
+	type CurrencyId = unet_traits::constants_types::CurrencyId;
+	type WeightInfo = ();
+	type ExistentialDeposits = ExistentialDeposits;
+	type OnDust = ();
+}
+
+parameter_types! {
+	pub const GetNativeCurrencyId: unet_traits::constants_types::CurrencyId = unet_traits::constants_types::NATIVE_CURRENCY_ID;
+}
+
+pub type AdaptedBasicCurrency = unet_orml_currencies::BasicCurrencyAdapter<
+	Runtime,
+	Balances,
+	unet_traits::constants_types::Amount,
+	unet_traits::constants_types::Moment,
+>;
+
+impl unet_orml_currencies::Config for Runtime {
+	type Event = Event;
+	type MultiCurrency = Tokens;
+	type NativeCurrency = AdaptedBasicCurrency;
+	type GetNativeCurrencyId = GetNativeCurrencyId;
+	type WeightInfo = ();
+}
+
+impl unet_orml_nft::Config for Runtime {
+	type ClassId = unet_traits::ClassId;
+	type TokenId = unet_traits::TokenId;
+	type ClassData = unet_traits::ClassData<BlockNumber>;
+	type TokenData = unet_traits::TokenData<AccountId, BlockNumber>;
+}
+
+impl unet_config::Config for Runtime {
+	type Event = Event;
+}
+
+parameter_types! {
+	pub const CreateClassDeposit: Balance = 20 * MILLIUNET;
+	pub const CreateTokenDeposit: Balance = 10 * MILLIUNET;
+	pub const MetaDataByteDeposit: Balance = 1 * MILLIUNET;
+	pub const NftModuleId: PalletId = PalletId(*b"unetnft*");
+}
+
+impl unet_nft::Config for Runtime {
+	type Event = Event;
+	type ExtraConfig = UnetConf;
+	type CreateClassDeposit = CreateClassDeposit;
+	type MetaDataByteDeposit = MetaDataByteDeposit;
+	type CreateTokenDeposit = CreateTokenDeposit;
+	type ModuleId = NftModuleId;
+	type Currency = Balances;
+	type MultiCurrency = Currencies;
+}
+
+impl unet_order::Config for Runtime {
+	type Event = Event;
+	type MultiCurrency = Currencies;
+	type Currency = Balances;
+	type ClassId = unet_traits::ClassId;
+	type TokenId = unet_traits::TokenId;
+	type NFT = UnetNft;
+	type ExtraConfig = UnetConf;
+	type TreasuryPalletId = TreasuryId;
+}
+
+impl unet_auction::Config for Runtime {
+	type Event = Event;
+	type MultiCurrency = Currencies;
+	type Currency = Balances;
+	type ClassId = unet_traits::ClassId;
+	type TokenId = unet_traits::TokenId;
+	type NFT = UnetNft;
+	type ExtraConfig = UnetConf;
+	type TreasuryPalletId = TreasuryId;
+	type WeightInfo = ();
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -1116,8 +1173,13 @@ construct_runtime!(
 		EVM: pallet_evm::{Pallet, Config, Call, Storage, Event<T>},
 		Identity: pallet_identity::{Pallet, Call, Storage, Event<T>},
 		Scheduler: pallet_scheduler::{Pallet, Storage, Config, Event<T>, Call},
-		OrmlNFT: orml_nft::{Pallet, Storage, Config<T>},
-		NFT: pallet_nft::{Pallet, Call, Event<T>},
+		Tokens: unet_orml_tokens::{Pallet, Storage, Event<T>, Config<T>},
+		Currencies: unet_orml_currencies::{Pallet, Call, Event<T>},
+		OrmlNFT: unet_orml_nft::{Pallet, Storage, Config<T>},
+		UnetConf: unet_config::{Pallet, Call, Storage, Event<T>, Config<T>},
+		UnetNft: unet_nft::{Pallet, Call, Storage, Event<T>, Config<T>},
+		UnetOrder: unet_order::{Pallet, Call, Storage, Event<T>, Config<T>},
+		UnetAuction: unet_auction::{Pallet, Call, Storage, Event<T>, Config<T>},
 		
 	}
 );
@@ -1358,6 +1420,31 @@ impl_runtime_apis! {
 			len: u32,
 		) -> pallet_transaction_payment::FeeDetails<Balance> {
 			TransactionPayment::query_fee_details(uxt, len)
+		}
+	}
+
+	impl unet_rpc_runtime_api::UnetApi<Block> for Runtime {
+		fn mint_token_deposit(metadata_len: u32) -> Balance {
+			UnetNft::mint_token_deposit(metadata_len)
+		}
+		fn add_class_admin_deposit(admin_count: u32) -> Balance {
+			UnetNft::add_class_admin_deposit(admin_count)
+		}
+		fn create_class_deposit(metadata_len: u32, name_len: u32, description_len: u32) -> (Balance, Balance) {
+			UnetNft::create_class_deposit(metadata_len, name_len, description_len)
+		}
+		fn get_dutch_auction_current_price(
+			max_price: Balance, min_price: Balance,
+			created_block: BlockNumber,
+			deadline: BlockNumber,
+			current_block: BlockNumber,
+		) -> Balance {
+			unet_auction::calc_current_price::<Runtime>(max_price, min_price, created_block, deadline, current_block)
+		}
+		fn get_auction_deadline(
+			allow_delay: bool, deadline: BlockNumber, last_bid_block: BlockNumber
+		) -> BlockNumber {
+			unet_auction::get_deadline::<Runtime>(allow_delay, deadline, last_bid_block)
 		}
 	}
 

@@ -1,0 +1,50 @@
+[package]
+authors = ['Unique One <hello@uniqueone.network>']
+edition = '2018'
+homepage = 'https://uniqueone.network'
+license = 'Apache-2.0'
+name = 'unet-nft'
+readme = 'README.md'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
+version = '1.0.0'
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+serde = { version = "1.0.124", optional = true }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
+
+sp-core = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-proxy = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-timestamp = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
+unet-orml-nft = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-nft" }
+unet-traits = { default-features = false, path = "../unet-traits" }
+
+[dev-dependencies]
+sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-core = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-balances = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-utility = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+
+[features]
+default = ['std']
+std = [
+	"serde",
+	"codec/std",
+    "sp-core/std",
+	"sp-std/std",
+    "sp-runtime/std",
+    "frame-support/std",
+    "frame-system/std",
+    "pallet-proxy/std",
+    "pallet-timestamp/std",
+	"unet-orml-traits/std",
+    "unet-orml-nft/std",
+    "unet-traits/std",
+]
