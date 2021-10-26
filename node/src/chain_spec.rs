@@ -1,7 +1,10 @@
 use hex_literal::hex;
 use uniqueone_appchain_runtime::{
 	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilConfig,
-	DemocracyConfig, SchedulerConfig, SystemConfig, TokensConfig, UnetConfConfig, UnetNftConfig, WASM_BINARY,
+	DemocracyConfig, SchedulerConfig, SystemConfig, WASM_BINARY, 
+	TokensConfig, 
+	//UnetConfConfig, UnetNftConfig, 
+	//CurrencyId,
 };
 use sc_service::{ChainType, Properties};
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public, H160, U256};
@@ -341,6 +344,22 @@ fn testnet_genesis(
 		council: Default::default(),
 		treasury: Default::default(),
 		phragmen_election: Default::default(),
+		tokens: TokensConfig { balances: vec![] },
+
+		/*
+		orml_tokens: Some(TokensConfig {
+			endowed_accounts: endowed_accounts
+			.iter()
+			.flat_map(|x| {
+				vec![
+					(x.clone(), CurrencyId::DOT, 10u128.pow(16)),
+					(x.clone(), CurrencyId::BTC, 10u128.pow(16)),
+				]
+			})
+			.collect(),
+		}),
+		*/
+		/*
 		tokens: TokensConfig {
 			endowed_accounts: endowed_accounts
 				.iter()
@@ -354,6 +373,9 @@ fn testnet_genesis(
 				})
 				.collect(),
 		},
+		*/
+
+		/*
 		orml_nft: Default::default(),
 		unet_conf: UnetConfConfig {
 			white_list: endowed_accounts,
@@ -438,6 +460,7 @@ fn testnet_genesis(
 		},
 		unet_order: Default::default(),
 		unet_auction: Default::default(),
-
+		*/
+		
 	}
 }

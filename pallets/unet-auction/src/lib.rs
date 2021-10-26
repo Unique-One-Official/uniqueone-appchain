@@ -113,6 +113,7 @@ pub mod module {
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(crate) fn deposit_event)]
+	#[pallet::metadata(T::AccountId = "AccountId", Option<(bool, T::AccountId, PerU16)> = "Option<(bool, AccountId, PerU16)>")]
 	pub enum Event<T: Config> {
 		/// CreatedBritishAuction \[who, auction_id\]
 		CreatedBritishAuction(T::AccountId, GlobalId),

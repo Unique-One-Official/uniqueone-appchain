@@ -46,6 +46,7 @@ sp-authorship = { branch = 'polkadot-v0.9.8', git = "https://github.com/parityte
 sp-keystore = { branch = 'polkadot-v0.9.8', git = "https://github.com/paritytech/substrate.git" }
 pallet-im-online = { branch = 'polkadot-v0.9.8', git = "https://github.com/paritytech/substrate.git" }
 pallet-mmr-rpc = { branch = 'polkadot-v0.9.8', git = "https://github.com/paritytech/substrate.git" }
+pallet-contracts-rpc = { branch = 'polkadot-v0.9.8', git = "https://github.com/paritytech/substrate.git" }
 sp-transaction-pool = { branch = 'polkadot-v0.9.8', git = "https://github.com/paritytech/substrate.git" }
 
 beefy-primitives = { version = "0.1.0", git = "https://github.com/octopus-network/grandpa-bridge-gadget", branch = "dev" }
@@ -74,8 +75,8 @@ pallet-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam
 pallet-ethereum = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.8' }
 
 ## Unet Dependencies
-unet-traits = { path = "../pallets/unet-traits" }
-unet-rpc = { path = "../pallets/unet-rpc" }
+# unet-traits = { path = "../pallets/unet-traits" }
+# unet-rpc = { path = "../pallets/unet-rpc" }
 
 [dependencies.frame-benchmarking]
 git = 'https://github.com/paritytech/substrate.git'
