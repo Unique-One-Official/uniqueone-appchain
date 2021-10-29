@@ -6,7 +6,7 @@
 <h1>Unique One Network</h1>
 <h2>The Next Generation NFT decentralised application chain</h2>
 
-Unique One Network is a Substrate-based, next-generation decentralised NFT application-specific blockchain leveraging Web3.0 interoperability to augment the NFT Evolution.
+Unique One Network is a Substrate-based, next-generation decentralised NFT application-specific with smart contract enabled blockchain leveraging Web3.0 interoperability to augment the NFT Evolution.
 
 <br>
 <br>
