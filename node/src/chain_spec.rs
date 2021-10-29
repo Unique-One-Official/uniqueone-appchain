@@ -3,7 +3,7 @@ use uniqueone_appchain_runtime::{
 	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilConfig,
 	DemocracyConfig, SchedulerConfig, SystemConfig, WASM_BINARY, 
 	TokensConfig, 
-	//UnetConfConfig, UnetNftConfig, 
+	UnetConfConfig, UnetNftConfig, 
 	//CurrencyId,
 };
 use sc_service::{ChainType, Properties};
@@ -100,7 +100,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 				// Council Members
 				vec![get_account_id_from_seed::<sr25519::Public>("Alice"), get_account_id_from_seed::<sr25519::Public>("Bob")],
 				// Sudo account
-				get_account_id_from_seed::<sr25519::Public>("Alice"),
+				hex!["9c5e883c0a7795c81d354aa2d596364e71f4bb07d047c8dcb67547fbe1114f12"].into(),
 				// Pre-funded accounts
 				Some(vec![
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
@@ -114,7 +114,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		// Telemetry
 		None,
 		// Protocol ID
-		Some("uniqueone-dev"),
+		Some("uniqueone"),
 		// Properties
         Some(properties),
 		// Extensions
@@ -140,7 +140,7 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 				// Council Members
 				vec![get_account_id_from_seed::<sr25519::Public>("Alice"), get_account_id_from_seed::<sr25519::Public>("Bob")],
 				// Sudo account
-				get_account_id_from_seed::<sr25519::Public>("Alice"),
+				hex!["9c5e883c0a7795c81d354aa2d596364e71f4bb07d047c8dcb67547fbe1114f12"].into(),
 				// Pre-funded accounts
 				Some(vec![
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
@@ -158,7 +158,7 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 		// Telemetry
 		None,
 		// Protocol ID
-		Some("uniqueone-local-testnet"),
+		Some("uniqueone"),
 		// Properties
         Some(properties),
 		// Extensions
@@ -234,7 +234,7 @@ pub fn staging_testnet_config() -> Result<ChainSpec, String> {
 		// Telemetry
 		None,
 		// Protocol ID
-		Some("uniqueone-staging-testnet"),
+		Some("uniqueone"),
 		// Properties
         Some(properties),
 		// Extensions
@@ -343,23 +343,7 @@ fn testnet_genesis(
 		},*/
 		council: Default::default(),
 		treasury: Default::default(),
-		phragmen_election: Default::default(),
-		tokens: TokensConfig { balances: vec![] },
-
-		/*
-		orml_tokens: Some(TokensConfig {
-			endowed_accounts: endowed_accounts
-			.iter()
-			.flat_map(|x| {
-				vec![
-					(x.clone(), CurrencyId::DOT, 10u128.pow(16)),
-					(x.clone(), CurrencyId::BTC, 10u128.pow(16)),
-				]
-			})
-			.collect(),
-		}),
-		*/
-		/*
+		phragmen_election: Default::default(),		
 		tokens: TokensConfig {
 			endowed_accounts: endowed_accounts
 				.iter()
@@ -373,53 +357,56 @@ fn testnet_genesis(
 				})
 				.collect(),
 		},
-		*/
-
-		/*
+		
+		
 		orml_nft: Default::default(),
 		unet_conf: UnetConfConfig {
 			white_list: endowed_accounts,
 			auction_close_delay: unet_traits::time::MINUTES * 10,
-			category_list: vec![b"saaaa1".to_vec(), b"saaaa2".to_vec(), b"saaaa3".to_vec()],
+			category_list: vec![
+				b"Arts".to_vec(), 
+				b"Animation".to_vec(), 
+				b"Manga".to_vec(),
+				b"Meme".to_vec(),
+				b"Trading Cards".to_vec(),
+				b"Collectibles".to_vec(),
+				b"Unique".to_vec(),
+				b"Audio".to_vec(),
+				b"Video".to_vec(),
+				b"3D".to_vec(),
+			],
 			..Default::default()
 		},
 		unet_nft: UnetNftConfig {
 			classes: vec![
+				// Unique One Default Collection
 				unet_traits::ClassConfig {
-					class_id: 99,
+					class_id: 0,
 					class_metadata: String::from_utf8(
-						br#"{"a":"class-metadata-99", "c":"dd99"}"#.to_vec(),
+						br#"{\"image\":\"https://img.unique.one/ipfs/QmQxTW2N5YSPSaA4gmD5ZjTyB7CCYAG51ooAtn5cCzNEG7\"}"#.to_vec(),
 					)
 					.unwrap(),
 					category_ids: vec![0],
-					name: String::from_utf8(b"class-name-99".to_vec()).unwrap(),
-					description: String::from_utf8(b"class-description-99".to_vec()).unwrap(),
-					properties: 1 | 2,
-					royalty_rate: PerU16::from_percent(20),
+					name: String::from_utf8(b"Unique One".to_vec()).unwrap(),
+					description: String::from_utf8(b"Unique One Collection".to_vec()).unwrap(),
+					properties: 1 | 2,  // 1 = Transferable, 2 = Burnable
+					royalty_rate: PerU16::from_percent(0),
 					admins: vec![
 						AccountId::from_ss58check(
 							"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
 						)
 						.unwrap(),
-						AccountId::from_ss58check(
-							"5HGtNjqdYQxn8mhBX22Z6HPjRSSmeb54zTTs3s798yyu4fk9",
-						)
-						.unwrap(),
-						AccountId::from_ss58check(
-							"5G9LtRirf1bVqaVChnZmCXmQ2f4dgFCdjDQsS1eA4sGSE8NS",
-						)
-						.unwrap(),
 					],
 					tokens: vec![
 						unet_traits::TokenConfig {
-							token_id: 48,
+							token_id: 0,
 							token_metadata: String::from_utf8(
-								br#"{"a":"token-metadata-48", "e":"aa48"}"#.to_vec(),
+								br#"{\"name\":\"Unique One\",\"description\":\"Unique.One is a next generation decentralised NFT arts marketplace for the growing world of digital artists and collectors.\",\"image\":\"https://img.unique.one/ipfs/QmQxTW2N5YSPSaA4gmD5ZjTyB7CCYAG51ooAtn5cCzNEG7\"}"#.to_vec(),
 							)
 							.unwrap(),
 							royalty_rate: PerU16::from_percent(10),
 							token_owner: AccountId::from_ss58check(
-								"5HGtNjqdYQxn8mhBX22Z6HPjRSSmeb54zTTs3s798yyu4fk9",
+								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
 							)
 							.unwrap(),
 							token_creator: AccountId::from_ss58check(
@@ -430,28 +417,7 @@ fn testnet_genesis(
 								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
 							)
 							.unwrap(),
-							quantity: 20,
-						},
-						unet_traits::TokenConfig {
-							token_id: 58,
-							token_metadata: String::from_utf8(
-								br#"{"a":"token-metadata-58", "e":"aa58"}"#.to_vec(),
-							)
-							.unwrap(),
-							royalty_rate: PerU16::zero(),
-							token_owner: AccountId::from_ss58check(
-								"5G9LtRirf1bVqaVChnZmCXmQ2f4dgFCdjDQsS1eA4sGSE8NS",
-							)
-							.unwrap(),
-							token_creator: AccountId::from_ss58check(
-								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
-							)
-							.unwrap(),
-							royalty_beneficiary: AccountId::from_ss58check(
-								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
-							)
-							.unwrap(),
-							quantity: 5,
+							quantity: 1000,
 						},
 					],
 				},
@@ -460,7 +426,7 @@ fn testnet_genesis(
 		},
 		unet_order: Default::default(),
 		unet_auction: Default::default(),
-		*/
+		
 		
 	}
 }

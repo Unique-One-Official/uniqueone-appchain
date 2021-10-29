@@ -206,25 +206,80 @@ default-features = false
 git = 'https://github.com/paritytech/substrate.git'
 branch = 'polkadot-v0.9.8'
 
-[dependencies.pallet-template]
-default-features = false
-path = '../pallets/template'
-version = '3.0.0'
+#[dependencies.pallet-template]
+#default-features = false
+#path = '../pallets/template'
+#version = '3.0.0'
 
-[dependencies.orml-tokens]
+#[dependencies.orml-tokens]
+#default-features = false
+#path = '../vendors/orml/tokens'
+#version = '0.4.1-dev'
+
+#[dependencies.orml-traits]
+#default-features = false
+#path = '../vendors/orml/traits'
+#version = '0.4.1-dev'
+
+#[dependencies.pallet-currencies]
+#default-features = false
+#path = '../pallets/currencies'
+#version = '0.4.1-dev'
+
+[dependencies.unet-orml-tokens]
 default-features = false
-path = '../vendors/orml/tokens'
+path = '../pallets/unet-orml-tokens'
 version = '0.4.1-dev'
 
-[dependencies.orml-traits]
+[dependencies.unet-orml-traits]
 default-features = false
-path = '../vendors/orml/traits'
+path = '../pallets/unet-orml-traits'
 version = '0.4.1-dev'
 
-[dependencies.pallet-currencies]
+[dependencies.unet-orml-currencies]
 default-features = false
-path = '../pallets/currencies'
+path = '../pallets/unet-orml-currencies'
 version = '0.4.1-dev'
+
+[dependencies.unet-orml-nft]
+default-features = false
+path = '../pallets/unet-orml-nft'
+version = '0.4.1-dev'
+
+[dependencies.unet-traits]
+default-features = false
+path = '../pallets/unet-traits'
+version = '1.0.0'
+
+[dependencies.unet-nft]
+default-features = false
+path = '../pallets/unet-nft'
+version = '1.0.0'
+
+[dependencies.unet-order]
+default-features = false
+path = '../pallets/unet-order'
+version = '1.0.0'
+
+[dependencies.unet-auction]
+default-features = false
+path = '../pallets/unet-auction'
+version = '1.0.0'
+
+[dependencies.unet-config]
+default-features = false
+path = '../pallets/unet-config'
+version = '1.0.0'
+
+[dependencies.unet-rpc-runtime-api]
+default-features = false
+path = '../pallets/unet-rpc/runtime-api'
+version = '1.0.0'
+
+[dependencies.chain-extension]
+default-features = false
+path = '../node/chain-extension'
+version = '1.0.0'
 
 [features]
 default = ['std']
@@ -296,9 +351,19 @@ std = [
 	'pallet-evm-precompile-modexp/std',
 	'pallet-evm-precompile-sha3fips/std',
 	'pallet-ethereum/std',        
-    'pallet-template/std',
-    'orml-tokens/std',
-    'orml-traits/std',
-    'pallet-currencies/std',
-
+    #'pallet-template/std',
+    #'orml-tokens/std',
+    #'orml-traits/std',
+    #'pallet-currencies/std',
+    'unet-orml-tokens/std',
+    'unet-orml-traits/std',
+    'unet-orml-currencies/std',
+    'unet-orml-nft/std',
+    'unet-traits/std',
+    'unet-nft/std',
+    'unet-order/std',
+    'unet-auction/std',
+    'unet-config/std',
+    'unet-rpc-runtime-api/std',
+    'chain-extension/std',
 ]

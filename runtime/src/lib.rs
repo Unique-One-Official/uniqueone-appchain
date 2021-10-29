@@ -70,12 +70,8 @@ use pallet_balances::NegativeImbalance;
 use static_assertions::const_assert;
 
 use pallet_contracts::weights::WeightInfo;
-
-use pallet_currencies::BasicCurrencyAdapter;
-pub use pallet_currencies::pallet::CurrencyId;
-use orml_traits::parameter_type_with_key;
-
-pub type Amount = i128;
+pub use unet_traits::constants_types::Amount;
+pub use unet_traits::constants_types::CurrencyId;
 
 /// Weights for pallets used in the runtime.
 mod weights;
@@ -1103,47 +1099,14 @@ impl pallet_contracts::Config for Runtime {
 	type CallStack = [pallet_contracts::Frame<Self>; 31];
 	type WeightPrice = pallet_transaction_payment::Pallet<Self>;
 	type WeightInfo = pallet_contracts::weights::SubstrateWeight<Self>;
-	//type ChainExtension = chain_extension::UnetExtension<Self>;
-	type ChainExtension = ();
+	type ChainExtension = chain_extension::UnetExtension<Self>;
 	type DeletionQueueDepth = DeletionQueueDepth;
 	type DeletionWeightLimit = DeletionWeightLimit;
 	type Schedule = Schedule;
 }
 
-parameter_type_with_key! {
-	pub ExistentialDeposits: |_currency_id: CurrencyId| -> Balance {
-		Zero::zero()
-	};
-}
-
-impl orml_tokens::Config for Runtime {
-	type Event = Event;
-	type Balance = Balance;
-	type Amount = Amount;
-	type CurrencyId = CurrencyId;
-	type WeightInfo = ();
-	type ExistentialDeposits = ExistentialDeposits;
-	type OnDust = ();
-	type MaxLocks = MaxLocks;
-	type DustRemovalWhitelist = ();
-
-}
-
-parameter_types! {
-	pub const GetNativeCurrencyId: CurrencyId = 0;
-}
-
-impl pallet_currencies::Config for Runtime {
-	type Event = Event;
-	type MultiCurrency = Tokens;
-	type NativeCurrency = BasicCurrencyAdapter<Runtime, Balances, Amount, BlockNumber>;
-	type GetNativeCurrencyId = GetNativeCurrencyId;
-	type WeightInfo = ();
-}
-
-/*
 unet_orml_traits::parameter_type_with_key! {
-	pub ExistentialDeposits: |currency_id: unet_traits::constants_types::CurrencyId| -> Balance {
+	pub ExistentialDeposits: |currency_id: CurrencyId| -> Balance {
 		if currency_id == &unet_traits::constants_types::NATIVE_CURRENCY_ID {
 			ExistentialDeposit::get()
 		} else  {
@@ -1155,49 +1118,33 @@ unet_orml_traits::parameter_type_with_key! {
 impl unet_orml_tokens::Config for Runtime {
 	type Event = Event;
 	type Balance = Balance;
-	type Amount = unet_traits::constants_types::Amount;
-	type CurrencyId = unet_traits::constants_types::CurrencyId;
-	type WeightInfo = ();
-	type ExistentialDeposits = ExistentialDeposits;
-	type OnDust = ();
-	type MaxLocks = MaxLocks;
-	type DustRemovalWhitelist = DustRemovalWhitelist;
-}
-*/
-
-/*
-parameter_type_with_key! {
-	pub ExistentialDeposits: |_currency_id: CurrencyId| -> Balance {
-		Zero::zero()
-	};
-}
-
-impl orml_tokens::Config for Runtime {
-	type Event = Event;
-	type Balance = Balance;
 	type Amount = Amount;
 	type CurrencyId = CurrencyId;
 	type WeightInfo = ();
 	type ExistentialDeposits = ExistentialDeposits;
 	type OnDust = ();
-	//type MaxLocks = MaxLocks;
-	//type DustRemovalWhitelist = ();
 }
 
 parameter_types! {
-	pub const GetNativeCurrencyId: CurrencyId = CurrencyId::Native;
+	pub const GetNativeCurrencyId: CurrencyId = unet_traits::constants_types::NATIVE_CURRENCY_ID;
 }
 
-impl orml_currencies::Config for Runtime {
+pub type AdaptedBasicCurrency = unet_orml_currencies::BasicCurrencyAdapter<
+	Runtime,
+	Balances,
+	Amount,
+	unet_traits::constants_types::Moment,
+>;
+
+impl unet_orml_currencies::Config for Runtime {
 	type Event = Event;
 	type MultiCurrency = Tokens;
-	type NativeCurrency = BasicCurrencyAdapter<Runtime, Balances, Amount, BlockNumber>;
+	type NativeCurrency = AdaptedBasicCurrency;
 	type GetNativeCurrencyId = GetNativeCurrencyId;
 	type WeightInfo = ();
 }
-*/
 
-/*
+
 impl unet_orml_nft::Config for Runtime {
 	type ClassId = unet_traits::ClassId;
 	type TokenId = unet_traits::TokenId;
@@ -1249,8 +1196,6 @@ impl unet_auction::Config for Runtime {
 	type TreasuryPalletId = TreasuryId;
 	type WeightInfo = ();
 }
-*/
-
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -1288,13 +1233,13 @@ construct_runtime!(
 		Identity: pallet_identity::{Pallet, Call, Storage, Event<T>},
 		Scheduler: pallet_scheduler::{Pallet, Storage, Config, Event<T>, Call},
 		Contracts: pallet_contracts::{Pallet, Call, Storage, Event<T>},
-		Currencies: pallet_currencies::{Pallet, Call, Event<T>},
-		Tokens: orml_tokens::{Pallet, Storage, Event<T>, Config<T>},		
-		//OrmlNFT: unet_orml_nft::{Pallet, Storage, Config<T>},
-		//UnetConf: unet_config::{Pallet, Call, Storage, Event<T>, Config<T>},
-		//UnetNft: unet_nft::{Pallet, Call, Storage, Event<T>, Config<T>},
-		//UnetOrder: unet_order::{Pallet, Call, Storage, Event<T>, Config<T>},
-		//UnetAuction: unet_auction::{Pallet, Call, Storage, Event<T>, Config<T>},
+		Currencies: unet_orml_currencies::{Pallet, Call, Event<T>},
+		Tokens: unet_orml_tokens::{Pallet, Storage, Event<T>, Config<T>},		
+		OrmlNFT: unet_orml_nft::{Pallet, Storage, Config<T>},
+		UnetConf: unet_config::{Pallet, Call, Storage, Event<T>, Config<T>},
+		UnetNft: unet_nft::{Pallet, Call, Storage, Event<T>, Config<T>},
+		UnetOrder: unet_order::{Pallet, Call, Storage, Event<T>, Config<T>},
+		UnetAuction: unet_auction::{Pallet, Call, Storage, Event<T>, Config<T>},
 		
 	}
 );
@@ -1579,7 +1524,7 @@ impl_runtime_apis! {
 		}
 	}
 
-	/*
+	
 	impl unet_rpc_runtime_api::UnetApi<Block> for Runtime {
 		fn mint_token_deposit(metadata_len: u32) -> Balance {
 			UnetNft::mint_token_deposit(metadata_len)
@@ -1604,7 +1549,7 @@ impl_runtime_apis! {
 			unet_auction::get_deadline::<Runtime>(allow_delay, deadline, last_bid_block)
 		}
 	}
-	*/
+	
 	
 	impl pallet_mmr::primitives::MmrApi<
 		Block,
