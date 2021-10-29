@@ -3,13 +3,13 @@
 </div>
 
 <div align="Center">
-    <h1>Unique One Network</h1>
-    <h2>The Next Generation NFT decentralised application chain</h2>
+<h1>Unique One Network</h1>
+<h2>The Next Generation NFT decentralised application chain</h2>
 
-    Unique One Network is a Substrate-based, next-generation decentralised NFT application-specific blockchain leveraging Web3.0 interoperability to augment the NFT Evolution.
+Unique One Network is a Substrate-based, next-generation decentralised NFT application-specific blockchain leveraging Web3.0 interoperability to augment the NFT Evolution.
 
-    <br>
-    <br>
+<br>
+<br>
 
 [![Substrate version](https://img.shields.io/badge/Substrate-3.0.0-brightgreen?logo=Parity%20Substrate)](https://substrate.dev/)
 [![Medium](https://img.shields.io/badge/Medium-UniqueOneNetwork-brightgreen?logo=medium)](https://medium.com/@uniqueone)
