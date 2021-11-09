@@ -655,7 +655,7 @@ impl frame_system::offchain::AppCrypto<<Signature as Verify>::Signer, Signature>
 parameter_types! {
 	pub const OctopusAppchainPalletId: PalletId = PalletId(*b"py/octps");
 	pub const GracePeriod: u32 = 5;
-	pub const UnsignedPriority: u64 = 1 << 20;
+	pub const UnsignedPriority: u64 = 1 << 20;	
 }
 
 impl pallet_octopus_appchain::Config for Runtime {
@@ -668,14 +668,13 @@ impl pallet_octopus_appchain::Config for Runtime {
 	type Currency = Balances;
 	type Assets = Assets;
 	type GracePeriod = GracePeriod;
-	type UnsignedPriority = UnsignedPriority;
+	type UnsignedPriority = UnsignedPriority;	
 }
 
 parameter_types! {
-		pub const SessionsPerEra: sp_staking::SessionIndex = 6;
-		pub const BondingDuration: pallet_octopus_lpos::EraIndex = 24 * 28;
-		pub OffchainRepeat: BlockNumber = 5;
-		pub const BlocksPerEra: u32 = EPOCH_DURATION_IN_BLOCKS * 6 / (SECS_PER_BLOCK as u32);
+	pub const SessionsPerEra: sp_staking::SessionIndex = 6;
+	pub const BondingDuration: pallet_octopus_lpos::EraIndex = 24 * 28;		
+	pub const BlocksPerEra: u32 = EPOCH_DURATION_IN_BLOCKS * 6 / (SECS_PER_BLOCK as u32);
 }
 
 impl pallet_octopus_lpos::Config for Runtime {
@@ -684,13 +683,14 @@ impl pallet_octopus_lpos::Config for Runtime {
 	type Event = Event;
 	type Reward = (); // rewards are minted from the void
 	type SessionsPerEra = SessionsPerEra;
-	type BlocksPerEra = BlocksPerEra;
 	type BondingDuration = BondingDuration;
+	type BlocksPerEra = BlocksPerEra;	
 	type SessionInterface = Self;
-	type ValidatorsProvider = OctopusAppchain;
-	type WeightInfo = pallet_octopus_lpos::weights::SubstrateWeight<Runtime>;
 	type UpwardMessagesInterface = OctopusUpwardMessages;
 	type PalletId = OctopusAppchainPalletId;
+	type ValidatorsProvider = OctopusAppchain;
+	type WeightInfo = pallet_octopus_lpos::weights::SubstrateWeight<Runtime>;	
+	
 }
 
 impl pallet_octopus_upward_messages::Config for Runtime {
@@ -1216,7 +1216,7 @@ construct_runtime!(
 		Council: pallet_collective::<Instance1>::{Pallet, Call, Storage, Origin<T>, Event<T>, Config<T>},
 		PhragmenElection: pallet_elections_phragmen::{Pallet, Call, Storage, Event<T>, Config<T>},
 		Treasury: pallet_treasury::{Pallet, Storage, Config, Event<T>, Call},
-		OctopusAppchain: pallet_octopus_appchain::{Pallet, Call, Storage, Config<T>, Event<T>, ValidateUnsigned},
+		OctopusAppchain: pallet_octopus_appchain::{Pallet, Call, Storage, Config<T>, Event<T>, ValidateUnsigned}, // must before session
 		OctopusLpos: pallet_octopus_lpos::{Pallet, Call, Config, Storage, Event<T>},
 		OctopusUpwardMessages: pallet_octopus_upward_messages::{Pallet, Call, Storage, Event<T>},
 		Session: pallet_session::{Pallet, Call, Storage, Event, Config<T>},

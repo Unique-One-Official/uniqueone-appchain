@@ -1,0 +1,104 @@
+{
+    "Address": "MultiAddress",
+    "LookupSource": "MultiAddress",
+    "Account": {
+      "nonce": "U256",
+      "balance": "U256"
+    },
+    "Transaction": {
+      "nonce": "U256",
+      "action": "String",
+      "gas_price": "u64",
+      "gas_limit": "u64",
+      "value": "U256",
+      "input": "Vec<u8>",
+      "signature": "Signature"
+    },
+    "Signature": {
+      "v": "u64",
+      "r": "H256",
+      "s": "H256"
+    },
+    "SessionKeys4B": "(AccountId, AccountId, AccountId, BeefyKey)",
+    "Validator": {
+      "id": "AccountId",
+      "weight": "u128"
+    },
+    "ValidatorSet": {
+      "sequence_number": "u32",
+      "set_id": "u32",
+      "validators": "Vec<Validator>"
+    },
+    "LockEvent": {
+      "sequence_number": "u32",
+      "token_id": "Vec<u8>",
+      "sender_id": "Vec<u8>",
+      "receiver": "AccountId",
+      "amount": "u128"
+    },
+    "AssetIdOf": "u32",
+    "AssetBalanceOf": "u128",
+    "TAssetBalance": "u128",
+    "Observation": {
+      "_enum": {
+        "UpdateValidatorSet": "(ValidatorSet)",
+        "LockToken": "(LockEvent)"
+      }
+    },
+    "Properties": "u8",
+    "BlockNumber": "u32",
+    "BlockNumberOf": "BlockNumber",
+    "BlockNumberFor": "BlockNumber",
+    "GlobalId": "u64",
+    "CurrencyId": "u32",
+    "CurrencyIdOf": "CurrencyId",
+    "NFTMetadata": "Vec<u8>",
+    "Amount": "i128",
+    "AmountOf": "Amount",
+    "CategoryId": "GlobalId",
+    "CategoryIdOf": "CategoryId",
+    "ClassId": "u32",
+    "ClassIdOf": "ClassId",
+    "TokenId": "u64",
+    "TokenIdOf": "TokenId",
+    "OrmlAccountData": {
+      "free": "Balance",
+      "reserved": "Balance",
+      "frozen": "Balance"
+    },
+    "ClassInfoOf": {
+      "metadata": "NFTMetadata",
+      "totalIssuance": "Compact<TokenId>",
+      "owner": "AccountId",
+      "data": "ClassData"
+    },
+    "ClassData": {
+      "deposit": "Compact<Balance>",
+      "properties": "Properties",
+      "name": "Vec<u8>",
+      "description": "Vec<u8>",
+      "createBlock": "Compact<BlockNumberOf>",
+      "royaltyRate": "Compact<PerU16>",
+      "categoryIds": "Vec<CategoryId>"
+    },
+    "TokenInfoOf": {
+      "metadata": "NFTMetadata",
+      "data": "TokenData",
+      "quantity": "Compact<TokenId>"
+    },
+    "TokenData": {
+      "deposit": "Compact<Balance>",
+      "createBlock": "Compact<BlockNumberOf>",
+      "royalty_rate": "Compact<PerU16>",
+      "creator": "AccountId",
+      "royaltyBeneficiary": "AccountId"
+    },
+    "AccountToken": {
+      "quantity": "Compact<TokenId>",
+      "reserved": "Compact<TokenId>"
+    },
+    "CategoryData": {
+      "metadata": "NFTMetadata",
+      "nftCount": "Compact<Balance>"
+    }
+  }

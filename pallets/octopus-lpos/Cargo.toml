@@ -1,0 +1,72 @@
+[package]
+name = "pallet-octopus-lpos"
+version = "3.0.0-pre.0"
+edition = "2018"
+authors = ["Parity Technologies <admin@parity.io>", "Octopus Network <hi@oct.network>"]
+license = "Apache-2.0"
+homepage = "https://oct.network"
+repository = "https://github.com/octopus-network/octopus-pallets.git"
+description = "FRAME pallet LPoS"
+readme = "README.md"
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+static_assertions = "1.1.0"
+serde = { version = "1.0.124", optional = true }
+borsh = { default-features = false, version = "0.9.0" }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
+hex = { default-features = false, version = "0.4", features = ["alloc"] }
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-io = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-staking = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-session = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8', features = ["historical"] }
+pallet-authorship = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-application-crypto = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+log = { version = "0.4.14", default-features = false }
+paste = "1.0"
+pallet-octopus-support = { default-features = false, path = "../octopus-support" }
+
+# Optional imports for benchmarking
+frame-benchmarking = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8', optional = true }
+rand_chacha = { version = "0.2", default-features = false, optional = true }
+
+[dev-dependencies]
+sp-storage = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-tracing = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+sp-core = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-balances = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+pallet-timestamp = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+substrate-test-utils = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+frame-benchmarking = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.8' }
+rand_chacha = { version = "0.2" }
+parking_lot = "0.11.1"
+
+[features]
+default = ["std"]
+std = [
+	"serde",
+	"borsh/std",
+	"codec/std",
+	"hex/std",
+	"sp-std/std",
+	"sp-io/std",
+	"frame-support/std",
+	"sp-runtime/std",
+	"sp-staking/std",
+	"pallet-session/std",
+	"frame-system/std",
+	"pallet-authorship/std",
+	"sp-application-crypto/std",
+	"log/std",
+	"pallet-octopus-support/std",
+]
+runtime-benchmarks = [
+	"frame-benchmarking",
+	"rand_chacha",
+]
+try-runtime = ["frame-support/try-runtime"]

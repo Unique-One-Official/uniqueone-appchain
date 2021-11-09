@@ -40,13 +40,9 @@ sp-staking = { branch = 'polkadot-v0.9.8', default-features = false, git = "http
 
 beefy-primitives = { version = "0.1.0", git = "https://github.com/octopus-network/grandpa-bridge-gadget", branch = "dev", default-features = false }
 pallet-beefy = { version = "0.1.0", git = "https://github.com/octopus-network/grandpa-bridge-gadget", branch = "dev", default-features = false }
-#pallet-octopus-appchain = { default-features = false, git = "https://github.com/octopus-network/octopus-pallets", branch = "main" }
-#pallet-octopus-lpos = { default-features = false, git = "https://github.com/octopus-network/octopus-pallets", branch = "main" }
-#pallet-octopus-upward-messages = { default-features = false, git = "https://github.com/octopus-network/octopus-pallets", branch = "main" }
-pallet-octopus-appchain = { git = 'https://github.com/blocksphereid/octopus-pallets.git', branch = 'polkadot-v0.9.8', default-features = false }
-pallet-octopus-lpos = { git = 'https://github.com/blocksphereid/octopus-pallets.git', branch = 'polkadot-v0.9.8', default-features = false }
-pallet-octopus-upward-messages = { git = 'https://github.com/blocksphereid/octopus-pallets.git', branch = 'polkadot-v0.9.8', default-features = false }
-
+pallet-octopus-appchain = { default-features = false, path = "../pallets/octopus-appchain" }
+pallet-octopus-lpos = { default-features = false, path = "../pallets/octopus-lpos" }
+pallet-octopus-upward-messages = { default-features = false, path = "../pallets/octopus-upward-messages" }
 
 # Frontier Dependencies
 ## Frontier Primitive Dependencies

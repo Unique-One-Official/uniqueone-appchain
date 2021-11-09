@@ -301,7 +301,7 @@ fn testnet_genesis(
 				})
 				.collect::<Vec<_>>(),
 		},
-		octopus_lpos: OctopusLposConfig { era_payout: 1024, ..Default::default() },
+		octopus_lpos: OctopusLposConfig { era_payout: 1000 * UNET, ..Default::default() },
 		sudo: SudoConfig { key: root_key },
 		babe: BabeConfig {
 			authorities: vec![],
@@ -315,6 +315,7 @@ fn testnet_genesis(
 			anchor_contract: "octopus-anchor.testnet".to_string(),
 			asset_id_by_name: vec![("usdc.testnet".to_string(), 0)],
 			validators,
+			premined_amount: 1000 * UNET,
 		},
 		ethereum: Default::default(),
 		evm: EVMConfig {

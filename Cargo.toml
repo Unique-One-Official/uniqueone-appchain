@@ -17,5 +17,9 @@ members = [
 	"pallets/unet-config",
 	"pallets/unet-order",
 	"pallets/unet-auction",
+	"pallets/octopus-support",
+	"pallets/octopus-upward-messages",
+	"pallets/octopus-lpos",
+	"pallets/octopus-appchain",
 	"runtime",
 ]
