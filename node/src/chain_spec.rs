@@ -1,29 +1,46 @@
 use hex_literal::hex;
 use uniqueone_appchain_runtime::{
-	AccountId, BabeConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig, CouncilCollectiveConfig, TechComitteeCollectiveConfig,
-	DemocracyConfig, SchedulerConfig, SystemConfig, WASM_BINARY,
+	opaque::Block, opaque::SessionKeys, AccountId, BabeConfig, Balance, BalancesConfig, 
+	GenesisConfig, GrandpaConfig, ImOnlineConfig, OctopusAppchainConfig, OctopusLposConfig, 
+	SessionConfig, Signature, SudoConfig, SystemConfig, UNET, 
+	CouncilCollectiveConfig, TechComitteeCollectiveConfig, DemocracyConfig, SchedulerConfig, WASM_BINARY,
+	// EVM 
+	Precompiles, EVMConfig, EthereumConfig, 
+
 };
+
+use beefy_primitives::crypto::AuthorityId as BeefyId;
+use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
+use pallet_octopus_appchain::AuthorityId as OctopusId;
+use sc_chain_spec::ChainSpecExtension;
 use sc_service::{ChainType, Properties};
+use serde::{Deserialize, Serialize};
+use sp_consensus_babe::AuthorityId as BabeId;
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public, H160, U256};
 use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::traits::{IdentifyAccount, Verify};
 use std::{collections::BTreeMap, str::FromStr};
-
-use uniqueone_appchain_runtime::BeefyConfig;
-use uniqueone_appchain_runtime::{
-	opaque::SessionKeys, Balance, ImOnlineConfig, SessionConfig, OrmlNFTConfig, UNET, EVMConfig
-};
-use uniqueone_appchain_runtime::{OctopusAppchainConfig, OctopusLposConfig};
-use beefy_primitives::crypto::AuthorityId as BeefyId;
-use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
-use pallet_octopus_appchain::AuthorityId as OctopusId;
-use sp_consensus_babe::AuthorityId as BabeId;
-
+	  
 // The URL for the telemetry server.
 // const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 
+/// Node `ChainSpec` extensions.
+///
+/// Additional parameters for some Substrate core modules,
+/// customizable from the chain spec.
+#[derive(Default, Clone, Serialize, Deserialize, ChainSpecExtension)]
+#[serde(rename_all = "camelCase")]
+pub struct Extensions {
+	/// Block numbers with known hashes.
+	pub fork_blocks: sc_client_api::ForkBlocks<Block>,
+	/// Known bad block hashes.
+	pub bad_blocks: sc_client_api::BadBlocks<Block>,
+	/// The light sync state extension used by the sync-state rpc.
+	pub light_sync_state: sc_sync_state_rpc::LightSyncStateExtension,
+}
+
 /// Specialized `ChainSpec`. This is a specialization of the general Substrate ChainSpec type.
-pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig>;
+pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig, Extensions>;
 
 fn session_keys(
 	babe: BabeId,
@@ -245,6 +262,13 @@ fn testnet_genesis(
 	endowed_accounts: Option<Vec<AccountId>>,
 	_enable_println: bool,
 ) -> GenesisConfig {
+
+	// This is the simplest bytecode to revert without returning any data.
+	// We will pre-deploy it under all of our precompiles to ensure they can be called from
+	// within contracts.
+	// (PUSH1 0x00 PUSH1 0x00 REVERT)
+	let revert_bytecode = vec![0x60, 0x00, 0x60, 0x00, 0xFD];
+
 	let mut endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(|| {
 		vec![
 			get_account_id_from_seed::<sr25519::Public>("Alice"),
@@ -264,7 +288,7 @@ fn testnet_genesis(
 	let validators = initial_authorities.iter().map(|x| (x.0.clone(), STASH)).collect::<Vec<_>>();
 
 	const ENDOWMENT: Balance = 10_000_000 * UNET;
-	const STASH: Balance = 100 * UNET;
+	const STASH: Balance = 100 * 1_000_000_000_000_000_000; // 100 OCT with 18 decimals
 
 	GenesisConfig {
 		system: SystemConfig {
@@ -293,7 +317,6 @@ fn testnet_genesis(
 				})
 				.collect::<Vec<_>>(),
 		},
-		octopus_lpos: OctopusLposConfig { era_payout: 1024, ..Default::default() },
 		sudo: SudoConfig { key: root_key },
 		babe: BabeConfig {
 			authorities: vec![],
@@ -301,32 +324,33 @@ fn testnet_genesis(
 		},
 		im_online: ImOnlineConfig { keys: vec![] },
 		grandpa: GrandpaConfig { authorities: vec![] },
+		assets: Default::default(),
 		beefy: BeefyConfig { authorities: vec![] },
 		octopus_appchain: OctopusAppchainConfig {
-			appchain_id: "".to_string(),
-			anchor_contract: "octopus-anchor.testnet".to_string(),
+			anchor_contract: "".to_string(),			
 			asset_id_by_name: vec![("usdc.testnet".to_string(), 0)],
 			validators,
+			premined_amount: 1024 * UNET,
 		},
-		orml_nft: OrmlNFTConfig { tokens: vec![] },
-		ethereum: Default::default(),
+		octopus_lpos: OctopusLposConfig { era_payout: 2 * UNET, ..Default::default() },		
 		evm: EVMConfig {
-			accounts: {
-				let mut map = BTreeMap::new();
-				map.insert(
-					H160::from_str("7D4a82306Eb4de7C7B1D686AFC56b1E7999ba7F9")
-						.expect("internal H160 is valid; qed"),
-					pallet_evm::GenesisAccount {
-						balance: U256::from_str("0xD3C21BCECCEDA1000000")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map
-			},
+			// We need _some_ code inserted at the precompile address so that
+			// the evm will actually call the address.
+			accounts: Precompiles::used_addresses()
+				.map(|addr| {
+					(
+						addr.into(),
+						GenesisAccount {
+							nonce: Default::default(),
+							balance: Default::default(),
+							storage: Default::default(),
+							code: revert_bytecode.clone(),
+						},
+					)
+				})
+				.collect(),
 		},
+		ethereum: EthereumConfig {},		
 		democracy: DemocracyConfig::default(),
 		scheduler: SchedulerConfig {},		
 		council_collective: CouncilCollectiveConfig {

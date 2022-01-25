@@ -24,15 +24,14 @@ use sc_finality_grandpa::{
 use sc_finality_grandpa_rpc::GrandpaRpcHandler;
 use sc_rpc::SubscriptionTaskExecutor;
 pub use sc_rpc_api::DenyUnsafe;
+use sp_transaction_pool::TransactionPool;
 use sp_api::ProvideRuntimeApi;
 use sp_block_builder::BlockBuilder;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 use sp_consensus::SelectChain;
 use sp_consensus_babe::BabeApi;
 use sp_keystore::SyncCryptoStorePtr;
-use sp_transaction_pool::TransactionPool;
 
-use beefy_gadget::notification::BeefySignedCommitmentStream;
 use sp_runtime::traits::{BlakeTwo256, Block as BlockT};
 
 /// Ethereum RPC
@@ -41,14 +40,6 @@ use fc_rpc::{OverrideHandle, RuntimeApiStorageOverride, SchemaV1Override, Storag
 use fc_rpc_core::types::{FilterPool, PendingTransactions};
 use jsonrpc_pubsub::manager::SubscriptionManager;
 use pallet_ethereum::EthereumStorageSchema;
-
-/// Extra dependencies for BEEFY
-pub struct BeefyDeps<B: BlockT> {
-	/// Receives notifications about signed commitments from BEEFY.
-	pub signed_commitment_stream: BeefySignedCommitmentStream<B>,
-	/// Executor to drive the subscription manager in the BEEFY RPC handler.
-	pub subscription_executor: SubscriptionTaskExecutor,
-}
 
 /// Light client extra dependencies.
 pub struct LightDeps<C, F, P> {
@@ -86,12 +77,23 @@ pub struct GrandpaDeps<B> {
 	pub finality_provider: Arc<FinalityProofProvider<B, Block>>,
 }
 
+/// Dependencies for BEEFY
+pub struct BeefyDeps {
+	/// Receives notifications about signed commitment events from BEEFY.
+	pub beefy_commitment_stream: beefy_gadget::notification::BeefySignedCommitmentStream<Block>,
+	/// Executor to drive the subscription manager in the BEEFY RPC handler.
+	pub subscription_executor: sc_rpc::SubscriptionTaskExecutor,
+}
+
+
 /// Full client dependencies.
-pub struct FullDeps<C, P, SC, B, BT: BlockT> {
+pub struct FullDeps<C, P, SC, B, A: ChainApi> {
 	/// The client instance to use.
 	pub client: Arc<C>,
 	/// Transaction pool instance.
 	pub pool: Arc<P>,
+	/// Graph pool instance.
+	pub graph: Arc<Pool<A>>,	
 	/// The SelectChain Strategy
 	pub select_chain: SC,
 	/// A copy of the chain spec.
@@ -103,19 +105,20 @@ pub struct FullDeps<C, P, SC, B, BT: BlockT> {
 	/// GRANDPA specific dependencies.
 	pub grandpa: GrandpaDeps<B>,
 	/// BEEFY specific dependencies.
-	pub beefy: BeefyDeps<BT>,
+	pub beefy: BeefyDeps,
 	/// The Node authority flag
 	pub is_authority: bool,
+	/// Whether to enable dev signer
+	pub enable_dev_signer: bool,	
 	/// Network service
 	pub network: Arc<NetworkService<Block, Hash>>,
-	/// Ethereum pending transactions.
-	pub pending_transactions: PendingTransactions,
 	/// EthFilterApi pool.
 	pub filter_pool: Option<FilterPool>,
 	/// Backend.
 	pub backend: Arc<fc_db::Backend<Block>>,
 	/// Maximum number of logs in a query.
 	pub max_past_logs: u32,
+
 
 }
 
