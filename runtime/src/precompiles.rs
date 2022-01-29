@@ -1,5 +1,5 @@
 use fp_evm::{Context, ExitError, PrecompileOutput};
-use pallet_evm::{Precompile, PrecompileResult, PrecompileSet};
+use pallet_evm::{AddressMapping, Precompile, PrecompileSet};
 use sp_core::H160;
 use sp_std::fmt::Debug;
 use sp_std::marker::PhantomData;
@@ -22,7 +22,7 @@ where
 	/// Return all addresses that contain precompiles. This can be used to populate dummy code
 	/// under the precompile.
 	pub fn used_addresses() -> impl Iterator<Item = R::AccountId> {
-		sp_std::vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 1024, 1025, 1026]
+		sp_std::vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 1024, 1025, 1026, 2048, 2049, 2050, 2052, 2053, 2054]
 		.into_iter()
 		.map(|x| R::AddressMapping::into_account_id(hash(x)))
 	}
@@ -49,7 +49,7 @@ where
             a if a == hash(6) => Some(Bn128Add::execute(input, target_gas, context)),
 			a if a == hash(7) => Some(Bn128Mul::execute(input, target_gas, context)),
 			a if a == hash(8) => Some(Bn128Pairing::execute(input, target_gas, context)),
-			a if a == hash(9) => Some(Blake2F::execute(input, target_gas, context)),            
+			a if a == hash(9) => Some(Blake2F::execute(input, target_gas, context)),
 			// Non-Frontier specific nor Ethereum precompiles :
 			a if a == hash(1024) => Some(Sha3FIPS256::execute(input, target_gas, context)),
             a if a == hash(1025) => Some(Dispatch::<R>::execute(input, target_gas, context)),
