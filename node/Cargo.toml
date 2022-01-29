@@ -82,6 +82,7 @@ pallet-transaction-payment = { git = 'https://github.com/paritytech/substrate.gi
 pallet-transaction-payment-rpc = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12' }
 beefy-gadget = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12' }
 beefy-gadget-rpc = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12' }
+pallet-contracts-rpc = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12' }
 
 # Octopus Dependencies
 ## Octopus Pallet Dependencies

@@ -4422,6 +4422,89 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-contracts"
+version = "4.0.0-dev"
+source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "bitflags",
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "libsecp256k1 0.6.0",
+ "log",
+ "pallet-contracts-primitives",
+ "pallet-contracts-proc-macro",
+ "parity-scale-codec",
+ "pwasm-utils",
+ "rand 0.7.3",
+ "scale-info",
+ "serde",
+ "smallvec",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-sandbox",
+ "sp-std",
+ "wasmi-validation",
+]
+
+[[package]]
+name = "pallet-contracts-primitives"
+version = "4.0.0-dev"
+source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "bitflags",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "pallet-contracts-proc-macro"
+version = "4.0.0-dev"
+source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "pallet-contracts-rpc"
+version = "4.0.0-dev"
+source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "pallet-contracts-primitives",
+ "pallet-contracts-rpc-runtime-api",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-blockchain",
+ "sp-core",
+ "sp-rpc",
+ "sp-runtime",
+]
+
+[[package]]
+name = "pallet-contracts-rpc-runtime-api"
+version = "4.0.0-dev"
+source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "pallet-contracts-primitives",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-api",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-democracy"
 version = "4.0.0-dev"
 source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
@@ -7665,6 +7748,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "sp-sandbox"
+version = "0.10.0-dev"
+source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "log",
+ "parity-scale-codec",
+ "sp-core",
+ "sp-io",
+ "sp-std",
+ "sp-wasm-interface",
+ "wasmi",
+]
+
+[[package]]
 name = "sp-serializer"
 version = "3.0.0"
 source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
@@ -8465,7 +8562,7 @@ version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f559b464de2e2bdabcac6a210d12e9b5a5973c251e102c44c585c71d51bd78e"
 dependencies = [
- "cfg-if 0.1.10",
+ "cfg-if 1.0.0",
  "rand 0.8.4",
  "static_assertions",
 ]
@@ -8559,6 +8656,7 @@ dependencies = [
  "jsonrpc-core",
  "jsonrpc-pubsub",
  "log",
+ "pallet-contracts-rpc",
  "pallet-ethereum",
  "pallet-evm",
  "pallet-im-online",
@@ -8634,6 +8732,9 @@ dependencies = [
  "pallet-beefy",
  "pallet-beefy-mmr",
  "pallet-collective",
+ "pallet-contracts",
+ "pallet-contracts-primitives",
+ "pallet-contracts-rpc-runtime-api",
  "pallet-democracy",
  "pallet-ethereum",
  "pallet-evm",
@@ -8922,6 +9023,7 @@ checksum = "ca00c5147c319a8ec91ec1a0edbec31e566ce2c9cc93b3f9bb86a9efd0eb795d"
 dependencies = [
  "downcast-rs",
  "libc",
+ "libm",
  "memory_units",
  "num-rational 0.2.4",
  "num-traits",

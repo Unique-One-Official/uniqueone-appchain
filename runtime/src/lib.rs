@@ -33,7 +33,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::{Everything, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance},
+	traits::{Everything, Nothing, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
 		DispatchClass, IdentityFee, Weight,
@@ -55,6 +55,7 @@ use pallet_mmr_primitives as mmr;
 use pallet_octopus_appchain::AuthorityId as OctopusId;
 use pallet_session::historical as pallet_session_historical;
 use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
+use pallet_contracts::weights::WeightInfo;
 
 // Frontier
 #[cfg(feature = "std")]
@@ -1050,6 +1051,47 @@ impl pallet_proxy::Config for Runtime {
 	type WeightInfo = ();
 }
 
+parameter_types! {
+	pub ContractDeposit: Balance = currency::deposit(
+		1,
+		<pallet_contracts::Pallet<Runtime>>::contract_info_size(),
+	);
+	pub const MaxValueSize: u32 = 16 * 1024;
+	// The lazy deletion runs inside on_initialize.
+	pub DeletionWeightLimit: Weight = AVERAGE_ON_INITIALIZE_RATIO *
+		RuntimeBlockWeights::get().max_block;
+	// The weight needed for decoding the queue should be less or equal than a fifth
+	// of the overall weight dedicated to the lazy deletion.
+	pub DeletionQueueDepth: u32 = ((DeletionWeightLimit::get() / (
+			<Runtime as pallet_contracts::Config>::WeightInfo::on_initialize_per_queue_item(1) -
+			<Runtime as pallet_contracts::Config>::WeightInfo::on_initialize_per_queue_item(0)
+		)) / 5) as u32;
+	pub Schedule: pallet_contracts::Schedule<Runtime> = Default::default();
+}
+
+impl pallet_contracts::Config for Runtime {
+	type Time = Timestamp;
+	type Randomness = RandomnessCollectiveFlip;
+	type Currency = Balances;
+	type Event = Event;
+	type Call = Call;
+	/// The safest default is to allow no calls at all.
+	///
+	/// Runtimes should whitelist dispatchables that are allowed to be called from contracts
+	/// and make sure they are stable. Dispatchables exposed to contracts are not allowed to
+	/// change because that would break already deployed contracts. The `Call` structure itself
+	/// is not allowed to change the indices of existing pallets, too.
+	type CallFilter = Nothing;
+	type ContractDeposit = ContractDeposit;
+	type CallStack = [pallet_contracts::Frame<Self>; 31];
+	type WeightPrice = pallet_transaction_payment::Pallet<Self>;
+	type WeightInfo = ();
+	type ChainExtension = ();
+	type DeletionQueueDepth = DeletionQueueDepth;
+	type DeletionWeightLimit = DeletionWeightLimit;
+	type Schedule = Schedule;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -1086,6 +1128,7 @@ construct_runtime!(
 		Scheduler: pallet_scheduler::{Call, Config, Event<T>, Pallet, Storage},
 		Sudo: pallet_sudo::{Call, Config<T>, Event<T>, Pallet, Storage},
 		Proxy: pallet_proxy::{Call, Event<T>, Pallet, Storage},
+		Contracts: pallet_contracts::{Call, Event<T>, Pallet, Storage},
 	}
 );
 
@@ -1431,6 +1474,41 @@ impl_runtime_apis! {
 			UncheckedExtrinsic::new_unsigned(
 				pallet_ethereum::Call::<Runtime>::transact { transaction }.into(),
 			)
+		}
+	}
+
+	impl pallet_contracts_rpc_runtime_api::ContractsApi<
+		Block, AccountId, Balance, BlockNumber, Hash,
+	>
+		for Runtime
+	{
+		fn call(
+			origin: AccountId,
+			dest: AccountId,
+			value: Balance,
+			gas_limit: u64,
+			input_data: Vec<u8>,
+		) -> pallet_contracts_primitives::ContractExecResult {
+			Contracts::bare_call(origin, dest, value, gas_limit, input_data, true)
+		}
+
+		fn instantiate(
+			origin: AccountId,
+			endowment: Balance,
+			gas_limit: u64,
+			code: pallet_contracts_primitives::Code<Hash>,
+			data: Vec<u8>,
+			salt: Vec<u8>,
+		) -> pallet_contracts_primitives::ContractInstantiateResult<AccountId>
+		{
+			Contracts::bare_instantiate(origin, endowment, gas_limit, code, data, salt, true)
+		}
+
+		fn get_storage(
+			address: AccountId,
+			key: [u8; 32],
+		) -> pallet_contracts_primitives::GetStorageResult {
+			Contracts::get_storage(address, key)
 		}
 	}
 

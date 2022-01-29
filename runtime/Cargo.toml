@@ -73,6 +73,9 @@ pallet-collective = { git = 'https://github.com/paritytech/substrate.git', branc
 pallet-society = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12', default-features = false }
 pallet-utility = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12', default-features = false }
 pallet-identity = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12', default-features = false }
+pallet-contracts = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12', default-features = false }
+pallet-contracts-primitives = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12', default-features = false }
+pallet-contracts-rpc-runtime-api = { git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.12', default-features = false }
 
 # Octopus Dependencies
 ## Octopus Pallet Dependencies
@@ -144,14 +147,17 @@ std = [
     'pallet-timestamp/std',
     'pallet-transaction-payment-rpc-runtime-api/std',
     'pallet-transaction-payment/std',
-    'pallet-proxy/std',      
+    'pallet-proxy/std',
     'pallet-treasury/std',
     'pallet-democracy/std',
     'pallet-scheduler/std',
     'pallet-collective/std',
     'pallet-society/std',
-    'pallet-utility/std',  
+    'pallet-utility/std',
     'pallet-identity/std',
+	'pallet-contracts/std',
+    'pallet-contracts-primitives/std',
+    'pallet-contracts-rpc-runtime-api/std',
 
 	# Octopus Dependencies
 	## Octopus Pallet Dependencies
@@ -165,7 +171,7 @@ std = [
     'fp-rpc/std',
 
     ## Frontier Primitive Dependencies
-    'pallet-ethereum/std',        
+    'pallet-ethereum/std',
 	'pallet-evm/std',
 ]
 runtime-benchmarks = [
@@ -191,12 +197,12 @@ runtime-benchmarks = [
 	'pallet-mmr/runtime-benchmarks',
     'pallet-balances/runtime-benchmarks',
     'pallet-timestamp/runtime-benchmarks',
-    'pallet-proxy/runtime-benchmarks',      
+    'pallet-proxy/runtime-benchmarks',
     'pallet-treasury/runtime-benchmarks',
     'pallet-democracy/runtime-benchmarks',
     'pallet-scheduler/runtime-benchmarks',
     'pallet-collective/runtime-benchmarks',
     'pallet-society/runtime-benchmarks',
-    'pallet-utility/runtime-benchmarks',  
+    'pallet-utility/runtime-benchmarks',
     'pallet-identity/runtime-benchmarks',
 ]
