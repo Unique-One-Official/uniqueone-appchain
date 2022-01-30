@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  node:
+    container_name: uniqueone-appchain
+    image: uniqueone/uniqueone-appchain
+    build:
+      context: ../../
+      dockerfile: .maintain/docker/Dockerfile
+    volumes:
+      - data:/data
+    command: >
+      --base-path /data
+      --dev
+      --alice
+      --enable-offchain-indexing=true
+      --rpc-cors all
+      --rpc-methods unsafe
+      --unsafe-rpc-external
+      --unsafe-ws-external
+      --prometheus-external
+      --no-telemetry
+    ports:
+      - 30333:30333
+      - 9933:9933
+      - 9944:9944
+      - 9615:9615
+    networks:
+      uniqueone:
+        ipv4_address: 172.27.1.1
+        aliases:
+          - node
+
+volumes:
+  data:
+
+networks:
+  uniqueone:
+    external: true

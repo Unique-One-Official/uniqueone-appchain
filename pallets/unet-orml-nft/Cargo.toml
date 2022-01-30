@@ -1,0 +1,41 @@
+[package]
+authors = ['Unique One <hello@uniqueone.network>']
+description = "Non-fungible token pallet provides basic functions to create and manager NFT"
+edition = '2018'
+homepage = 'https://uniqueone.network'
+license = 'Apache-2.0'
+name = 'unet-orml-nft'
+readme = 'README.md'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
+version = '0.4.1-dev'
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+serde = { version = "1.0.101", optional = true }
+codec = { package = "parity-scale-codec", version = "2.2", default-features = false }
+scale-info = { version = '1.0', default-features = false, features = ['derive'] }
+
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
+
+[dev-dependencies]
+sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+sp-core = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+
+[features]
+default = ['std']
+std = [
+	"serde",
+	"codec/std",
+	'sp-std/std',
+    "sp-runtime/std",
+    'frame-support/std',
+    'frame-system/std',
+	'unet-orml-traits/std',
+
+]

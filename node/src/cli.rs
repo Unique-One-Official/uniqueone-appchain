@@ -1,4 +1,3 @@
-//use sc_cli::RunCmd;
 use structopt::StructOpt;
 
 #[allow(missing_docs)]
@@ -7,6 +6,9 @@ pub struct RunCmd {
 	#[allow(missing_docs)]
 	#[structopt(flatten)]
 	pub base: sc_cli::RunCmd,
+
+	#[structopt(long = "enable-dev-signer")]
+	pub enable_dev_signer: bool,
 
 	/// Maximum number of logs in a query.
 	#[structopt(long, default_value = "10000")]
@@ -26,6 +28,7 @@ pub struct Cli {
 pub enum Subcommand {
 	/// Key management cli utilities
 	Key(sc_cli::KeySubcommand),
+
 	/// Build a chain specification.
 	BuildSpec(sc_cli::BuildSpecCmd),
 
@@ -47,7 +50,7 @@ pub enum Subcommand {
 	/// Revert the chain to a previous state.
 	Revert(sc_cli::RevertCmd),
 
-	/// The custom benchmark subcommmand benchmarking runtime pallets.
+	/// The custom benchmark subcommand benchmarking runtime pallets.
 	#[structopt(name = "benchmark", about = "Benchmark runtime pallets.")]
 	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 }

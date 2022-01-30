@@ -1,20 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2017-2021 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 use crate::{
 	chain_spec,
 	cli::{Cli, Subcommand},
@@ -23,6 +6,7 @@ use crate::{
 use uniqueone_appchain_runtime::Block;
 use sc_cli::{ChainSpec, Role, RuntimeVersion, SubstrateCli};
 use sc_service::PartialComponents;
+use std::path::PathBuf;
 
 impl SubstrateCli for Cli {
 	fn impl_name() -> String {
@@ -52,10 +36,14 @@ impl SubstrateCli for Cli {
 	fn load_spec(&self, id: &str) -> Result<Box<dyn sc_service::ChainSpec>, String> {
 		Ok(match id {
 			"dev" => Box::new(chain_spec::development_config()?),
-			"" | "local" => Box::new(chain_spec::local_testnet_config()?),
-			"staging" => Box::new(chain_spec::staging_testnet_config()?),
-			path =>
-				Box::new(chain_spec::ChainSpec::from_json_file(std::path::PathBuf::from(path))?),
+			"local" | "" => Box::new(chain_spec::local_config()?),
+			"dev-testnet" => Box::new(chain_spec::development_testnet_config()?),
+			"stg-testnet" => Box::new(chain_spec::staging_testnet_config()?),
+			"testnet" => Box::new(chain_spec::testnet_config()?),
+			"mainnet" => Box::new(chain_spec::mainnet_config()?),
+			"octopus-testnet" => Box::new(chain_spec::testnet_config()?),
+			"octopus-mainnet" => Box::new(chain_spec::mainnet_config()?),
+			path => Box::new(chain_spec::ChainSpec::from_json_file(PathBuf::from(path))?),
 		})
 	}
 
@@ -78,21 +66,21 @@ pub fn run() -> sc_cli::Result<()> {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
 				let PartialComponents { client, task_manager, import_queue, .. } =
-					service::new_partial(&config)?;
+					service::new_partial(&config, &cli)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
 		Some(Subcommand::ExportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, .. } = service::new_partial(&config)?;
+				let PartialComponents { client, task_manager, .. } = service::new_partial(&config, &cli)?;
 				Ok((cmd.run(client, config.database), task_manager))
 			})
 		},
 		Some(Subcommand::ExportState(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, .. } = service::new_partial(&config)?;
+				let PartialComponents { client, task_manager, .. } = service::new_partial(&config, &cli)?;
 				Ok((cmd.run(client, config.chain_spec), task_manager))
 			})
 		},
@@ -100,7 +88,7 @@ pub fn run() -> sc_cli::Result<()> {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
 				let PartialComponents { client, task_manager, import_queue, .. } =
-					service::new_partial(&config)?;
+					service::new_partial(&config, &cli)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
@@ -112,7 +100,7 @@ pub fn run() -> sc_cli::Result<()> {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
 				let PartialComponents { client, task_manager, backend, .. } =
-					service::new_partial(&config)?;
+					service::new_partial(&config, &cli)?;
 				Ok((cmd.run(client, backend), task_manager))
 			})
 		},
