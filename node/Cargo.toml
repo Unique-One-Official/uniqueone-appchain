@@ -106,7 +106,11 @@ pallet-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam
 pallet-ethereum = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.12' }
 
 # Local Dependencies
-# Runtime Dependencies
+## Unet Pallet Dependencies
+unet-traits = {  path = '../pallets/unet-traits' }
+unet-rpc = { path = "../pallets/unet-rpc" }
+
+## Unet Runtime Dependencies
 uniqueone-appchain-runtime = { path = '../runtime' }
 
 [features]

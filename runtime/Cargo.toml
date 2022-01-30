@@ -98,6 +98,20 @@ pallet-evm-precompile-modexp = { git = 'https://github.com/purestake/frontier', 
 pallet-evm-precompile-sha3fips = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.12', default-features = false }
 pallet-evm-precompile-simple = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.12', default-features = false }
 
+# Local Dependencies
+## Unet Pallet Dependencies
+unet-orml-tokens = {  path = '../pallets/unet-orml-tokens', default-features = false }
+unet-orml-traits = {  path = '../pallets/unet-orml-traits', default-features = false }
+unet-orml-currencies = {  path = '../pallets/unet-orml-currencies', default-features = false }
+unet-orml-nft = {  path = '../pallets/unet-orml-nft', default-features = false }
+unet-traits = {  path = '../pallets/unet-traits', default-features = false }
+unet-nft = {  path = '../pallets/unet-nft', default-features = false }
+unet-order = {  path = '../pallets/unet-order', default-features = false }
+unet-auction = {  path = '../pallets/unet-auction', default-features = false }
+unet-config = {  path = '../pallets/unet-config', default-features = false }
+unet-rpc-runtime-api = {  path = '../pallets/unet-rpc/runtime-api', default-features = false }
+chain-extension = {  path = '../pallets/chain-extension', default-features = false }
+
 [features]
 default = ['std']
 std = [
@@ -173,6 +187,20 @@ std = [
     ## Frontier Primitive Dependencies
     'pallet-ethereum/std',
 	'pallet-evm/std',
+
+	# Unet Dependencies
+	## Unet Pallet Dependencies
+	'unet-orml-tokens/std',
+    'unet-orml-traits/std',
+    'unet-orml-currencies/std',
+    'unet-orml-nft/std',
+    'unet-traits/std',
+    'unet-nft/std',
+    'unet-order/std',
+    'unet-auction/std',
+    'unet-config/std',
+    'unet-rpc-runtime-api/std',
+    'chain-extension/std',
 ]
 runtime-benchmarks = [
     # External Dependencies

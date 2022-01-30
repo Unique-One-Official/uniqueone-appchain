@@ -1,0 +1,51 @@
+[package]
+authors = ['Unique One <hello@uniqueone.network>']
+edition = '2018'
+homepage = 'https://uniqueone.network'
+license = 'Apache-2.0'
+name = 'unet-order'
+readme = 'README.md'
+repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
+version = '1.0.0'
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+serde = { version = "1.0.101", optional = true }
+codec = { package = "parity-scale-codec", version = "2.2", default-features = false, features = ["derive", "max-encoded-len"] }
+scale-info = { version = '1.0', default-features = false, features = ['derive'] }
+
+sp-core = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+pallet-proxy = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+pallet-timestamp = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
+unet-traits = { default-features = false, path = "../unet-traits" }
+
+[dev-dependencies]
+sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+pallet-balances = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+pallet-utility = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+unet-orml-nft = { path = "../unet-orml-nft" }
+unet-config = { path = "../unet-config" }
+unet-nft = { path = "../unet-nft" }
+
+[features]
+default = ["std"]
+std = [
+    "serde/std",
+    "codec/std",
+	"sp-core/std",
+	"sp-std/std",
+	"sp-runtime/std",
+    "frame-support/std",
+    "frame-system/std",
+    "pallet-proxy/std",
+    "pallet-timestamp/std",
+    "unet-orml-traits/std",
+	"unet-traits/std",
+]

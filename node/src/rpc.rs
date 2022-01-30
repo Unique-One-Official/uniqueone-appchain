@@ -25,7 +25,6 @@ use sc_transaction_pool::{ChainApi, Pool};
 use sc_transaction_pool_api::TransactionPool;
 
 use jsonrpc_pubsub::manager::SubscriptionManager;
-use pallet_ethereum::EthereumStorageSchema;
 
 use uniqueone_appchain_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash, Index};
 
@@ -138,6 +137,7 @@ where
 	C::Api: sp_api::ApiExt<Block>,
 	C::Api: fp_rpc::EthereumRuntimeRPCApi<Block> + fp_rpc::ConvertTransactionRuntimeApi<Block>,
 	C::Api: pallet_contracts_rpc::ContractsRuntimeApi<Block, AccountId, Balance, BlockNumber, Hash>,
+	C::Api: unet_rpc::UnetRuntimeApi<Block>,
 	P: TransactionPool<Block = Block> + 'static,
 	SC: SelectChain<Block> + 'static,
 	B: sc_client_api::Backend<Block> + Send + Sync + 'static,
@@ -157,7 +157,11 @@ where
 	use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApi};
 	use pallet_contracts_rpc::{Contracts, ContractsApi};
 
+	use pallet_ethereum::EthereumStorageSchema;
+
 	use substrate_frame_rpc_system::{FullSystem, SystemApi};
+
+	use unet_rpc::{Unet, UnetApi};
 
 	let mut io = jsonrpc_core::IoHandler::default();
 
@@ -234,6 +238,7 @@ where
 		),
 	));
 	io.extend_with(ContractsApi::to_delegate(Contracts::new(client.clone())));
+	io.extend_with(UnetApi::to_delegate(Unet::new(client.clone())));
 
 	// Ethereum
 	let mut signers = Vec::new();

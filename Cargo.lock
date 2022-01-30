@@ -432,7 +432,7 @@ dependencies = [
  "sc-utils",
  "sp-api",
  "sp-application-crypto",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-blockchain",
  "sp-core",
  "sp-keystore",
@@ -857,6 +857,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "chain-extension"
+version = "1.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-contracts",
+ "pallet-randomness-collective-flip",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
+ "unet-nft",
+ "unet-traits",
+]
+
+[[package]]
 name = "chrono"
 version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -938,6 +955,14 @@ name = "constant_time_eq"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
+
+[[package]]
+name = "contract-types"
+version = "0.1.0"
+dependencies = [
+ "parity-scale-codec",
+ "scale-info",
+]
 
 [[package]]
 name = "convert_case"
@@ -1421,6 +1446,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83c8d82922337cd23a15f88b70d8e4ef5f11da38dd7cdb55e84dd5de99695da0"
 dependencies = [
  "enumflags2_derive",
+ "serde",
 ]
 
 [[package]]
@@ -1943,8 +1969,8 @@ dependencies = [
  "frame-system",
  "parity-scale-codec",
  "scale-info",
- "sp-arithmetic",
- "sp-npos-elections",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
+ "sp-npos-elections 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-std",
 ]
 
@@ -1992,7 +2018,7 @@ dependencies = [
  "scale-info",
  "serde",
  "smallvec",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-core",
  "sp-inherents",
  "sp-io",
@@ -4521,6 +4547,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-elections-phragmen"
+version = "5.0.0-dev"
+source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12#d76f39995315ec36980908e4b99709bd14927044"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-npos-elections 4.0.0-dev (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12)",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-ethereum"
 version = "4.0.0-dev"
 source = "git+https://github.com/purestake/frontier?branch=moonbeam-polkadot-v0.9.12#276a54af832883aab1d303eb85ef7307a644bf47"
@@ -6170,7 +6213,7 @@ dependencies = [
  "parking_lot",
  "sc-client-api",
  "sc-state-db",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-blockchain",
  "sp-core",
  "sp-database 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
@@ -6297,7 +6340,7 @@ dependencies = [
  "sc-consensus",
  "sc-telemetry",
  "sp-api",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-blockchain",
  "sp-consensus",
  "sp-consensus-slots",
@@ -6425,7 +6468,7 @@ dependencies = [
  "serde_json",
  "sp-api",
  "sp-application-crypto",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-blockchain",
  "sp-consensus",
  "sp-core",
@@ -6547,7 +6590,7 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-blockchain",
  "sp-consensus",
  "sp-core",
@@ -7353,7 +7396,22 @@ dependencies = [
  "parity-scale-codec",
  "scale-info",
  "serde",
- "sp-debug-derive",
+ "sp-debug-derive 3.0.0 (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
+ "sp-std",
+ "static_assertions",
+]
+
+[[package]]
+name = "sp-arithmetic"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12#d76f39995315ec36980908e4b99709bd14927044"
+dependencies = [
+ "integer-sqrt",
+ "num-traits",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-debug-derive 3.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12)",
  "sp-std",
  "static_assertions",
 ]
@@ -7449,7 +7507,7 @@ source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v
 dependencies = [
  "parity-scale-codec",
  "scale-info",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-runtime",
 ]
 
@@ -7496,7 +7554,7 @@ dependencies = [
  "secrecy",
  "serde",
  "sha2 0.9.8",
- "sp-debug-derive",
+ "sp-debug-derive 3.0.0 (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-externalities",
  "sp-runtime-interface",
  "sp-std",
@@ -7533,6 +7591,16 @@ dependencies = [
 name = "sp-debug-derive"
 version = "3.0.0"
 source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "sp-debug-derive"
+version = "3.0.0"
+source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12#d76f39995315ec36980908e4b99709bd14927044"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7650,9 +7718,24 @@ dependencies = [
  "parity-scale-codec",
  "scale-info",
  "serde",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-core",
- "sp-npos-elections-solution-type",
+ "sp-npos-elections-solution-type 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "sp-npos-elections"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12#d76f39995315ec36980908e4b99709bd14927044"
+dependencies = [
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12)",
+ "sp-core",
+ "sp-npos-elections-solution-type 4.0.0-dev (git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12)",
  "sp-runtime",
  "sp-std",
 ]
@@ -7661,6 +7744,17 @@ dependencies = [
 name = "sp-npos-elections-solution-type"
 version = "4.0.0-dev"
 source = "git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12#902587b22222be87321c1a53f8b2a11ed3855a42"
+dependencies = [
+ "proc-macro-crate 1.1.0",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "sp-npos-elections-solution-type"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v0.9.12#d76f39995315ec36980908e4b99709bd14927044"
 dependencies = [
  "proc-macro-crate 1.1.0",
  "proc-macro2",
@@ -7712,7 +7806,7 @@ dependencies = [
  "scale-info",
  "serde",
  "sp-application-crypto",
- "sp-arithmetic",
+ "sp-arithmetic 4.0.0-dev (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-core",
  "sp-io",
  "sp-std",
@@ -7832,7 +7926,7 @@ dependencies = [
  "parity-scale-codec",
  "ref-cast",
  "serde",
- "sp-debug-derive",
+ "sp-debug-derive 3.0.0 (git+https://github.com/octopus-network/substrate.git?branch=polkadot-v0.9.12)",
  "sp-std",
 ]
 
@@ -8592,6 +8686,221 @@ dependencies = [
 ]
 
 [[package]]
+name = "unet-auction"
+version = "1.0.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "pallet-proxy",
+ "pallet-timestamp",
+ "pallet-utility",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-config",
+ "unet-nft",
+ "unet-orml-nft",
+ "unet-orml-traits",
+ "unet-traits",
+]
+
+[[package]]
+name = "unet-config"
+version = "1.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "pallet-proxy",
+ "pallet-timestamp",
+ "pallet-utility",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-traits",
+]
+
+[[package]]
+name = "unet-nft"
+version = "1.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "pallet-proxy",
+ "pallet-timestamp",
+ "pallet-utility",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-orml-nft",
+ "unet-orml-traits",
+ "unet-traits",
+]
+
+[[package]]
+name = "unet-order"
+version = "1.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "pallet-proxy",
+ "pallet-timestamp",
+ "pallet-utility",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-config",
+ "unet-nft",
+ "unet-orml-nft",
+ "unet-orml-traits",
+ "unet-traits",
+]
+
+[[package]]
+name = "unet-orml-currencies"
+version = "0.4.1-dev"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-orml-tokens",
+ "unet-orml-traits",
+ "unet-orml-utilities",
+]
+
+[[package]]
+name = "unet-orml-nft"
+version = "0.4.1-dev"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-orml-traits",
+]
+
+[[package]]
+name = "unet-orml-tokens"
+version = "0.4.1-dev"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-elections-phragmen",
+ "pallet-treasury",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-orml-traits",
+]
+
+[[package]]
+name = "unet-orml-traits"
+version = "0.4.1-dev"
+dependencies = [
+ "frame-support",
+ "impl-trait-for-tuples 0.1.3",
+ "num-traits",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "unet-orml-utilities",
+]
+
+[[package]]
+name = "unet-orml-utilities"
+version = "0.4.1-dev"
+dependencies = [
+ "frame-support",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "unet-rpc"
+version = "1.0.0"
+dependencies = [
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "sp-api",
+ "sp-blockchain",
+ "sp-runtime",
+ "unet-rpc-runtime-api",
+]
+
+[[package]]
+name = "unet-rpc-runtime-api"
+version = "1.0.0"
+dependencies = [
+ "sp-api",
+ "sp-core",
+ "sp-std",
+ "unet-traits",
+]
+
+[[package]]
+name = "unet-traits"
+version = "1.0.0"
+dependencies = [
+ "contract-types",
+ "enumflags2",
+ "frame-support",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "smallvec",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
+ "unet-orml-traits",
+]
+
+[[package]]
 name = "unicase"
 version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8706,6 +9015,8 @@ dependencies = [
  "structopt",
  "substrate-build-script-utils",
  "substrate-frame-rpc-system",
+ "unet-rpc",
+ "unet-traits",
  "uniqueone-appchain-runtime",
 ]
 
@@ -8714,6 +9025,7 @@ name = "uniqueone-appchain-runtime"
 version = "1.5.0"
 dependencies = [
  "beefy-primitives",
+ "chain-extension",
  "fp-evm",
  "fp-rpc",
  "frame-benchmarking",
@@ -8779,6 +9091,16 @@ dependencies = [
  "sp-transaction-pool",
  "sp-version",
  "substrate-wasm-builder",
+ "unet-auction",
+ "unet-config",
+ "unet-nft",
+ "unet-order",
+ "unet-orml-currencies",
+ "unet-orml-nft",
+ "unet-orml-tokens",
+ "unet-orml-traits",
+ "unet-rpc-runtime-api",
+ "unet-traits",
 ]
 
 [[package]]
