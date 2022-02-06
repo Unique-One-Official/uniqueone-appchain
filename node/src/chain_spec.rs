@@ -1,13 +1,11 @@
-use std::{collections::BTreeMap, str::FromStr};
 use serde::{Deserialize, Serialize};
-use hex_literal::hex;
 
 use sc_chain_spec::ChainSpecExtension;
 use sc_service::{ChainType, Properties};
 
 use beefy_primitives::crypto::AuthorityId as BeefyId;
 use sp_consensus_babe::AuthorityId as BabeId;
-use sp_core::{crypto::{UncheckedInto, Ss58Codec}, sr25519, Pair, Public, H160, U256};
+use sp_core::{crypto::Ss58Codec, sr25519, Pair, Public};
 use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::{traits::{IdentifyAccount, Verify}, PerU16};
 
@@ -19,8 +17,7 @@ use uniqueone_appchain_runtime::{
 	opaque::{Block, SessionKeys},
 	AccountId, BabeConfig, Balance, BalancesConfig, GenesisConfig, OctopusAppchainConfig,
 	OctopusLposConfig, SchedulerConfig, SessionConfig, Signature, SudoConfig, SystemConfig,
-	CouncilCollectiveConfig, TechComitteeCollectiveConfig, DemocracyConfig,
-	GenesisAccount, EVMConfig, EthereumConfig, Precompiles,
+	CouncilCollectiveConfig, TechComitteeCollectiveConfig, DemocracyConfig, EVMConfig, EthereumConfig,
 	TokensConfig, UnetConfConfig, UnetNftConfig,
 	BABE_GENESIS_EPOCH_CONFIG, WASM_BINARY,
 };
@@ -418,16 +415,9 @@ fn genesis(
 	endowed_accounts: Vec<(AccountId, Balance)>,
 	appchain_config: (String, String, Balance, Balance),
 ) -> GenesisConfig {
-	// This is the simplest bytecode to revert without returning any data.
-	// We will pre-deploy it under all of our precompiles to ensure they can be called from
-	// within contracts.
-	// (PUSH1 0x00 PUSH1 0x00 REVERT)
-	let revert_bytecode = vec![0x60, 0x00, 0x60, 0x00, 0xFD];
-
 	GenesisConfig {
 		system: SystemConfig {
 			code: wasm_binary.to_vec(),
-			changes_trie_config: Default::default(),
 		},
 		balances: BalancesConfig {
 			balances: endowed_accounts.iter().map(|x| (x.0.clone(), x.1)).collect(),
@@ -436,7 +426,6 @@ fn genesis(
 			authorities: Default::default(),
 			epoch_config: Some(BABE_GENESIS_EPOCH_CONFIG),
 		},
-		assets: Default::default(),
 		grandpa: Default::default(),
 		im_online: Default::default(),
 		beefy: Default::default(),
@@ -447,6 +436,7 @@ fn genesis(
 			validators: initial_authorities.iter().map(|x| (x.0.clone(), x.6)).collect(),
 		},
 		octopus_lpos: OctopusLposConfig { era_payout: appchain_config.3, ..Default::default() },
+		octopus_assets: Default::default(),
 		session: SessionConfig {
 			keys: initial_authorities
 				.iter()
@@ -479,6 +469,7 @@ fn genesis(
 			accounts: Default::default(), // TODO: make this dynamic, put on params
 		},
 		ethereum: EthereumConfig {},
+		base_fee: Default::default(),
 		scheduler: SchedulerConfig {},
 		sudo: SudoConfig { key: root_key },
 		// TODO: make this dynamic, put on params
