@@ -12,16 +12,17 @@ version = '1.0.0'
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "2.2", default-features = false, features = ["derive", "max-encoded-len"] }
+codec = { package = 'parity-scale-codec', version = '2.2', default-features = false, features = ['derive', 'max-encoded-len'] }
+serde = { version = '1.0.130', default-features = false, features = ['derive'], optional = true }
 scale-info = { version = '1.0', default-features = false, features = ['derive'] }
 
-sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
-sp-core = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
-sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
-frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
-frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
-pallet-randomness-collective-flip = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
-pallet-contracts = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.12' }
+sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
+sp-core = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
+sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
+frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
+frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
+pallet-randomness-collective-flip = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
+pallet-contracts = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.13' }
 
 unet-traits = { default-features = false, path = "../unet-traits" }
 unet-nft = { default-features = false, path = "../unet-nft" }
@@ -29,6 +30,7 @@ unet-nft = { default-features = false, path = "../unet-nft" }
 [features]
 default = ['std']
 std = [
+	"serde/std",
 	"codec/std",
 	"sp-core/std",
 	"sp-std/std",

@@ -33,7 +33,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::{Everything, Nothing, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance},
+	traits::{Everything, EqualPrivilegeOnly, Nothing, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
 		DispatchClass, IdentityFee, Weight,
@@ -116,14 +116,14 @@ pub type Executive = frame_executive::Executive<
 	Runtime,
 	AllPallets,
 >;
-/// Digest item type.
-pub type DigestItem = generic::DigestItem<Hash>;
 /// Council instance type.
 pub type CouncilInstance = pallet_collective::Instance1;
 /// Tech committee instancee type.
 pub type TechCommitteeInstance = pallet_collective::Instance2;
-/// SlowAdjustingFeeUpdate type.
-pub type SlowAdjustingFeeUpdate<R> = TargetedFeeAdjustment<R, TargetBlockFullness, AdjustmentVariable, MinimumMultiplier>;
+/// Assets instancee type.
+pub type OctopusAssetsInstance = pallet_assets::Instance1;
+pub type AssetBalance = u128;
+pub type AssetId = u32;
 /// Precompile type.
 pub type Precompiles = UniqueOnePrecompiles<Runtime>;
 
@@ -216,7 +216,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 102,
+	spec_version: 105,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -394,11 +394,14 @@ impl pallet_balances::Config for Runtime {
 
 parameter_types! {
 	pub const TransactionByteFee: Balance = currency::TRANSACTION_BYTE_FEE;
-	pub OperationalFeeMultiplier: u8 = 5;
+	pub const OperationalFeeMultiplier: u8 = 5;
+	pub const TargetBlockFullness: Perquintill = Perquintill::from_percent(25);
+	pub AdjustmentVariable: Multiplier = Multiplier::saturating_from_rational(1, 100_000);
+	pub MinimumMultiplier: Multiplier = Multiplier::saturating_from_rational(1, 1_000_000_000u128);
 }
 
 impl pallet_transaction_payment::Config for Runtime {
-	type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Runtime>;
+	type FeeMultiplierUpdate = TargetedFeeAdjustment<Self, TargetBlockFullness, AdjustmentVariable, MinimumMultiplier>;
 	type OnChargeTransaction = CurrencyAdapter<Balances, DealWithFees<Runtime>>;
 	type OperationalFeeMultiplier = OperationalFeeMultiplier;
 	type TransactionByteFee = TransactionByteFee;
@@ -504,6 +507,30 @@ impl pallet_timestamp::Config for Runtime {
 }
 
 parameter_types! {
+	pub const ClassDeposit: Balance = 100 * currency::DOLLARS;
+	pub const InstanceDeposit: Balance = currency::DOLLARS;
+	pub const KeyLimit: u32 = 32;
+	pub const ValueLimit: u32 = 256;
+}
+
+impl pallet_uniques::Config for Runtime {
+	type Event = Event;
+	type ClassId = u32;
+	type InstanceId = u32;
+	type Currency = Balances;
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+	type ClassDeposit = ClassDeposit;
+	type InstanceDeposit = InstanceDeposit;
+	type MetadataDepositBase = MetadataDepositBase;
+	type AttributeDepositBase = MetadataDepositBase;
+	type DepositPerByte = MetadataDepositPerByte;
+	type StringLimit = StringLimit;
+	type KeyLimit = KeyLimit;
+	type ValueLimit = ValueLimit;
+	type WeightInfo = ();
+}
+
+parameter_types! {
 	pub const ApprovalDeposit: Balance = currency::DOLLARS;
 	pub const AssetDeposit: Balance = 100 * currency::DOLLARS;
 	pub const MetadataDepositBase: Balance = 10 * currency::DOLLARS;
@@ -511,10 +538,10 @@ parameter_types! {
 	pub const StringLimit: u32 = 50;
 }
 
-impl pallet_assets::Config for Runtime {
+impl pallet_assets::Config<OctopusAssetsInstance> for Runtime {
 	type Event = Event;
-	type Balance = Balance;
-	type AssetId = Index;
+	type Balance = AssetBalance;
+	type AssetId = AssetId;
 	type Currency = Balances;
 	type ForceOrigin = EnsureRoot<AccountId>;
 	type AssetDeposit = AssetDeposit;
@@ -608,7 +635,10 @@ parameter_types! {
 }
 
 impl pallet_octopus_appchain::Config for Runtime {
-	type Assets = Assets;
+	type Assets = OctopusAssets;
+	type AssetBalance = AssetBalance;
+	type AssetId = AssetId;
+	type AssetIdByName = OctopusAppchain;
 	type AuthorityId = OctopusAppCrypto;
 	type Call = Call;
 	type Currency = Balances;
@@ -873,20 +903,9 @@ impl pallet_democracy::Config for Runtime {
 
 parameter_types! {
 	pub const ChainId: u64 = 388;
-	/// The portion of the `NORMAL_DISPATCH_RATIO` that we adjust the fees with. Blocks filled less
-	/// than this will decrease the weight and more will increase.
-	pub const TargetBlockFullness: Perquintill = Perquintill::from_percent(25);
-	/// The adjustment variable of the runtime. Higher values will cause `TargetBlockFullness` to
-	/// change the fees more rapidly. This low value causes changes to occur slowly over time.
-	pub AdjustmentVariable: Multiplier = Multiplier::saturating_from_rational(3, 100_000);
 	pub BlockGasLimit: U256
 		= U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT / WEIGHT_PER_GAS);
-	/// Minimum amount of the multiplier. This value cannot be too low. A test case should ensure
-	/// that combined with `AdjustmentVariable`, we can recover from the minimum.
-	/// See `multiplier_can_grow_from_zero` in integration_tests.rs.
-	/// This value is currently only used by pallet-transaction-payment as an assertion that the
-	/// next multiplier is always > min value.
-	pub MinimumMultiplier: Multiplier = Multiplier::saturating_from_rational(1, 1_000_000u128);
+	pub PrecompilesValue: UniqueOnePrecompiles<Runtime> = UniqueOnePrecompiles::<_>::new();
 }
 
 impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
@@ -929,7 +948,8 @@ impl pallet_evm::Config for Runtime {
 	type FindAuthor = FindAuthorTruncated<Babe>;
 	type GasWeightMapping = RuntimeGasWeightMapping;
 	type OnChargeTransaction = pallet_evm::EVMCurrencyAdapter<Balances, DealWithFees<Runtime>>;
-	type Precompiles = UniqueOnePrecompiles<Self>;
+	type PrecompilesType = UniqueOnePrecompiles<Self>;
+	type PrecompilesValue = PrecompilesValue;
 	type Runner = pallet_evm::runner::stack::Runner<Self>;
 	type WithdrawOrigin = EnsureAddressTruncated;
 }
@@ -939,9 +959,36 @@ impl pallet_ethereum::Config for Runtime {
 	type StateRoot = pallet_ethereum::IntermediateStateRoot;
 }
 
+parameter_types! {
+	// Tells `pallet_base_fee` whether to calculate a new BaseFee `on_finalize` or not.
+	pub IsActive: bool = false;
+	pub DefaultBaseFeePerGas: U256 = (currency::GIGAWEI * currency::SUPPLY_FACTOR).into();
+}
+
+pub struct BaseFeeThreshold;
+impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
+	fn lower() -> Permill {
+		Permill::zero()
+	}
+	fn ideal() -> Permill {
+		Permill::from_parts(500_000)
+	}
+	fn upper() -> Permill {
+		Permill::from_parts(1_000_000)
+	}
+}
+
+impl pallet_base_fee::Config for Runtime {
+	type Event = Event;
+	type Threshold = BaseFeeThreshold;
+	type IsActive = IsActive;
+	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
+}
+
 impl pallet_utility::Config for Runtime {
 	type Event = Event;
 	type Call = Call;
+	type PalletsOrigin = OriginCaller;
 	type WeightInfo = ();
 }
 
@@ -956,6 +1003,7 @@ impl pallet_scheduler::Config for Runtime {
 	type MaximumWeight = MaximumSchedulerWeight;
 	type MaxScheduledPerBlock = MaxScheduledPerBlock;
 	type Origin = Origin;
+	type OriginPrivilegeCmp = EqualPrivilegeOnly;
 	type PalletsOrigin = OriginCaller;
 	type ScheduleOrigin = EnsureRoot<AccountId>;
 	type WeightInfo = ();
@@ -1200,7 +1248,7 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage},
 		Babe: pallet_babe::{Call, Config, Pallet, Storage, ValidateUnsigned},
 		Timestamp: pallet_timestamp::{Call, Inherent, Pallet, Storage},
-		Assets: pallet_assets::{Call, Config<T>, Event<T>, Pallet, Storage},
+		OctopusAssets: pallet_assets::<Instance1>::{Call, Config<T>, Event<T>, Pallet, Storage},
 		Grandpa: pallet_grandpa::{Call, Config, Event, Pallet, Storage, ValidateUnsigned},
 		ImOnline: pallet_im_online::{Call, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},
 		Beefy: pallet_beefy::{Config<T>, Pallet, Storage},
@@ -1217,6 +1265,7 @@ construct_runtime!(
 		CouncilCollective: pallet_collective::<Instance1>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		TechComitteeCollective: pallet_collective::<Instance2>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		Democracy: pallet_democracy::{Call, Config<T>, Event<T>, Pallet, Storage},
+		BaseFee: pallet_base_fee::{Call, Config<T>, Event, Pallet, Storage},
 		EVM: pallet_evm::{Call, Config, Event<T>, Pallet, Storage},
 		Ethereum: pallet_ethereum::{Call, Config, Event, Pallet, Storage, Origin},
 		Utility: pallet_utility::{Call, Event, Pallet},
@@ -1224,12 +1273,13 @@ construct_runtime!(
 		Sudo: pallet_sudo::{Call, Config<T>, Event<T>, Pallet, Storage},
 		Proxy: pallet_proxy::{Call, Event<T>, Pallet, Storage},
 		Contracts: pallet_contracts::{Call, Event<T>, Pallet, Storage},
+		Uniques: pallet_uniques::{Call, Event<T>, Pallet, Storage},
 		Currencies: unet_orml_currencies::{Call, Event<T>, Pallet},
 		Tokens: unet_orml_tokens::{Config<T>, Event<T>, Pallet, Storage},
 		OrmlNFT: unet_orml_nft::{Config<T>, Pallet, Storage},
 		UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
-		UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage,},
-		UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage,},
+		UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
+		UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
 		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},
 	}
 );
@@ -1482,9 +1532,11 @@ impl_runtime_apis! {
 			data: Vec<u8>,
 			value: U256,
 			gas_limit: U256,
-			gas_price: Option<U256>,
+			max_fee_per_gas: Option<U256>,
+			max_priority_fee_per_gas: Option<U256>,
 			nonce: Option<U256>,
 			estimate: bool,
+			access_list: Option<Vec<(H160, Vec<H256>)>>,
 		) -> Result<pallet_evm::CallInfo, sp_runtime::DispatchError> {
 			let config = if estimate {
 				let mut config = <Runtime as pallet_evm::Config>::config().clone();
@@ -1500,9 +1552,11 @@ impl_runtime_apis! {
 				data,
 				value,
 				gas_limit.low_u64(),
-				gas_price,
+				max_fee_per_gas,
+				max_priority_fee_per_gas,
 				nonce,
-				config.as_ref().unwrap_or_else(|| <Runtime as pallet_evm::Config>::config()),
+				access_list.unwrap_or_default(),
+				config.as_ref().unwrap_or(<Runtime as pallet_evm::Config>::config()),
 			).map_err(|err| err.into())
 		}
 
@@ -1511,9 +1565,11 @@ impl_runtime_apis! {
 			data: Vec<u8>,
 			value: U256,
 			gas_limit: U256,
-			gas_price: Option<U256>,
+			max_fee_per_gas: Option<U256>,
+			max_priority_fee_per_gas: Option<U256>,
 			nonce: Option<U256>,
 			estimate: bool,
+			access_list: Option<Vec<(H160, Vec<H256>)>>,
 		) -> Result<pallet_evm::CreateInfo, sp_runtime::DispatchError> {
 			let config = if estimate {
 				let mut config = <Runtime as pallet_evm::Config>::config().clone();
@@ -1523,19 +1579,20 @@ impl_runtime_apis! {
 				None
 			};
 
-			#[allow(clippy::or_fun_call)] // suggestion not helpful here
 			<Runtime as pallet_evm::Config>::Runner::create(
 				from,
 				data,
 				value,
 				gas_limit.low_u64(),
-				gas_price,
+				max_fee_per_gas,
+				max_priority_fee_per_gas,
 				nonce,
-				config.as_ref().unwrap_or_else(|| <Runtime as pallet_evm::Config>::config()),
+				access_list.unwrap_or_default(),
+				config.as_ref().unwrap_or(<Runtime as pallet_evm::Config>::config()),
 			).map_err(|err| err.into())
 		}
 
-		fn current_transaction_statuses() -> Option<Vec<fp_rpc::TransactionStatus>> {
+		fn current_transaction_statuses() -> Option<Vec<pallet_ethereum::TransactionStatus>> {
 			Ethereum::current_transaction_statuses()
 		}
 
@@ -1550,7 +1607,7 @@ impl_runtime_apis! {
 		fn current_all() -> (
 			Option<pallet_ethereum::Block>,
 			Option<Vec<pallet_ethereum::Receipt>>,
-			Option<Vec<fp_rpc::TransactionStatus>>
+			Option<Vec<pallet_ethereum::TransactionStatus>>
 		) {
 			(
 				Ethereum::current_block(),
@@ -1566,6 +1623,10 @@ impl_runtime_apis! {
 				Call::Ethereum(transact { transaction }) => Some(transaction),
 				_ => None
 			}).collect::<Vec<EthereumTransaction>>()
+		}
+
+		fn elasticity() -> Option<Permill> {
+			Some(BaseFee::elasticity())
 		}
 	}
 
@@ -1646,11 +1707,13 @@ impl_runtime_apis! {
 			Vec<frame_support::traits::StorageInfo>,
 		) {
 			use frame_benchmarking::{list_benchmark, Benchmarking, BenchmarkList};
+			use frame_benchmarking::baseline::Pallet as BaselineBench;
 			use frame_support::traits::StorageInfoTrait;
 			use frame_system_benchmarking::Pallet as SystemBench;
 
 			let mut list = Vec::<BenchmarkList>::new();
 
+			list_benchmark!(list, extra, frame_benchmarking, BaselineBench::<Runtime>);
 			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_balances, Balances);
 			list_benchmark!(list, extra, pallet_timestamp, Timestamp);
@@ -1663,8 +1726,8 @@ impl_runtime_apis! {
 		fn dispatch_benchmark(
 			config: frame_benchmarking::BenchmarkConfig
 		) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
-			use frame_benchmarking::{Benchmarking, BenchmarkBatch, add_benchmark, TrackedStorageKey};
-
+			use frame_benchmarking::{add_benchmark, Benchmarking, BenchmarkBatch, TrackedStorageKey};
+			impl frame_benchmarking::baseline::Config for Runtime {}
 			use frame_system_benchmarking::Pallet as SystemBench;
 			impl frame_system_benchmarking::Config for Runtime {}
 
@@ -1684,11 +1747,11 @@ impl_runtime_apis! {
 			let mut batches = Vec::<BenchmarkBatch>::new();
 			let params = (&config, &whitelist);
 
+			add_benchmark!(params, batches, frame_benchmarking, BaselineBench::<Runtime>);
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
 
-			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)
 		}
 	}

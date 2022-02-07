@@ -28,18 +28,6 @@ use jsonrpc_pubsub::manager::SubscriptionManager;
 
 use uniqueone_appchain_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash, Index};
 
-/// Light client extra dependencies.
-pub struct LightDeps<C, F, P> {
-	/// The client instance to use.
-	pub client: Arc<C>,
-	/// Transaction pool instance.
-	pub pool: Arc<P>,
-	/// Remote access to the blockchain (async).
-	pub remote_blockchain: Arc<dyn sc_client_api::light::RemoteBlockchain<Block>>,
-	/// Fetcher instance.
-	pub fetcher: Arc<F>,
-}
-
 /// Extra dependencies for BABE.
 pub struct BabeDeps {
 	/// BABE protocol config.
@@ -86,6 +74,10 @@ pub struct FrontierDeps {
 	pub max_past_logs: u32,
 	/// EthFilterApi pool.
 	pub filter_pool: Option<fc_rpc_core::types::FilterPool>,
+	/// Maximum fee history cache size.
+	pub fee_history_limit: u64,
+	/// Fee history cache.
+	pub fee_history_cache: fc_rpc_core::types::FeeHistoryCache,
 }
 
 /// Full client dependencies.
@@ -199,6 +191,8 @@ where
 		is_authority,
 		max_past_logs,
 		filter_pool,
+		fee_history_limit,
+		fee_history_cache,
 	} = frontier;
 
 	io.extend_with(SystemApi::to_delegate(FullSystem::new(client.clone(), pool.clone(), deny_unsafe)));
@@ -281,6 +275,8 @@ where
 		max_past_logs,
 		block_data_cache.clone(),
 		fc_rpc::format::Legacy,
+		fee_history_limit,
+		fee_history_cache,
 	)));
 	if let Some(filter_pool) = filter_pool {
 		io.extend_with(EthFilterApiServer::to_delegate(EthFilterApi::new(
@@ -312,27 +308,4 @@ where
 	)));
 
 	Ok(io)
-}
-
-/// Instantiate all Light RPC extensions.
-pub fn create_light<C, P, M, F>(deps: LightDeps<C, F, P>) -> jsonrpc_core::IoHandler<M>
-where
-	C: sp_blockchain::HeaderBackend<Block>,
-	C: Send + Sync + 'static,
-	F: sc_client_api::light::Fetcher<Block> + 'static,
-	P: TransactionPool + 'static,
-	M: jsonrpc_core::Metadata + Default,
-{
-	use substrate_frame_rpc_system::{LightSystem, SystemApi};
-
-	let LightDeps { client, pool, remote_blockchain, fetcher } = deps;
-	let mut io = jsonrpc_core::IoHandler::default();
-	io.extend_with(SystemApi::<Hash, AccountId, Index>::to_delegate(LightSystem::new(
-		client,
-		remote_blockchain,
-		fetcher,
-		pool,
-	)));
-
-	io
 }
