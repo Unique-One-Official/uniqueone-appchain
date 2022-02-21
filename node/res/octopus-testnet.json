@@ -2,7 +2,12 @@
   "name": "UniqueOne Testnet",
   "id": "uniqueone_testnet",
   "chainType": "Live",
-  "bootNodes": [],
+  "bootNodes": [
+    "/dns/bootnode-v1-0.uniqueone.testnet.octopus.network/tcp/30333/ws/p2p/12D3KooWPZyB8KUBbLwtGLVVefXiG7A7sTvqeHaXvqLs7eswiaML",
+    "/dns/bootnode-v1-1.uniqueone.testnet.octopus.network/tcp/30333/ws/p2p/12D3KooWDbk9kRGWebUC7R4Mp6BxM1L1MbamfrNRJHVJqFj1F8BJ",
+    "/dns/bootnode-v1-2.uniqueone.testnet.octopus.network/tcp/30333/ws/p2p/12D3KooWNoUgsPjUaL8mrhE7UdyhcUwZJYT9BjQbXGHTx9XThRXC",
+    "/dns/bootnode-v1-3.uniqueone.testnet.octopus.network/tcp/30333/ws/p2p/12D3KooWEdo3i4YufxLJdgFkbwiNHEHtnauT6poSX63pdAaui1Nz"
+  ],
   "telemetryEndpoints": null,
   "protocolId": "uniqueone-testnet",
   "properties": {
