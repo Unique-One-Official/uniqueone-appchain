@@ -102,8 +102,10 @@ fc-rpc = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-pol
 fc-rpc-core = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13' }
 
 ## Frontier Pallet Dependencies
-pallet-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13' }
+pallet-dynamic-fee = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13' }
+pallet-base-fee = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13' }
 pallet-ethereum = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13' }
+pallet-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13' }
 
 # Local Dependencies
 ## Unet Pallet Dependencies

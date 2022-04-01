@@ -26,7 +26,7 @@ use sc_transaction_pool_api::TransactionPool;
 
 use jsonrpc_pubsub::manager::SubscriptionManager;
 
-use uniqueone_appchain_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash, Index};
+use uniqueone_appchain_runtime::{opaque::Block, AccountId, Balance, BlockNumber, EthereumTransactionConverter, Hash, Index};
 
 /// Extra dependencies for BABE.
 pub struct BabeDeps {
@@ -142,7 +142,7 @@ where
 		EthApi, EthApiServer, EthFilterApi, EthFilterApiServer, EthPubSubApi, EthPubSubApiServer,
 		EthBlockDataCache, EthSigner, EthDevSigner,
 		HexEncodedIdProvider, NetApi, NetApiServer, Web3Api, Web3ApiServer,
-		OverrideHandle, RuntimeApiStorageOverride, SchemaV1Override, StorageOverride,
+		OverrideHandle, RuntimeApiStorageOverride, SchemaV1Override, SchemaV2Override, SchemaV3Override, StorageOverride,
 	};
 
 	use pallet_mmr_rpc::{Mmr, MmrApi};
@@ -247,6 +247,18 @@ where
 			as Box<dyn StorageOverride<_> + Send + Sync>,
 	);
 
+	overrides_map.insert(
+		EthereumStorageSchema::V2,
+		Box::new(SchemaV2Override::new(client.clone()))
+			as Box<dyn StorageOverride<_> + Send + Sync>,
+	);
+
+	overrides_map.insert(
+		EthereumStorageSchema::V3,
+		Box::new(SchemaV3Override::new(client.clone()))
+			as Box<dyn StorageOverride<_> + Send + Sync>,
+	);
+
 	let overrides = Arc::new(OverrideHandle {
 		schemas: overrides_map,
 		fallback: Box::new(RuntimeApiStorageOverride::new(client.clone())),
@@ -254,19 +266,11 @@ where
 
 	let block_data_cache = Arc::new(EthBlockDataCache::new(50, 50));
 
-	struct FakeTransactionConverter;
-	impl<T> fp_rpc::ConvertTransaction<T> for FakeTransactionConverter {
-		fn convert_transaction(&self, _transaction: pallet_ethereum::Transaction) -> T {
-			unreachable!()
-		}
-	}
-	let convert_transaction: Option<FakeTransactionConverter> = None;
-
 	io.extend_with(EthApiServer::to_delegate(EthApi::new(
 		client.clone(),
 		pool.clone(),
 		graph,
-		convert_transaction,
+		Some(EthereumTransactionConverter),
 		network.clone(),
 		signers,
 		overrides.clone(),

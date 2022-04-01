@@ -9,6 +9,7 @@ use std::{
 	time::Duration,
 };
 
+use sp_core::U256;
 use sp_runtime::traits::Block as BlockT;
 
 use sc_client_api::{BlockchainEvents, ExecutorProvider};
@@ -154,6 +155,7 @@ pub fn new_partial(
 	let frontier_backend = open_frontier_backend(config)?;
 	let max_past_logs = cli.run.max_past_logs;
 	let fee_history_limit = cli.run.fee_history_limit;
+	let target_gas_price = cli.run.target_gas_price;
 	let filter_pool: Option<FilterPool> = Some(Arc::new(Mutex::new(BTreeMap::new())));
 	let fee_history_cache: FeeHistoryCache = Arc::new(Mutex::new(BTreeMap::new()));
 
@@ -196,7 +198,9 @@ pub fn new_partial(
 
 			let uncles = sp_authorship::InherentDataProvider::<<Block as BlockT>::Header>::check_inherents();
 
-			Ok((timestamp, slot, uncles))
+			let dynamic_fee = pallet_dynamic_fee::InherentDataProvider(U256::from(target_gas_price));
+
+			Ok((timestamp, slot, uncles, dynamic_fee))
 		},
 		&task_manager.spawn_essential_handle(),
 		config.prometheus_registry(),

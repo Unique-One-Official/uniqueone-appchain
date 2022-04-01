@@ -20,10 +20,10 @@ use sp_inherents::{CheckInherentsResult, InherentData};
 use sp_runtime::{
 	create_runtime_str, generic, impl_opaque_keys,
 	traits::{
-		self, AccountIdLookup, BlakeTwo256, Block as BlockT, ConvertInto, IdentifyAccount,
-		Keccak256, NumberFor, OpaqueKeys, SaturatedConversion, StaticLookup, Verify,
+		self, AccountIdLookup, BlakeTwo256, Block as BlockT, ConvertInto, Dispatchable, PostDispatchInfoOf,
+		IdentifyAccount, Keccak256, NumberFor, OpaqueKeys, SaturatedConversion, StaticLookup, Verify,
 	},
-	transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity},
+	transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity, TransactionValidityError},
 	ApplyExtrinsicResult, FixedPointNumber, MultiSignature, Perbill, Permill, Perquintill,
 };
 use sp_std::{marker::PhantomData, prelude::*};
@@ -105,7 +105,10 @@ pub type SignedExtra = (
 	pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
 );
 /// Unchecked extrinsic type as expected by this runtime.
-pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
+pub type UncheckedExtrinsic =
+	fp_self_contained::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
+/// Extrinsic type that has already been checked.
+pub type CheckedExtrinsic = fp_self_contained::CheckedExtrinsic<AccountId, Call, SignedExtra, H160>;
 /// The payload being signed in transactions.
 pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
 /// Executive: handles dispatch to the various modules.
@@ -131,7 +134,9 @@ pub struct DealWithFees<R>(sp_std::marker::PhantomData<R>);
 pub struct OctopusAppCrypto;
 pub struct FindAuthorTruncated<F>(PhantomData<F>);
 pub struct FixedGasPrice;
+pub struct BaseFeeThreshold;
 pub struct RuntimeGasWeightMapping;
+pub struct EthereumTransactionConverter;
 
 /// The type used to represent the kinds of proxying allowed.
 #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
@@ -903,70 +908,12 @@ impl pallet_democracy::Config for Runtime {
 
 impl pallet_ethereum_chain_id::Config for Runtime {}
 
-parameter_types! {	
-	pub BlockGasLimit: U256
-		= U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT / WEIGHT_PER_GAS);
-	pub PrecompilesValue: UniqueOnePrecompiles<Runtime> = UniqueOnePrecompiles::<_>::new();
-}
-
-impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
-	fn find_author<'a, I>(digests: I) -> Option<H160>
-	where
-		I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
-	{
-		if let Some(author_index) = F::find_author(digests) {
-			let authority_id = Babe::authorities()[author_index as usize].0.clone();
-			return Some(H160::from_slice(&authority_id.to_raw_vec()[4..24]))
-		}
-		None
-	}
-}
-
-impl FeeCalculator for FixedGasPrice {
-	fn min_gas_price() -> U256 {
-		(currency::GIGAWEI * currency::SUPPLY_FACTOR).into()
-	}
-}
-
-impl pallet_evm::GasWeightMapping for RuntimeGasWeightMapping {
-	fn gas_to_weight(gas: u64) -> Weight {
-		gas.saturating_mul(WEIGHT_PER_GAS)
-	}
-	fn weight_to_gas(weight: Weight) -> u64 {
-		weight.wrapping_div(WEIGHT_PER_GAS)
-	}
-}
-
-impl pallet_evm::Config for Runtime {
-	type AddressMapping = HashedAddressMapping<BlakeTwo256>;
-	type BlockGasLimit = BlockGasLimit;
-	type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
-	type CallOrigin = EnsureAddressTruncated;
-	type ChainId = EthereumChainId;
-	type Currency = Balances;
-	type Event = Event;
-	type FeeCalculator = FixedGasPrice;
-	type FindAuthor = FindAuthorTruncated<Babe>;
-	type GasWeightMapping = RuntimeGasWeightMapping;
-	type OnChargeTransaction = pallet_evm::EVMCurrencyAdapter<Balances, DealWithFees<Runtime>>;
-	type PrecompilesType = UniqueOnePrecompiles<Self>;
-	type PrecompilesValue = PrecompilesValue;
-	type Runner = pallet_evm::runner::stack::Runner<Self>;
-	type WithdrawOrigin = EnsureAddressTruncated;
-}
-
-impl pallet_ethereum::Config for Runtime {
-	type Event = Event;
-	type StateRoot = pallet_ethereum::IntermediateStateRoot;
-}
-
 parameter_types! {
 	// Tells `pallet_base_fee` whether to calculate a new BaseFee `on_finalize` or not.
 	pub IsActive: bool = false;
-	pub DefaultBaseFeePerGas: U256 = (currency::GIGAWEI * currency::SUPPLY_FACTOR).into();
+	pub DefaultBaseFeePerGas: U256 = U256::from(1_000_000_000);
 }
 
-pub struct BaseFeeThreshold;
 impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
 	fn lower() -> Permill {
 		Permill::zero()
@@ -984,6 +931,124 @@ impl pallet_base_fee::Config for Runtime {
 	type Threshold = BaseFeeThreshold;
 	type IsActive = IsActive;
 	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
+}
+
+parameter_types! {
+	pub BoundDivision: U256 = U256::from(1024);
+}
+
+impl pallet_dynamic_fee::Config for Runtime {
+	type MinGasPriceBoundDivisor = BoundDivision;
+}
+
+parameter_types! {
+	pub BlockGasLimit: U256 = U256::from(u32::max_value());
+	pub PrecompilesValue: UniqueOnePrecompiles<Runtime> = UniqueOnePrecompiles::<_>::new();
+}
+
+impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
+	fn find_author<'a, I>(digests: I) -> Option<H160>
+	where
+		I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
+	{
+		if let Some(author_index) = F::find_author(digests) {
+			let authority_id = Babe::authorities()[author_index as usize].0.clone();
+			return Some(H160::from_slice(&authority_id.to_raw_vec()[4..24]))
+		}
+		None
+	}
+}
+
+impl pallet_evm::Config for Runtime {
+	type AddressMapping = HashedAddressMapping<BlakeTwo256>;
+	type BlockGasLimit = BlockGasLimit;
+	type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
+	type CallOrigin = EnsureAddressTruncated;
+	type ChainId = EthereumChainId;
+	type Currency = Balances;
+	type Event = Event;
+	type FeeCalculator = BaseFee;
+	type FindAuthor = FindAuthorTruncated<Babe>;
+	type GasWeightMapping = ();
+	type OnChargeTransaction = ();
+	type PrecompilesType = UniqueOnePrecompiles<Self>;
+	type PrecompilesValue = PrecompilesValue;
+	type Runner = pallet_evm::runner::stack::Runner<Self>;
+	type WithdrawOrigin = EnsureAddressTruncated;
+}
+
+impl pallet_ethereum::Config for Runtime {
+	type Event = Event;
+	type StateRoot = pallet_ethereum::IntermediateStateRoot;
+}
+
+impl fp_self_contained::SelfContainedCall for Call {
+	type SignedInfo = H160;
+
+	fn is_self_contained(&self) -> bool {
+		match self {
+			Call::Ethereum(call) => call.is_self_contained(),
+			_ => false,
+		}
+	}
+
+	fn check_self_contained(&self) -> Option<Result<Self::SignedInfo, TransactionValidityError>> {
+		match self {
+			Call::Ethereum(call) => call.check_self_contained(),
+			_ => None,
+		}
+	}
+
+	fn validate_self_contained(&self, info: &Self::SignedInfo) -> Option<TransactionValidity> {
+		match self {
+			Call::Ethereum(call) => call.validate_self_contained(info),
+			_ => None,
+		}
+	}
+
+	fn pre_dispatch_self_contained(
+		&self,
+		info: &Self::SignedInfo,
+	) -> Option<Result<(), TransactionValidityError>> {
+		match self {
+			Call::Ethereum(call) => call.pre_dispatch_self_contained(info),
+			_ => None,
+		}
+	}
+
+	fn apply_self_contained(
+		self,
+		info: Self::SignedInfo,
+	) -> Option<sp_runtime::DispatchResultWithInfo<PostDispatchInfoOf<Self>>> {
+		match self {
+			call @ Call::Ethereum(pallet_ethereum::Call::transact { .. }) => Some(
+				call.dispatch(Origin::from(pallet_ethereum::RawOrigin::EthereumTransaction(info))),
+			),
+			_ => None,
+		}
+	}
+}
+
+impl fp_rpc::ConvertTransaction<UncheckedExtrinsic> for EthereumTransactionConverter {
+	fn convert_transaction(&self, transaction: pallet_ethereum::Transaction) -> UncheckedExtrinsic {
+		UncheckedExtrinsic::new_unsigned(
+			pallet_ethereum::Call::<Runtime>::transact { transaction }.into(),
+		)
+	}
+}
+
+impl fp_rpc::ConvertTransaction<opaque::UncheckedExtrinsic> for EthereumTransactionConverter {
+	fn convert_transaction(
+		&self,
+		transaction: pallet_ethereum::Transaction,
+	) -> opaque::UncheckedExtrinsic {
+		let extrinsic = UncheckedExtrinsic::new_unsigned(
+			pallet_ethereum::Call::<Runtime>::transact { transaction }.into(),
+		);
+		let encoded = extrinsic.encode();
+		opaque::UncheckedExtrinsic::decode(&mut &encoded[..])
+			.expect("Encoded extrinsic is always valid")
+	}
 }
 
 impl pallet_utility::Config for Runtime {
@@ -1266,8 +1331,9 @@ construct_runtime!(
 		CouncilCollective: pallet_collective::<Instance1>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		TechComitteeCollective: pallet_collective::<Instance2>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		Democracy: pallet_democracy::{Call, Config<T>, Event<T>, Pallet, Storage},
-		BaseFee: pallet_base_fee::{Call, Config<T>, Event, Pallet, Storage},
 		EthereumChainId: pallet_ethereum_chain_id::{Pallet, Storage, Config},
+		BaseFee: pallet_base_fee::{Call, Config<T>, Event, Pallet, Storage},
+		DynamicFee: pallet_dynamic_fee::{Call, Config, Inherent, Pallet, Storage},
 		EVM: pallet_evm::{Call, Config, Event<T>, Pallet, Storage},
 		Ethereum: pallet_ethereum::{Call, Config, Event, Pallet, Storage, Origin},
 		Utility: pallet_utility::{Call, Event, Pallet},
@@ -1282,7 +1348,7 @@ construct_runtime!(
 		UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
 		UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
 		UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
-		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},		
+		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},
 	}
 );
 
@@ -1621,7 +1687,7 @@ impl_runtime_apis! {
 		fn extrinsic_filter(
 			xts: Vec<<Block as BlockT>::Extrinsic>,
 		) -> Vec<EthereumTransaction> {
-			xts.into_iter().filter_map(|xt| match xt.function {
+			xts.into_iter().filter_map(|xt| match xt.0.function {
 				Call::Ethereum(transact { transaction }) => Some(transaction),
 				_ => None
 			}).collect::<Vec<EthereumTransaction>>()
