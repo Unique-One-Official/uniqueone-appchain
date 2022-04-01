@@ -15,15 +15,23 @@ use sp_consensus_babe::{
 	AllowedSlots::PrimaryAndSecondaryVRFSlots, BabeEpochConfiguration, BabeGenesisConfiguration,
 	Epoch, OpaqueKeyOwnershipProof, Slot,
 };
-use sp_core::{crypto::{KeyTypeId, Public}, u32_trait::*, sr25519, OpaqueMetadata, H160, U256, H256};
+use sp_core::{
+	crypto::{KeyTypeId, Public},
+	sr25519,
+	u32_trait::*,
+	OpaqueMetadata, H160, H256, U256,
+};
 use sp_inherents::{CheckInherentsResult, InherentData};
 use sp_runtime::{
 	create_runtime_str, generic, impl_opaque_keys,
 	traits::{
-		self, AccountIdLookup, BlakeTwo256, Block as BlockT, ConvertInto, Dispatchable, PostDispatchInfoOf,
-		IdentifyAccount, Keccak256, NumberFor, OpaqueKeys, SaturatedConversion, StaticLookup, Verify,
+		self, AccountIdLookup, BlakeTwo256, Block as BlockT, ConvertInto, Dispatchable,
+		IdentifyAccount, Keccak256, NumberFor, OpaqueKeys, PostDispatchInfoOf, SaturatedConversion,
+		StaticLookup, Verify,
 	},
-	transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity, TransactionValidityError},
+	transaction_validity::{
+		TransactionPriority, TransactionSource, TransactionValidity, TransactionValidityError,
+	},
 	ApplyExtrinsicResult, FixedPointNumber, MultiSignature, Perbill, Permill, Perquintill,
 };
 use sp_std::{marker::PhantomData, prelude::*};
@@ -33,7 +41,10 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::{Everything, EqualPrivilegeOnly, Nothing, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance, Get},
+	traits::{
+		EqualPrivilegeOnly, Everything, FindAuthor, Get, Imbalance, InstanceFilter,
+		KeyOwnerProofSystem, Nothing, OnUnbalanced,
+	},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
 		DispatchClass, IdentityFee, Weight,
@@ -47,6 +58,7 @@ use frame_system::{
 
 use pallet_babe::{AuthorityId as BabeId, ExternalTrigger};
 use pallet_balances::NegativeImbalance;
+use pallet_contracts::weights::WeightInfo;
 use pallet_grandpa::{
 	fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
@@ -55,13 +67,12 @@ use pallet_mmr_primitives as mmr;
 use pallet_octopus_appchain::AuthorityId as OctopusId;
 use pallet_session::historical as pallet_session_historical;
 use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
-use pallet_contracts::weights::WeightInfo;
 
 // Frontier
-#[cfg(feature = "std")]
-pub use pallet_evm::GenesisAccount;
 use pallet_ethereum::Call::transact;
 use pallet_ethereum::Transaction as EthereumTransaction;
+#[cfg(feature = "std")]
+pub use pallet_evm::GenesisAccount;
 use pallet_evm::{
 	Account as EVMAccount, EnsureAddressTruncated, FeeCalculator, HashedAddressMapping, Runner,
 };
@@ -140,7 +151,9 @@ pub struct EthereumTransactionConverter;
 
 /// The type used to represent the kinds of proxying allowed.
 #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Encode, Decode, Debug, MaxEncodedLen, TypeInfo)]
+#[derive(
+	Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Encode, Decode, Debug, MaxEncodedLen, TypeInfo,
+)]
 pub enum ProxyType {
 	/// All calls can be proxied. This is the trivial/most permissive filter.
 	Any = 0,
@@ -221,7 +234,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 107, // 105 --> 107
+	spec_version: 108,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -406,7 +419,8 @@ parameter_types! {
 }
 
 impl pallet_transaction_payment::Config for Runtime {
-	type FeeMultiplierUpdate = TargetedFeeAdjustment<Self, TargetBlockFullness, AdjustmentVariable, MinimumMultiplier>;
+	type FeeMultiplierUpdate =
+		TargetedFeeAdjustment<Self, TargetBlockFullness, AdjustmentVariable, MinimumMultiplier>;
 	type OnChargeTransaction = CurrencyAdapter<Balances, DealWithFees<Runtime>>;
 	type OperationalFeeMultiplier = OperationalFeeMultiplier;
 	type TransactionByteFee = TransactionByteFee;
@@ -741,7 +755,6 @@ where
 		let (_, to_treasury) = amount.ration(80, 20);
 		<pallet_treasury::Pallet<R> as OnUnbalanced<_>>::on_unbalanced(to_treasury);
 	}
-
 }
 
 parameter_types! {
@@ -953,7 +966,7 @@ impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
 	{
 		if let Some(author_index) = F::find_author(digests) {
 			let authority_id = Babe::authorities()[author_index as usize].0.clone();
-			return Some(H160::from_slice(&authority_id.to_raw_vec()[4..24]))
+			return Some(H160::from_slice(&authority_id.to_raw_vec()[4..24]));
 		}
 		None
 	}
@@ -1115,7 +1128,7 @@ impl InstanceFilter<Call> for ProxyType {
 					Call::Scheduler(..) |
 					Call::Proxy(..)
 				)
-			}
+			},
 			ProxyType::Governance => matches!(
 				c,
 				Call::Democracy(..) |
@@ -1124,23 +1137,13 @@ impl InstanceFilter<Call> for ProxyType {
 				// Call::Treasury(..) |
 				Call::Utility(..)
 			),
-			ProxyType::Staking => matches!(
-				c,
-				Call::Utility(..)
-			),
+			ProxyType::Staking => matches!(c, Call::Utility(..)),
 			ProxyType::CancelProxy => {
-				matches!(
-					c,
-					Call::Proxy(pallet_proxy::Call::reject_announcement { .. })
-				)
-			}
+				matches!(c, Call::Proxy(pallet_proxy::Call::reject_announcement { .. }))
+			},
 			ProxyType::Balances => {
-				matches!(
-					c,
-					Call::Balances(..) |
-					Call::Utility(..)
-				)
-			}
+				matches!(c, Call::Balances(..) | Call::Utility(..))
+			},
 		}
 	}
 	fn is_superset(&self, o: &Self) -> bool {
@@ -1247,7 +1250,6 @@ impl unet_orml_currencies::Config for Runtime {
 	type GetNativeCurrencyId = GetNativeCurrencyId;
 	type WeightInfo = ();
 }
-
 
 impl unet_orml_nft::Config for Runtime {
 	type ClassId = unet_traits::ClassId;
