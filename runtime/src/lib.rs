@@ -33,7 +33,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::{Everything, EqualPrivilegeOnly, Nothing, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance},
+	traits::{Everything, EqualPrivilegeOnly, Nothing, KeyOwnerProofSystem, InstanceFilter, FindAuthor, OnUnbalanced, Imbalance, Get},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
 		DispatchClass, IdentityFee, Weight,

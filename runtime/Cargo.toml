@@ -90,6 +90,7 @@ fp-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-pol
 fp-rpc = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 
 ## Frontier Pallet Dependencies
+pallet-ethereum-chain-id = {  path = '../pallets/ethereum-chain-id', default-features = false }
 pallet-base-fee = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 pallet-ethereum = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 pallet-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
@@ -113,7 +114,6 @@ unet-auction = {  path = '../pallets/unet-auction', default-features = false }
 unet-config = {  path = '../pallets/unet-config', default-features = false }
 unet-rpc-runtime-api = {  path = '../pallets/unet-rpc/runtime-api', default-features = false }
 chain-extension = {  path = '../pallets/chain-extension', default-features = false }
-pallet-ethereum-chain-id = {  path = '../pallets/ethereum-chain-id', default-features = false }
 
 [features]
 default = ['std']
@@ -189,6 +189,7 @@ std = [
     'fp-rpc/std',
 
     ## Frontier Primitive Dependencies
+    'pallet-ethereum-chain-id/std',
 	'pallet-base-fee/std',
     'pallet-ethereum/std',
 	'pallet-evm/std',
@@ -206,7 +207,7 @@ std = [
     'unet-config/std',
     'unet-rpc-runtime-api/std',
     'chain-extension/std',
-    'pallet-ethereum-chain-id/std'
+    
 ]
 runtime-benchmarks = [
     # External Dependencies
