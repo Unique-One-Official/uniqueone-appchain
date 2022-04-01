@@ -942,7 +942,6 @@ impl pallet_dynamic_fee::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ChainId: u64 = EthereumChainId;
 	pub BlockGasLimit: U256 = U256::from(u32::max_value());
 	pub PrecompilesValue: UniqueOnePrecompiles<Runtime> = UniqueOnePrecompiles::<_>::new();
 }

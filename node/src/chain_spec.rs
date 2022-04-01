@@ -210,7 +210,6 @@ pub fn staging_testnet_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-
 				388,
 			)
 		},
@@ -284,7 +283,6 @@ pub fn development_testnet_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-
 				387,
 			)
 		},
@@ -358,8 +356,7 @@ pub fn local_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-
-				387,
+				386,
 			)
 		},
 		// Bootnodes
@@ -430,8 +427,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-
-				387,
+				385,
 			)
 		},
 		// Bootnodes
