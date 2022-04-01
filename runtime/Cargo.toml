@@ -88,10 +88,12 @@ pallet-octopus-upward-messages = { git = 'https://github.com/octopus-network/oct
 ## Frontier Primitive Dependencies
 fp-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 fp-rpc = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
+fp-self-contained = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 
 ## Frontier Pallet Dependencies
 pallet-ethereum-chain-id = {  path = '../pallets/ethereum-chain-id', default-features = false }
 pallet-base-fee = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
+pallet-dynamic-fee = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 pallet-ethereum = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 pallet-evm = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
 pallet-evm-precompile-blake2 = { git = 'https://github.com/purestake/frontier', branch = 'moonbeam-polkadot-v0.9.13', default-features = false }
@@ -191,6 +193,7 @@ std = [
     ## Frontier Primitive Dependencies
     'pallet-ethereum-chain-id/std',
 	'pallet-base-fee/std',
+	'pallet-dynamic-fee/std',
     'pallet-ethereum/std',
 	'pallet-evm/std',
 
