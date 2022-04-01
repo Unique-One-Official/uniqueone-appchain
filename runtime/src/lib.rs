@@ -901,8 +901,9 @@ impl pallet_democracy::Config for Runtime {
 	type MaxProposals = MaxProposals;
 }
 
-parameter_types! {
-	pub const ChainId: u64 = 388;
+impl pallet_ethereum_chain_id::Config for Runtime {}
+
+parameter_types! {	
 	pub BlockGasLimit: U256
 		= U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT / WEIGHT_PER_GAS);
 	pub PrecompilesValue: UniqueOnePrecompiles<Runtime> = UniqueOnePrecompiles::<_>::new();
@@ -941,7 +942,7 @@ impl pallet_evm::Config for Runtime {
 	type BlockGasLimit = BlockGasLimit;
 	type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
 	type CallOrigin = EnsureAddressTruncated;
-	type ChainId = ChainId;
+	type ChainId = EthereumChainId;
 	type Currency = Balances;
 	type Event = Event;
 	type FeeCalculator = FixedGasPrice;
@@ -1266,6 +1267,7 @@ construct_runtime!(
 		TechComitteeCollective: pallet_collective::<Instance2>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		Democracy: pallet_democracy::{Call, Config<T>, Event<T>, Pallet, Storage},
 		BaseFee: pallet_base_fee::{Call, Config<T>, Event, Pallet, Storage},
+		EthereumChainId: pallet_ethereum_chain_id::{Pallet, Storage, Config},
 		EVM: pallet_evm::{Call, Config, Event<T>, Pallet, Storage},
 		Ethereum: pallet_ethereum::{Call, Config, Event, Pallet, Storage, Origin},
 		Utility: pallet_utility::{Call, Event, Pallet},
@@ -1280,7 +1282,7 @@ construct_runtime!(
 		UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
 		UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
 		UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
-		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},
+		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},		
 	}
 );
 

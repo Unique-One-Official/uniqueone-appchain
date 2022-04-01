@@ -17,6 +17,7 @@
 
 Cargo.lock
 
+scripts/*
 scripts/*.sh
 scripts/chainspec/
 

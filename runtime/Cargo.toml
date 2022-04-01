@@ -113,6 +113,7 @@ unet-auction = {  path = '../pallets/unet-auction', default-features = false }
 unet-config = {  path = '../pallets/unet-config', default-features = false }
 unet-rpc-runtime-api = {  path = '../pallets/unet-rpc/runtime-api', default-features = false }
 chain-extension = {  path = '../pallets/chain-extension', default-features = false }
+pallet-ethereum-chain-id = {  path = '../pallets/ethereum-chain-id', default-features = false }
 
 [features]
 default = ['std']
@@ -205,6 +206,7 @@ std = [
     'unet-config/std',
     'unet-rpc-runtime-api/std',
     'chain-extension/std',
+    'pallet-ethereum-chain-id/std'
 ]
 runtime-benchmarks = [
     # External Dependencies
