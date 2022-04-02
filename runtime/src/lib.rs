@@ -234,7 +234,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 108,
+	spec_version: 110,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -1333,7 +1333,7 @@ construct_runtime!(
 		CouncilCollective: pallet_collective::<Instance1>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		TechComitteeCollective: pallet_collective::<Instance2>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
 		Democracy: pallet_democracy::{Call, Config<T>, Event<T>, Pallet, Storage},
-		EthereumChainId: pallet_ethereum_chain_id::{Pallet, Storage, Config},
+		EthereumChainId: pallet_ethereum_chain_id::{Call, Pallet, Storage, Config},
 		BaseFee: pallet_base_fee::{Call, Config<T>, Event, Pallet, Storage},
 		DynamicFee: pallet_dynamic_fee::{Call, Config, Inherent, Pallet, Storage},
 		EVM: pallet_evm::{Call, Config, Event<T>, Pallet, Storage},

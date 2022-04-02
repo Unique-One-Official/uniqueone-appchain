@@ -24,9 +24,10 @@ pub use pallet::*;
 
 #[pallet]
 pub mod pallet {
-
+	use super::*;
 	use frame_support::pallet_prelude::*;
-
+	use frame_system::pallet_prelude::*;
+	
 	/// The Ethereum Chain Id Pallet
 	#[pallet::pallet]
 	pub struct Pallet<T>(PhantomData<T>);
@@ -56,5 +57,18 @@ pub mod pallet {
 		fn build(&self) {
 			ChainId::<T>::put(self.chain_id);
 		}
+	}
+
+	#[pallet::call]
+	impl<T: Config> Pallet<T> {
+		/// Allow Root account to change the Ethereum Chain Id
+		#[pallet::weight(0)]
+		pub fn set_chain_id(origin: OriginFor<T>, chain_id: u64) -> DispatchResult {
+		    ensure_root(origin)?;
+
+			ChainId::<T>::put(chain_id);
+
+		    Ok(())
+		}		
 	}
 }

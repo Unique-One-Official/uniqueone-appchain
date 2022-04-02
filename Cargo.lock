@@ -4655,7 +4655,7 @@ dependencies = [
 
 [[package]]
 name = "pallet-ethereum-chain-id"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "frame-support",
  "frame-system",

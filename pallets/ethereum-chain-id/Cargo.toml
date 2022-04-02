@@ -2,7 +2,7 @@
 name = "pallet-ethereum-chain-id"
 authors = ['Unique One <hello@uniqueone.network>']
 edition = "2018"
-version = "1.0.0"
+version = "1.0.1"
 
 [dependencies]
 serde = { version = "1.0.130", optional = true, features = [ "derive" ] }
