@@ -9035,7 +9035,7 @@ checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
 
 [[package]]
 name = "uniqueone-appchain"
-version = "1.5.3"
+version = "1.5.4"
 dependencies = [
  "beefy-gadget",
  "beefy-gadget-rpc",
@@ -9115,7 +9115,7 @@ dependencies = [
 
 [[package]]
 name = "uniqueone-appchain-runtime"
-version = "1.5.3"
+version = "1.5.4"
 dependencies = [
  "beefy-primitives",
  "chain-extension",
