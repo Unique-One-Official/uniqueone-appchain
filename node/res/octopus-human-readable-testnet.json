@@ -62,7 +62,7 @@
         "authorities": []
       },
       "octopusAppchain": {
-        "anchorContract": "uniqueone-appchain.octopus-registry.near",
+        "anchorContract": "",
         "validators": [
           [
             "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
