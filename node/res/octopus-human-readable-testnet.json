@@ -28,11 +28,19 @@
       "balances": {
         "balances": [
           [
-            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-            124999990000000000000000000
+            "5FYg72P51zz6hGeAMcm4Gz848C7PC7fSkSCzjdzmt66tyfpS",
+            510000000000000000000
           ],
           [
-            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+            "5CZfm5Z5gq9APvwb7WdkJz4RpGBRYP16sVYtmVDTkszYLa2t",
+            10000000000000000000
+          ],
+          [
+            "5ELa6RU6myDcSQrjTSXmFYrMq3pvRC6wLd4Dta2CWLE83Qyu",
+            10000000000000000000
+          ],
+          [
+            "5HpbCuayyRkEMYD8fGHbtXzjxtyQeNyiDge37uWBXp3Emcge",
             10000000000000000000
           ]
         ]
@@ -62,18 +70,26 @@
         "authorities": []
       },
       "octopusAppchain": {
-        "anchorContract": "uniqueone-appchain.octopus-registry.near",
+        "anchorContract": "uniqueone-appchain.registry.test_oct.testnet",
         "validators": [
           [
-            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-            100000000000000000000
+            "5FYg72P51zz6hGeAMcm4Gz848C7PC7fSkSCzjdzmt66tyfpS",
+            10000000000000000000000
           ],
           [
-            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-            100000000000000000000
+            "5CZfm5Z5gq9APvwb7WdkJz4RpGBRYP16sVYtmVDTkszYLa2t",
+            10000000000000000000000
+          ],
+          [
+            "5ELa6RU6myDcSQrjTSXmFYrMq3pvRC6wLd4Dta2CWLE83Qyu",
+            10000000000000000000000
+          ],
+          [
+            "5HpbCuayyRkEMYD8fGHbtXzjxtyQeNyiDge37uWBXp3Emcge",
+            10000000000000000000000
           ]
         ],
-        "preminedAmount": 875000000000000000000000000,
+        "preminedAmount": 88000000000000000000000000,
         "assetIdByName": [
           [
             "usdc.testnet",
@@ -83,30 +99,52 @@
       },
       "octopusLpos": {
         "historyDepth": 84,
-        "eraPayout": 68493000000000000000000
+        "eraPayout": 9132000000000000000000
       },
       "session": {
         "keys": [
           [
-            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+            "5FYg72P51zz6hGeAMcm4Gz848C7PC7fSkSCzjdzmt66tyfpS",
+            "5FYg72P51zz6hGeAMcm4Gz848C7PC7fSkSCzjdzmt66tyfpS",
             {
-              "babe": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-              "grandpa": "5FA9nQDVg267DEd8m1ZypXLBnvN7SFxYwV7ndqSYGiN9TTpu",
-              "im_online": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-              "beefy": "KW39r9CJjAVzmkf9zQ4YDb2hqfAVGdRqn53eRqyruqpxAP5YL",
-              "octopus": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+              "babe": "5EpgSMfUWLbB1ACJM78v2bVvHXkta5uA64LzdBWanZdWTb4T",
+              "grandpa": "5DermRkfXqnewFfbEpSQKR3vpCZfX6YsJWxpKLPHTFGv7wqh",
+              "im_online": "5EJWDoyfPi8wSXTt8PgaQjkfrSPdRmy2o9wTHq5zv3fuLHHy",
+              "beefy": "KW3m1nzSEaYwRht6WDG4EUDCWWUrspx5VReYnK691rWoa8Esu",
+              "octopus": "5CJohmH7XjdYWYm69JSKjE3kjhfmtmdbBwHcH9BsyuDnw1Yn"
             }
           ],
           [
-            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+            "5CZfm5Z5gq9APvwb7WdkJz4RpGBRYP16sVYtmVDTkszYLa2t",
+            "5CZfm5Z5gq9APvwb7WdkJz4RpGBRYP16sVYtmVDTkszYLa2t",
             {
-              "babe": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-              "grandpa": "5GoNkf6WdbxCFnPdAnYYQyCjAKPJgLNxXwPjwTh6DGg6gN3E",
-              "im_online": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-              "beefy": "KWByAN7WfZABWS5AoWqxriRmF5f2jnDqy3rB5pfHLGkY93ibN",
-              "octopus": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+              "babe": "5GmtBw4kKLfCDTTEFrhtoMpSmoQsUzA84qjk1eKNL5ymiYDY",
+              "grandpa": "5GuegXSkXGBWX2SP6SXMvpRTisdrYBhBDpAJMzVcBJPRZ4od",
+              "im_online": "5H5ytwVwNMrivaHJ9rt1MpqSauuRt9iqXgkswMnoguo5U1rG",
+              "beefy": "KWA5DMR2CfxfDkj7dm4uprCMc3gKYnGzRySQ1d4fMjnxTde5J",
+              "octopus": "5HNimaGT7jBH9GVtM5cALsi1wsBwrJhj78ppHSv7L3d8i7G4"
+            }
+          ],
+          [
+            "5ELa6RU6myDcSQrjTSXmFYrMq3pvRC6wLd4Dta2CWLE83Qyu",
+            "5ELa6RU6myDcSQrjTSXmFYrMq3pvRC6wLd4Dta2CWLE83Qyu",
+            {
+              "babe": "5ExnQ7kwFuVNrEUBY8PJad8bug6BHMMy9V2bndEtMCrSpFNR",
+              "grandpa": "5DUb3y8yEd8QLtoBmygo4hL5Ac58kEGnNCufwKctG6XAKbsr",
+              "im_online": "5GEE86mJFsqudQDu5V3m1kKdYfwvGpvj6gJWgH1Qaj3wenyM",
+              "beefy": "KW3WX97eEwZZSV94VYMTo7E5fGQooDkXaKQRVt4wCtd5K5vw2",
+              "octopus": "5HGaHz1FoQEnF6oztC2Kw6oySzeM8sy9Xkws9aT3Cvg7wuDp"
+            }
+          ],
+          [
+            "5HpbCuayyRkEMYD8fGHbtXzjxtyQeNyiDge37uWBXp3Emcge",
+            "5HpbCuayyRkEMYD8fGHbtXzjxtyQeNyiDge37uWBXp3Emcge",
+            {
+              "babe": "5F27w9hBK3ZwNZMvKJcA1oyFKXwRKbkYYGsDaZvQdQ8RjMk9",
+              "grandpa": "5GcwEGxw2YzvYQXmtFkZXkNLUgi7vD4vwvJ8aN6PsjfoVMXY",
+              "im_online": "5DXDkFHThVgBDuKWESaDUr4pdLsgdmKbXsmsNdFfcvDzLmme",
+              "beefy": "KWA2FqJVaDmSFJJgxKmRm5MnFuJPYxdwzxWVqnL8Y2ZDYPFKv",
+              "octopus": "5FKYrXSHbvbh9tX6zooBxqxZg5FoAuVKMtkL2MBup9Gc4Sw8"
             }
           ]
         ]
@@ -115,8 +153,10 @@
       "councilCollective": {
         "phantom": null,
         "members": [
-          "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-          "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+          "5FYg72P51zz6hGeAMcm4Gz848C7PC7fSkSCzjdzmt66tyfpS",
+          "5CZfm5Z5gq9APvwb7WdkJz4RpGBRYP16sVYtmVDTkszYLa2t",
+          "5ELa6RU6myDcSQrjTSXmFYrMq3pvRC6wLd4Dta2CWLE83Qyu",
+          "5HpbCuayyRkEMYD8fGHbtXzjxtyQeNyiDge37uWBXp3Emcge"
         ]
       },
       "techComitteeCollective": {
@@ -127,7 +167,7 @@
         "phantom": null
       },
       "ethereumChainId": {
-        "chainId": 386
+        "chainId": 389
       },
       "baseFee": {
         "baseFeePerGas": "0x3b9aca00",
@@ -151,7 +191,7 @@
       "ethereum": {},
       "scheduler": null,
       "sudo": {
-        "key": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+        "key": "5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx"
       },
       "tokens": {
         "endowedAccounts": []
