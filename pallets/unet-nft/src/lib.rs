@@ -7,7 +7,7 @@ use frame_support::{
 	transactional, PalletId,
 };
 use frame_system::pallet_prelude::*;
-use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
+pub use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{
 		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One, StaticLookup, Zero,
@@ -15,11 +15,11 @@ use sp_runtime::{
 	PerU16, RuntimeDebug, SaturatedConversion,
 };
 use sp_std::vec::Vec;
-pub use scale_info::TypeInfo;
+use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
 
 pub use pallet::*;
-use unet_traits::*;
 use unet_orml_nft::{ClassInfoOf, TokenInfoOf};
+use unet_traits::*;
 
 pub type TokenIdOf<T> = <T as unet_orml_nft::Config>::TokenId;
 pub type ClassIdOf<T> = <T as unet_orml_nft::Config>::ClassId;
@@ -45,8 +45,11 @@ impl Default for Releases {
 
 pub mod migrations {
 	use super::*;
-	pub type OldClass<T> =
-		unet_orml_nft::ClassInfo<TokenIdOf<T>, <T as frame_system::Config>::AccountId, OldClassData>;
+	pub type OldClass<T> = unet_orml_nft::ClassInfo<
+		TokenIdOf<T>,
+		<T as frame_system::Config>::AccountId,
+		OldClassData,
+	>;
 	pub type NewClass<T> = unet_orml_nft::ClassInfo<
 		TokenIdOf<T>,
 		<T as frame_system::Config>::AccountId,
@@ -313,7 +316,8 @@ pub mod pallet {
 				for category_id in category_ids {
 					T::ExtraConfig::inc_count_in_category(*category_id).unwrap();
 				}
-				unet_orml_nft::Pallet::<T>::create_class(&owner, class_metadata.clone(), data).unwrap();
+				unet_orml_nft::Pallet::<T>::create_class(&owner, class_metadata.clone(), data)
+					.unwrap();
 
 				if max_class_id < *class_id {
 					max_class_id = *class_id;
@@ -423,8 +427,8 @@ pub mod pallet {
 						maybe_token.as_mut().ok_or(Error::<T>::TokenIdNotFound)?;
 					ensure!(who == token_info.data.royalty_beneficiary, Error::<T>::NoPermission);
 					ensure!(
-						unet_orml_nft::Pallet::<T>::total_count(&who, (class_id, token_id)) ==
-							token_info.quantity,
+						unet_orml_nft::Pallet::<T>::total_count(&who, (class_id, token_id))
+							== token_info.quantity,
 						Error::<T>::NoPermission
 					);
 
@@ -674,7 +678,10 @@ impl<T: Config> Pallet<T> {
 		quantity: TokenIdOf<T>,
 		charge_royalty: Option<PerU16>,
 	) -> ResultPost<(T::AccountId, T::AccountId, ClassIdOf<T>, TokenIdOf<T>, TokenIdOf<T>)> {
-		ensure!(T::ExtraConfig::is_in_whitelist(to), Error::<T>::AccountNotInWhitelist);
+		// Check if Whitelist is Enable
+		if T::ExtraConfig::is_enable_whitelist() {
+			ensure!(T::ExtraConfig::is_in_whitelist(to), Error::<T>::AccountNotInWhitelist);
+		}
 
 		ensure!(quantity >= One::one(), Error::<T>::InvalidQuantity);
 		ensure!(who == &class_info.owner, Error::<T>::NoPermission);
@@ -717,7 +724,11 @@ impl<T: Config> Pallet<T> {
 		properties: Properties,
 		category_ids: Vec<GlobalId>,
 	) -> ResultPost<(T::AccountId, ClassIdOf<T>)> {
-		ensure!(T::ExtraConfig::is_in_whitelist(who), Error::<T>::AccountNotInWhitelist);
+		// Check if Whitelist is Enable
+		if T::ExtraConfig::is_enable_whitelist() {
+			ensure!(T::ExtraConfig::is_in_whitelist(who), Error::<T>::AccountNotInWhitelist);
+		}
+
 		ensure!(category_ids.len() <= MAX_CATEGORY_PER_CLASS, Error::<T>::CategoryOutOfBound);
 		ensure!(category_ids.len() >= 1, Error::<T>::CategoryOutOfBound);
 		if category_ids.len() == 2 {
@@ -797,13 +808,7 @@ impl<T: Config> Pallet<T> {
 		class_id: ClassIdOf<T>,
 		token_id: TokenIdOf<T>,
 	) -> Option<
-		unet_traits::ContractTokenInfo<
-			NFTMetadata,
-			Quantity,
-			Balance,
-			BlockNumber,
-			T::AccountId,
-		>,
+		unet_traits::ContractTokenInfo<NFTMetadata, Quantity, Balance, BlockNumber, T::AccountId>,
 	> {
 		unet_orml_nft::Pallet::<T>::tokens(class_id, token_id).map(|t: TokenInfoOf<T>| {
 			unet_traits::ContractTokenInfo {
@@ -951,8 +956,8 @@ impl<T: Config> unet_traits::UnetNft<T::AccountId, ClassIdOf<T>, TokenIdOf<T>> f
 		class_id: ClassIdOf<T>,
 		token_id: TokenIdOf<T>,
 	) -> Result<(T::AccountId, PerU16), DispatchError> {
-		let token: TokenInfoOf<T> =
-			unet_orml_nft::Tokens::<T>::get(class_id, token_id).ok_or(Error::<T>::TokenIdNotFound)?;
+		let token: TokenInfoOf<T> = unet_orml_nft::Tokens::<T>::get(class_id, token_id)
+			.ok_or(Error::<T>::TokenIdNotFound)?;
 		let data: TokenData<T::AccountId, T::BlockNumber> = token.data;
 		Ok((data.royalty_beneficiary, data.royalty_rate))
 	}

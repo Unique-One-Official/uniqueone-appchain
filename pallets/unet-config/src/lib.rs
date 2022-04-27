@@ -5,13 +5,13 @@ use frame_system::pallet_prelude::*;
 use sp_std::vec::Vec;
 
 pub use pallet::*;
-use unet_traits::{
-	constants_types::{Balance, GlobalId, ACCURACY},
-	time, CategoryData, NFTMetadata, UnetConfig,
-};
 use sp_runtime::{
 	traits::{One, Zero},
 	PerU16,
+};
+use unet_traits::{
+	constants_types::{Balance, GlobalId, ACCURACY},
+	time, CategoryData, NFTMetadata, UnetConfig,
 };
 
 #[frame_support::pallet]
@@ -103,6 +103,7 @@ pub mod pallet {
 				)
 				.unwrap();
 			}
+			IsWhiteListActivated::<T>::put(true);
 		}
 	}
 
@@ -164,6 +165,10 @@ pub mod pallet {
 	#[pallet::storage]
 	#[pallet::getter(fn categories)]
 	pub type Categories<T: Config> = StorageMap<_, Twox64Concat, GlobalId, CategoryData>;
+
+	/// The storage of white list De/Active.
+	#[pallet::storage]
+	pub type IsWhiteListActivated<T: Config> = StorageValue<_, bool, ValueQuery>;
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
@@ -237,6 +242,15 @@ pub mod pallet {
 			AuctionCloseDelay::<T>::set(delay);
 			Ok((None, Pays::No).into())
 		}
+
+		/// add an account into whitelist
+		#[pallet::weight((100_000, DispatchClass::Operational))]
+		#[transactional]
+		pub fn en_disable_whitelist(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
+			ensure_root(origin)?;
+			IsWhiteListActivated::<T>::put(!IsWhiteListActivated::<T>::get());
+			Ok((None, Pays::No).into())
+		}
 	}
 }
 
@@ -247,6 +261,10 @@ impl<T: Config> UnetConfig<T::AccountId, BlockNumberFor<T>> for Pallet<T> {
 
 	fn is_in_whitelist(who: &T::AccountId) -> bool {
 		Self::account_whitelist(who).is_some()
+	}
+
+	fn is_enable_whitelist() -> bool {
+		IsWhiteListActivated::<T>::get()
 	}
 
 	fn get_min_order_deposit() -> Balance {
@@ -283,8 +301,7 @@ impl<T: Config> UnetConfig<T::AccountId, BlockNumberFor<T>> for Pallet<T> {
 	}
 
 	fn do_create_category(metadata: NFTMetadata) -> DispatchResultWithPostInfo {
-		let category_id =
-			<Self as UnetConfig<T::AccountId, BlockNumberFor<T>>>::get_then_inc_id()?;
+		let category_id = <Self as UnetConfig<T::AccountId, BlockNumberFor<T>>>::get_then_inc_id()?;
 
 		let info = CategoryData { metadata, count: Zero::zero() };
 		Categories::<T>::insert(category_id, info);

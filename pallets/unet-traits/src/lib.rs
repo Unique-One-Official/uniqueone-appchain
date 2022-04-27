@@ -6,12 +6,12 @@ use frame_support::pallet_prelude::*;
 
 pub use unet_orml_traits::nft::{AccountToken, ClassInfo, TokenInfo};
 
+pub use scale_info::{build::Fields, meta_type, Path, Type, TypeInfo, TypeParameter};
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};
 use sp_runtime::PerU16;
 pub use sp_std::vec;
 pub use sp_std::vec::Vec;
-pub use scale_info::{build::{Fields}, meta_type, Path, Type, TypeInfo, TypeParameter};
 
 pub mod constants_types;
 pub use crate::constants_types::*;
@@ -26,6 +26,7 @@ pub type ResultPost<T> = sp_std::result::Result<
 pub trait UnetConfig<AccountId, BlockNumber> {
 	fn auction_close_delay() -> BlockNumber;
 	fn is_in_whitelist(_who: &AccountId) -> bool;
+	fn is_enable_whitelist() -> bool;
 	fn get_min_order_deposit() -> Balance;
 	fn get_then_inc_id() -> Result<GlobalId, DispatchError>;
 	fn inc_count_in_category(category_id: GlobalId) -> DispatchResult;
@@ -119,11 +120,8 @@ impl TypeInfo for Properties {
 	fn type_info() -> Type {
 		Type::builder()
 			.path(Path::new("BitFlags", module_path!()))
-			.type_params(vec![ TypeParameter::new("T", Some(meta_type::<ClassProperty>())) ])
-			.composite(
-			Fields::unnamed()
-				.field(|f| f.ty::<u8>().type_name("ClassProperty")),
-		)
+			.type_params(vec![TypeParameter::new("T", Some(meta_type::<ClassProperty>()))])
+			.composite(Fields::unnamed().field(|f| f.ty::<u8>().type_name("ClassProperty")))
 	}
 }
 
@@ -189,7 +187,9 @@ pub struct OrderItem<ClassId, TokenId> {
 }
 
 #[cfg(feature = "std")]
-#[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, Serialize, Deserialize, Default, TypeInfo)]
+#[derive(
+	Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, Serialize, Deserialize, Default, TypeInfo,
+)]
 pub struct ClassConfig<ClassId, AccountId, TokenId> {
 	pub class_id: ClassId,
 	pub class_metadata: String,
@@ -203,7 +203,9 @@ pub struct ClassConfig<ClassId, AccountId, TokenId> {
 }
 
 #[cfg(feature = "std")]
-#[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, Serialize, Deserialize, Default, TypeInfo)]
+#[derive(
+	Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, Serialize, Deserialize, Default, TypeInfo,
+)]
 pub struct TokenConfig<AccountId, TokenId> {
 	pub token_id: TokenId,
 	pub token_metadata: String,
@@ -290,8 +292,8 @@ macro_rules! to_item_vec {
 		let commission_agent: Option<(bool, T::AccountId, PerU16)> =
 			$commission_agent.and_then(|ca| {
 				let b: Balance = <T as Config>::Currency::total_balance(&ca).saturated_into();
-				if b < T::ExtraConfig::get_min_commission_agent_deposit() ||
-					$obj.commission_rate.is_zero()
+				if b < T::ExtraConfig::get_min_commission_agent_deposit()
+					|| $obj.commission_rate.is_zero()
 				{
 					Some((false, ca, $obj.commission_rate))
 				} else {
