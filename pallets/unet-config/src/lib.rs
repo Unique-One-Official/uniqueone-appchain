@@ -243,7 +243,7 @@ pub mod pallet {
 			Ok((None, Pays::No).into())
 		}
 
-		/// add an account into whitelist
+		/// En/disable feature whitelist check
 		#[pallet::weight((100_000, DispatchClass::Operational))]
 		#[transactional]
 		pub fn en_disable_whitelist(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
