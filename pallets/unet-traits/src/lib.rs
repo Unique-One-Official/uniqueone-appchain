@@ -145,7 +145,7 @@ pub struct ClassData<BlockNumber> {
 	pub category_ids: Vec<GlobalId>,
 }
 
-#[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, TypeInfo)]
+#[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, TypeInfo, Default)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct TokenData<AccountId, BlockNumber> {
 	/// The minimum balance to create token

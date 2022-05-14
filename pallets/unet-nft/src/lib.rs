@@ -70,7 +70,7 @@ pub mod migrations {
 		pub description: Vec<u8>,
 	}
 
-	#[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, TypeInfo)]
+	#[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, TypeInfo, Default)]
 	pub struct OldTokenData {
 		#[codec(compact)]
 		pub deposit: Balance,
@@ -99,7 +99,7 @@ pub mod migrations {
 		#[allow(dead_code)]
 		fn upgraded<AccountId: Clone, T>(self, who: AccountId) -> TokenData<AccountId, T>
 		where
-			T: AtLeast32BitUnsigned + Bounded + Copy + From<u32>,
+			T: AtLeast32BitUnsigned + Bounded + Copy + From<u32> + Default,
 		{
 			let create_block: T = One::one();
 			TokenData {
@@ -232,6 +232,8 @@ pub mod pallet {
 	}
 
 	#[pallet::pallet]
+	#[pallet::generate_store(pub(super) trait Store)]
+	#[pallet::without_storage_info]
 	pub struct Pallet<T>(PhantomData<T>);
 
 	#[pallet::hooks]
