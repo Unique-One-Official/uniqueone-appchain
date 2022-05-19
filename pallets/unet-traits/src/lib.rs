@@ -224,11 +224,12 @@ where
 	NFT: UnetNft<AccountId, ClassId, TokenId>,
 	ClassId: Copy,
 	TokenId: Copy,
-	AccountId: Default,
+	AccountId: Decode,
 {
 	let mut count_of_charged_royalty: u32 = 0;
 	let mut royalty_rate = PerU16::zero();
-	let mut who = AccountId::default();
+	let mut who = AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes())
+		.expect("infinite length input; no invalid inputs for type; qed");
 	for (class_id, token_id, _quantity) in items {
 		let (id, rate) = NFT::token_charged_royalty(*class_id, *token_id)?;
 		if !rate.is_zero() {
