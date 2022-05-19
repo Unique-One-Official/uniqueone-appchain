@@ -63,8 +63,6 @@ use frame_system::{
 	offchain, EnsureRoot,
 };
 
-use frame_system::Config::AccountId;
-
 use pallet_babe::{AuthorityId as BabeId, ExternalTrigger};
 use pallet_balances::NegativeImbalance;
 use pallet_contracts::weights::WeightInfo;
@@ -251,12 +249,6 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	transaction_version: 1,
 	state_version: 0,
 };
-
-/// The version information used to identify this runtime when compiled natively.
-#[cfg(feature = "std")]
-pub fn native_version() -> NativeVersion {
-	NativeVersion { runtime_version: VERSION, can_author_with: Default::default() }
-}
 
 /// Since BABE is probabilistic this is the average expected block time that
 /// we are targeting. Blocks will be produced at a minimum duration defined
