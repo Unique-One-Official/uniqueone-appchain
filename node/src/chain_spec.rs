@@ -18,7 +18,7 @@ use uniqueone_appchain_runtime::{
 	currency::{OCTS, UNITS as UNET},
 	opaque::{Block, SessionKeys},
 	AccountId, BabeConfig, Balance, BalancesConfig, GenesisConfig, OctopusAppchainConfig,
-	OctopusLposConfig, SchedulerConfig, SessionConfig, Signature, SudoConfig, SystemConfig,
+	OctopusLposConfig, SessionConfig, Signature, SudoConfig, SystemConfig,
 	CouncilCollectiveConfig, TechComitteeCollectiveConfig, DemocracyConfig, EVMConfig, EthereumConfig,
 	TokensConfig, UnetConfConfig, UnetNftConfig, EthereumChainIdConfig,
 	BABE_GENESIS_EPOCH_CONFIG, WASM_BINARY,
@@ -531,7 +531,6 @@ fn genesis(
 			},
 		},
 		ethereum: EthereumConfig {},
-		scheduler: SchedulerConfig {},
 		sudo: SudoConfig { key: root_key },
 		// TODO: make this dynamic, put on params
 		tokens: TokensConfig {
