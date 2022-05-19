@@ -9222,6 +9222,7 @@ dependencies = [
  "beefy-gadget",
  "beefy-gadget-rpc",
  "beefy-primitives",
+ "clap 3.1.18",
  "fc-consensus",
  "fc-db",
  "fc-mapping-sync",

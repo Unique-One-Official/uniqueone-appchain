@@ -1,5 +1,6 @@
 use std::{collections::BTreeMap, sync::Arc};
 
+use fc_rpc::OverrideHandle;
 use sp_api::ProvideRuntimeApi;
 use sp_block_builder::BlockBuilder;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
@@ -26,7 +27,9 @@ use sc_transaction_pool_api::TransactionPool;
 
 use jsonrpc_pubsub::manager::SubscriptionManager;
 
-use uniqueone_appchain_runtime::{opaque::Block, AccountId, Balance, BlockNumber, EthereumTransactionConverter, Hash, Index};
+use uniqueone_appchain_runtime::{
+	opaque::Block, AccountId, Balance, BlockNumber, EthereumTransactionConverter, Hash, Index,
+};
 
 /// Extra dependencies for BABE.
 pub struct BabeDeps {
@@ -55,9 +58,11 @@ pub struct GrandpaDeps<B> {
 /// Dependencies for BEEFY
 pub struct BeefyDeps {
 	/// Receives notifications about signed commitment events from BEEFY.
-	pub beefy_commitment_stream: beefy_gadget::notification::BeefySignedCommitmentStream<Block>,
+	pub beefy_commitment_stream: BeefySignedCommitmentStream<Block>,
+	/// Receives notifications about best block events from BEEFY.
+	pub beefy_best_block_stream: BeefyBestBlockStream<Block>,
 	/// Executor to drive the subscription manager in the BEEFY RPC handler.
-	pub subscription_executor: SubscriptionTaskExecutor,
+	pub subscription_executor: sc_rpc::SubscriptionTaskExecutor,
 }
 
 /// Dependencies for Frontier
@@ -102,6 +107,10 @@ pub struct FullDeps<C, P, SC, B, A: ChainApi> {
 	pub beefy: BeefyDeps,
 	/// Frontier specific dependencies.
 	pub frontier: FrontierDeps,
+	/// Ethereum data access overrides.
+	pub overrides: Arc<OverrideHandle<Block>>,
+	/// Cache for Ethereum block data.
+	pub block_data_cache: Arc<EthBlockDataCacheTask<Block>>,
 }
 
 /// Instantiate all Full RPC extensions.
@@ -139,15 +148,15 @@ where
 	BE::State: StateBackend<sp_runtime::traits::BlakeTwo256>,
 {
 	use fc_rpc::{
-		EthApi, EthApiServer, EthFilterApi, EthFilterApiServer, EthPubSubApi, EthPubSubApiServer,
-		EthBlockDataCache, EthSigner, EthDevSigner,
-		HexEncodedIdProvider, NetApi, NetApiServer, Web3Api, Web3ApiServer,
-		OverrideHandle, RuntimeApiStorageOverride, SchemaV1Override, SchemaV2Override, SchemaV3Override, StorageOverride,
+		EthApi, EthApiServer, EthBlockDataCacheTask, EthDevSigner, EthFilterApi,
+		EthFilterApiServer, EthPubSubApi, EthPubSubApiServer, EthSigner, HexEncodedIdProvider,
+		NetApi, NetApiServer, OverrideHandle, RuntimeApiStorageOverride, SchemaV1Override,
+		SchemaV2Override, SchemaV3Override, StorageOverride, Web3Api, Web3ApiServer,
 	};
 
+	use pallet_contracts_rpc::{Contracts, ContractsApi};
 	use pallet_mmr_rpc::{Mmr, MmrApi};
 	use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApi};
-	use pallet_contracts_rpc::{Contracts, ContractsApi};
 
 	use pallet_ethereum::EthereumStorageSchema;
 
@@ -168,13 +177,11 @@ where
 		grandpa,
 		beefy,
 		frontier,
+		overrides,
+		block_data_cache,
 	} = deps;
 
-	let BabeDeps {
-		keystore,
-		babe_config,
-		shared_epoch_changes
-	} = babe;
+	let BabeDeps { keystore, babe_config, shared_epoch_changes } = babe;
 
 	let GrandpaDeps {
 		shared_voter_state,
@@ -195,7 +202,11 @@ where
 		fee_history_cache,
 	} = frontier;
 
-	io.extend_with(SystemApi::to_delegate(FullSystem::new(client.clone(), pool.clone(), deny_unsafe)));
+	io.extend_with(SystemApi::to_delegate(FullSystem::new(
+		client.clone(),
+		pool.clone(),
+		deny_unsafe,
+	)));
 	// Making synchronous calls in light client freezes the browser currently,
 	// more context: https://github.com/paritytech/substrate/pull/3480
 	// These RPCs should use an asynchronous caller instead.
@@ -222,12 +233,13 @@ where
 			client.clone(),
 			shared_authority_set,
 			shared_epoch_changes,
-			deny_unsafe,
+			//deny_unsafe,
 		)?,
 	));
 	io.extend_with(beefy_gadget_rpc::BeefyApi::to_delegate(
 		beefy_gadget_rpc::BeefyRpcHandler::new(
 			beefy.beefy_commitment_stream,
+			beefy.beefy_best_block_stream,
 			beefy.subscription_executor,
 		),
 	));
@@ -264,7 +276,7 @@ where
 		fallback: Box::new(RuntimeApiStorageOverride::new(client.clone())),
 	});
 
-	let block_data_cache = Arc::new(EthBlockDataCache::new(50, 50));
+	//let block_data_cache = Arc::new(EthBlockDataCacheTask::new(50, 50));
 
 	io.extend_with(EthApiServer::to_delegate(EthApi::new(
 		client.clone(),
@@ -288,7 +300,7 @@ where
 			backend,
 			filter_pool,
 			500_usize, // max stored filters
-			overrides.clone(),
+			//overrides.clone(),
 			max_past_logs,
 			block_data_cache.clone(),
 		)));

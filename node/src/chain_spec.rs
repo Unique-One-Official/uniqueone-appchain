@@ -54,7 +54,7 @@ fn session_keys(
 
 /// Generate a crypto pair from seed.
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
-	TPublic::Pair::from_string(&format!("//{}", seed), None)
+	TPublic::Pair::from_string(&format!("//{}", seed))
 		.expect("static values are valid; qed")
 		.public()
 }
@@ -219,6 +219,8 @@ pub fn staging_testnet_config() -> Result<ChainSpec, String> {
 		None,
 		// Protocol ID
 		Some("uniqueone-staging-testnet"),
+		// Fork ID
+		None,
 		// Properties
 		Some(properties),
 		// Extensions
@@ -292,6 +294,8 @@ pub fn development_testnet_config() -> Result<ChainSpec, String> {
 		None,
 		// Protocol ID
 		Some("uniqueone-development-testnet"),
+		// Fork ID
+		None,
 		// Properties
 		Some(properties),
 		// Extensions
@@ -365,6 +369,8 @@ pub fn local_config() -> Result<ChainSpec, String> {
 		None,
 		// Protocol ID
 		Some("uniqueone-local"),
+		// Fork ID
+		None,
 		// Properties
 		Some(properties),
 		// Extensions
@@ -436,6 +442,8 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		None,
 		// Protocol ID
 		Some("uniqueone-development"),
+		// Fork ID
+		None,
 		// Properties
 		Some(properties),
 		// Extensions
@@ -531,7 +539,7 @@ fn genesis(
 			},
 		},
 		ethereum: EthereumConfig {},
-		sudo: SudoConfig { key: root_key },
+		sudo: SudoConfig { key: Some(root_key) },
 		// TODO: make this dynamic, put on params
 		tokens: TokensConfig {
 			endowed_accounts: Default::default(),
