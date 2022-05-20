@@ -49,7 +49,7 @@ use sp_version::RuntimeVersion;
 use frame_support::{
 	construct_runtime, parameter_types,
 	traits::{
-		ConstU32, ConstU64, ConstU128, EnsureOneOf, EqualPrivilegeOnly, Everything, FindAuthor, Get,
+		ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, FindAuthor, Get,
 		Imbalance, InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced,
 	},
 	weights::{

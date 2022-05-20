@@ -1,14 +1,11 @@
-//use structopt::StructOpt;
-use sc_cli::RunCmd;
-
 #[allow(missing_docs)]
-#[derive(Debug, StructOpt)]
+#[derive(Debug, clap::Parser)]
 pub struct RunCmd {
 	#[allow(missing_docs)]
 	#[clap(flatten)]
 	pub base: sc_cli::RunCmd,
 
-	#[clap(long = "enable-dev-signer")]
+	#[clap(long)]
 	pub enable_dev_signer: bool,
 
 	/// Maximum number of logs in a query.
