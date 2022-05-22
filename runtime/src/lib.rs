@@ -6,9 +6,9 @@
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
+use crate::currency::deposit;
 use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
-use crate::currency::deposit;
 
 use beefy_primitives::{crypto::AuthorityId as BeefyId, mmr::MmrLeafVersion};
 use sp_api::impl_runtime_apis;
@@ -38,7 +38,7 @@ use sp_runtime::{
 		TransactionPriority, TransactionSource, TransactionValidity, TransactionValidityError,
 	},
 	ApplyExtrinsicResult, FixedPointNumber, MultiSignature, Perbill, Permill, Perquintill,
-	RuntimeAppPublic
+	RuntimeAppPublic,
 };
 
 use sp_std::{marker::PhantomData, prelude::*};
@@ -49,8 +49,8 @@ use sp_version::RuntimeVersion;
 use frame_support::{
 	construct_runtime, parameter_types,
 	traits::{
-		ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, FindAuthor, Get,
-		Imbalance, InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced,
+		ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, FindAuthor, Get, Imbalance,
+		InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced,
 	},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
@@ -1192,10 +1192,6 @@ impl pallet_proxy::Config for Runtime {
 }
 
 parameter_types! {
-	// pub ContractDeposit: Balance = currency::deposit(
-	// 	1,
-	// 	<pallet_contracts::Pallet<Runtime>>::contract_info_size(),
-	// );
 	pub const MaxValueSize: u32 = 16 * 1024;
 	// The lazy deletion runs inside on_initialize.
 	pub DeletionWeightLimit: Weight = AVERAGE_ON_INITIALIZE_RATIO *
@@ -1224,7 +1220,6 @@ impl pallet_contracts::Config for Runtime {
 	/// change because that would break already deployed contracts. The `Call` structure itself
 	/// is not allowed to change the indices of existing pallets, too.
 	type CallFilter = Nothing;
-	//type ContractDeposit = ContractDeposit; // remove in v0.9.18: https://github.com/paritytech/substrate/pull/9669
 	type CallStack = [pallet_contracts::Frame<Self>; 31];
 	type WeightPrice = pallet_transaction_payment::Pallet<Self>;
 	type WeightInfo = ();

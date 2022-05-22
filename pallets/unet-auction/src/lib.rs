@@ -6,11 +6,6 @@ use frame_support::{
 	transactional,
 };
 use frame_system::pallet_prelude::*;
-use unet_traits::{
-	constants_types::{Balance, GlobalId, ACCURACY},
-	*,
-};
-use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};
 use sp_runtime::{
@@ -18,6 +13,11 @@ use sp_runtime::{
 	FixedPointNumber, FixedU128, PerU16, RuntimeDebug, SaturatedConversion,
 };
 use sp_std::vec::Vec;
+use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
+use unet_traits::{
+	constants_types::{Balance, GlobalId, ACCURACY},
+	*,
+};
 
 //mod benchmarking;
 //mod british_tests;
@@ -380,8 +380,8 @@ pub mod pallet {
 				(Some(_), true) => {
 					// check deadline
 					ensure!(
-						get_deadline::<T>(true, Zero::zero(), auction_bid.last_bid_block) >=
-							frame_system::Pallet::<T>::block_number(),
+						get_deadline::<T>(true, Zero::zero(), auction_bid.last_bid_block)
+							>= frame_system::Pallet::<T>::block_number(),
 						Error::<T>::DutchAuctionClosed,
 					);
 					Self::save_dutch_bid(
@@ -413,8 +413,8 @@ pub mod pallet {
 			let auction_owner = T::Lookup::lookup(auction_owner)?;
 			let (auction, auction_bid) = Self::delete_dutch_auction(&auction_owner, auction_id)?;
 			ensure!(
-				get_deadline::<T>(true, Zero::zero(), auction_bid.last_bid_block) <
-					frame_system::Pallet::<T>::block_number(),
+				get_deadline::<T>(true, Zero::zero(), auction_bid.last_bid_block)
+					< frame_system::Pallet::<T>::block_number(),
 				Error::<T>::CannotRedeemAuctionUntilDeadline
 			);
 			ensure!(auction_bid.last_bid_account.is_some(), Error::<T>::CannotRedeemAuctionNoBid);

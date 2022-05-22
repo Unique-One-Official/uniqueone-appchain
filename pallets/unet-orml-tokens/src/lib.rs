@@ -50,12 +50,7 @@ use frame_support::{
 	transactional, PalletId,
 };
 use frame_system::{ensure_signed, pallet_prelude::*};
-use unet_orml_traits::{
-	account::MergeAccount,
-	arithmetic::{self, Signed},
-	BalanceStatus, GetByKey, LockIdentifier, MultiCurrency, MultiCurrencyExtended,
-	MultiLockableCurrency, MultiReservableCurrency, OnDust,
-};
+pub use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{
 		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, CheckedSub,
@@ -69,7 +64,12 @@ use sp_std::{
 	prelude::*,
 	vec::Vec,
 };
-pub use scale_info::TypeInfo;
+use unet_orml_traits::{
+	account::MergeAccount,
+	arithmetic::{self, Signed},
+	BalanceStatus, GetByKey, LockIdentifier, MultiCurrency, MultiCurrencyExtended,
+	MultiLockableCurrency, MultiReservableCurrency, OnDust,
+};
 
 mod default_weight;
 mod imbalances;
@@ -388,8 +388,8 @@ impl<T: Config> Pallet<T> {
 				} else {
 					// if non_zero total is below existential deposit and the account is not a
 					// module account, should handle the dust.
-					if total < T::ExistentialDeposits::get(&currency_id) &&
-						!Self::is_module_account_id(who)
+					if total < T::ExistentialDeposits::get(&currency_id)
+						&& !Self::is_module_account_id(who)
 					{
 						handle_dust = Some(total);
 					}
@@ -530,7 +530,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 
 		let new_balance = Self::free_balance(currency_id, who)
@@ -553,7 +553,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() || from == to {
-			return Ok(())
+			return Ok(());
 		}
 		Self::ensure_can_withdraw(currency_id, from, amount)?;
 
@@ -577,7 +577,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 
 		TotalIssuance::<T>::try_mutate(currency_id, |total_issuance| -> DispatchResult {
@@ -596,7 +596,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 		Self::ensure_can_withdraw(currency_id, who, amount)?;
 
@@ -610,7 +610,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 	// Check if `value` amount of free balance can be slashed from `who`.
 	fn can_slash(currency_id: Self::CurrencyId, who: &T::AccountId, value: Self::Balance) -> bool {
 		if value.is_zero() {
-			return true
+			return true;
 		}
 		Self::free_balance(currency_id, who) >= value
 	}
@@ -628,7 +628,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> Self::Balance {
 		if amount.is_zero() {
-			return amount
+			return amount;
 		}
 
 		let account = Self::accounts(who, currency_id);
@@ -671,7 +671,7 @@ impl<T: Config> MultiCurrencyExtended<T::AccountId> for Pallet<T> {
 		by_amount: Self::Amount,
 	) -> DispatchResult {
 		if by_amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 
 		// Ensure this doesn't overflow. There isn't any traits that exposes
@@ -704,7 +704,7 @@ impl<T: Config> MultiLockableCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 		let mut new_lock = Some(OrmlBalanceLock { id: lock_id, amount });
 		let mut locks = Self::locks(who, currency_id)
@@ -727,7 +727,7 @@ impl<T: Config> MultiLockableCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 		let mut new_lock = Some(OrmlBalanceLock { id: lock_id, amount });
 		let mut locks = Self::locks(who, currency_id)
@@ -772,7 +772,7 @@ impl<T: Config> MultiReservableCurrency<T::AccountId> for Pallet<T> {
 		value: Self::Balance,
 	) -> bool {
 		if value.is_zero() {
-			return true
+			return true;
 		}
 		Self::ensure_can_withdraw(currency_id, who, value).is_ok()
 	}
@@ -787,7 +787,7 @@ impl<T: Config> MultiReservableCurrency<T::AccountId> for Pallet<T> {
 		value: Self::Balance,
 	) -> Self::Balance {
 		if value.is_zero() {
-			return value
+			return value;
 		}
 
 		let reserved_balance = Self::reserved_balance(currency_id, who);
@@ -811,7 +811,7 @@ impl<T: Config> MultiReservableCurrency<T::AccountId> for Pallet<T> {
 		value: Self::Balance,
 	) -> DispatchResult {
 		if value.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 		Self::ensure_can_withdraw(currency_id, who, value)?;
 
@@ -833,7 +833,7 @@ impl<T: Config> MultiReservableCurrency<T::AccountId> for Pallet<T> {
 		value: Self::Balance,
 	) -> Self::Balance {
 		if value.is_zero() {
-			return value
+			return value;
 		}
 
 		let account = Self::accounts(who, currency_id);
@@ -859,15 +859,16 @@ impl<T: Config> MultiReservableCurrency<T::AccountId> for Pallet<T> {
 		status: BalanceStatus,
 	) -> sp_std::result::Result<Self::Balance, DispatchError> {
 		if value.is_zero() {
-			return Ok(value)
+			return Ok(value);
 		}
 
 		if slashed == beneficiary {
 			return match status {
 				BalanceStatus::Free => Ok(Self::unreserve(currency_id, slashed, value)),
-				BalanceStatus::Reserved =>
-					Ok(value.saturating_sub(Self::reserved_balance(currency_id, slashed))),
-			}
+				BalanceStatus::Reserved => {
+					Ok(value.saturating_sub(Self::reserved_balance(currency_id, slashed)))
+				},
+			};
 		}
 
 		let from_account = Self::accounts(slashed, currency_id);
@@ -915,7 +916,7 @@ where
 
 	fn burn(mut amount: Self::Balance) -> Self::PositiveImbalance {
 		if amount.is_zero() {
-			return PositiveImbalance::zero()
+			return PositiveImbalance::zero();
 		}
 		<TotalIssuance<T>>::mutate(GetCurrencyId::get(), |issued| {
 			*issued = issued.checked_sub(&amount).unwrap_or_else(|| {
@@ -928,7 +929,7 @@ where
 
 	fn issue(mut amount: Self::Balance) -> Self::NegativeImbalance {
 		if amount.is_zero() {
-			return NegativeImbalance::zero()
+			return NegativeImbalance::zero();
 		}
 		<TotalIssuance<T>>::mutate(GetCurrencyId::get(), |issued| {
 			*issued = issued.checked_add(&amount).unwrap_or_else(|| {
@@ -968,7 +969,7 @@ where
 
 	fn slash(who: &T::AccountId, value: Self::Balance) -> (Self::NegativeImbalance, Self::Balance) {
 		if value.is_zero() {
-			return (Self::NegativeImbalance::zero(), value)
+			return (Self::NegativeImbalance::zero(), value);
 		}
 
 		let currency_id = GetCurrencyId::get();
@@ -1004,7 +1005,7 @@ where
 		value: Self::Balance,
 	) -> sp_std::result::Result<Self::PositiveImbalance, DispatchError> {
 		if value.is_zero() {
-			return Ok(Self::PositiveImbalance::zero())
+			return Ok(Self::PositiveImbalance::zero());
 		}
 		let currency_id = GetCurrencyId::get();
 		let new_total = Pallet::<T>::free_balance(currency_id, who)
@@ -1026,7 +1027,7 @@ where
 		_liveness: ExistenceRequirement,
 	) -> sp_std::result::Result<Self::NegativeImbalance, DispatchError> {
 		if value.is_zero() {
-			return Ok(Self::NegativeImbalance::zero())
+			return Ok(Self::NegativeImbalance::zero());
 		}
 		let currency_id = GetCurrencyId::get();
 		Pallet::<T>::ensure_can_withdraw(currency_id, who, value)?;

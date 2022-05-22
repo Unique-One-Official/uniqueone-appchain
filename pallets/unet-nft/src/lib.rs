@@ -125,11 +125,15 @@ pub mod migrations {
 		});
 		// migrate tokens
 		unet_orml_nft::Tokens::<T>::translate::<OldToken<T>, _>(|_, _, p: OldToken<T>| {
-			let zero_account_id = <T as frame_system::Config>::AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes())
-				.expect("infinite length input; no invalid inputs for type; qed");
+			let zero_account_id = <T as frame_system::Config>::AccountId::decode(
+				&mut sp_runtime::traits::TrailingZeroInput::zeroes(),
+			)
+			.expect("infinite length input; no invalid inputs for type; qed");
 			let new_data: NewToken<T> = NewToken::<T> {
 				metadata: p.metadata,
-				data: p.data.upgraded::<<T as frame_system::Config>::AccountId, BlockNumberOf<T>>(zero_account_id),
+				data: p.data.upgraded::<<T as frame_system::Config>::AccountId, BlockNumberOf<T>>(
+					zero_account_id,
+				),
 				quantity: p.quantity,
 			};
 			Some(new_data)

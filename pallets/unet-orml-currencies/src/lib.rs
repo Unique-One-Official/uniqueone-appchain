@@ -49,14 +49,6 @@ use frame_support::{
 	},
 };
 use frame_system::{ensure_root, ensure_signed, pallet_prelude::*};
-use unet_orml_traits::{
-	account::MergeAccount,
-	arithmetic::{Signed, SimpleArithmetic},
-	BalanceStatus, BasicCurrency, BasicCurrencyExtended, BasicLockableCurrency,
-	BasicReservableCurrency, LockIdentifier, MultiCurrency, MultiCurrencyExtended,
-	MultiLockableCurrency, MultiReservableCurrency,
-};
-use unet_orml_utilities::with_transaction_result;
 use sp_runtime::{
 	traits::{CheckedSub, MaybeSerializeDeserialize, StaticLookup, Zero},
 	DispatchError, DispatchResult,
@@ -66,6 +58,14 @@ use sp_std::{
 	fmt::Debug,
 	marker, result,
 };
+use unet_orml_traits::{
+	account::MergeAccount,
+	arithmetic::{Signed, SimpleArithmetic},
+	BalanceStatus, BasicCurrency, BasicCurrencyExtended, BasicLockableCurrency,
+	BasicReservableCurrency, LockIdentifier, MultiCurrency, MultiCurrencyExtended,
+	MultiLockableCurrency, MultiReservableCurrency,
+};
+use unet_orml_utilities::with_transaction_result;
 
 pub use scale_info::TypeInfo;
 
@@ -87,12 +87,15 @@ pub mod pallet {
 		fn update_balance_native_currency_killing() -> Weight;
 	}
 
-	pub(crate) type BalanceOf<T> =
-		<<T as Config>::MultiCurrency as MultiCurrency<<T as frame_system::Config>::AccountId >>::Balance;
-	pub(crate) type CurrencyIdOf<T> =
-		<<T as Config>::MultiCurrency as MultiCurrency<<T as frame_system::Config>::AccountId >>::CurrencyId;
-	pub(crate) type AmountOf<T> =
-		<<T as Config>::MultiCurrency as MultiCurrencyExtended<<T as frame_system::Config>::AccountId >>::Amount;
+	pub(crate) type BalanceOf<T> = <<T as Config>::MultiCurrency as MultiCurrency<
+		<T as frame_system::Config>::AccountId,
+	>>::Balance;
+	pub(crate) type CurrencyIdOf<T> = <<T as Config>::MultiCurrency as MultiCurrency<
+		<T as frame_system::Config>::AccountId,
+	>>::CurrencyId;
+	pub(crate) type AmountOf<T> = <<T as Config>::MultiCurrency as MultiCurrencyExtended<
+		<T as frame_system::Config>::AccountId,
+	>>::Amount;
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
@@ -263,7 +266,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() || from == to {
-			return Ok(())
+			return Ok(());
 		}
 		if currency_id == T::GetNativeCurrencyId::get() {
 			T::NativeCurrency::transfer(from, to, amount)?;
@@ -280,7 +283,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 		if currency_id == T::GetNativeCurrencyId::get() {
 			T::NativeCurrency::deposit(who, amount)?;
@@ -297,7 +300,7 @@ impl<T: Config> MultiCurrency<T::AccountId> for Pallet<T> {
 		amount: Self::Balance,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 		if currency_id == T::GetNativeCurrencyId::get() {
 			T::NativeCurrency::withdraw(who, amount)?;

@@ -1,12 +1,12 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use codec::{Decode, Encode};
+pub use scale_info::TypeInfo;
 use sp_runtime::RuntimeDebug;
 use sp_std::{
 	cmp::{Eq, PartialEq},
 	prelude::Vec,
 };
-pub use scale_info::TypeInfo;
 
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};

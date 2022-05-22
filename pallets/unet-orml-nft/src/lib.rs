@@ -22,7 +22,6 @@
 #![allow(clippy::unused_unit)]
 
 use frame_support::{ensure, pallet_prelude::*, Parameter};
-pub use unet_orml_traits::nft::{AccountToken, ClassInfo, TokenInfo};
 use sp_runtime::{
 	traits::{
 		AtLeast32BitUnsigned, CheckedAdd, CheckedSub, MaybeSerializeDeserialize, Member, One, Zero,
@@ -30,6 +29,7 @@ use sp_runtime::{
 	DispatchError, DispatchResult,
 };
 use sp_std::vec::Vec;
+pub use unet_orml_traits::nft::{AccountToken, ClassInfo, TokenInfo};
 
 pub use pallet::*;
 
@@ -181,7 +181,7 @@ pub mod pallet {
 			})
 		}
 	}
-	
+
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
 	#[pallet::without_storage_info]
@@ -222,7 +222,7 @@ impl<T: Config> Pallet<T> {
 	) -> Result<bool, DispatchError> {
 		if from == to || quantity.is_zero() {
 			// no change needed
-			return Ok(false)
+			return Ok(false);
 		}
 		TokensByOwner::<T>::try_mutate_exists(
 			from,
@@ -299,7 +299,7 @@ impl<T: Config> Pallet<T> {
 	) -> Result<Option<TokenInfoOf<T>>, DispatchError> {
 		if quantity.is_zero() {
 			// no change needed
-			return Ok(None)
+			return Ok(None);
 		}
 		TokensByOwner::<T>::try_mutate_exists(
 			owner,

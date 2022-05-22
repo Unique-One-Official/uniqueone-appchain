@@ -6,8 +6,7 @@ use frame_support::{
 	transactional,
 };
 use frame_system::pallet_prelude::*;
-pub use unet_traits::*;
-use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
+pub use scale_info::TypeInfo;
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};
 use sp_runtime::{
@@ -15,7 +14,8 @@ use sp_runtime::{
 	PerU16, RuntimeDebug, SaturatedConversion,
 };
 use sp_std::vec::Vec;
-pub use scale_info::TypeInfo;
+use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
+pub use unet_traits::*;
 
 pub use pallet::*;
 

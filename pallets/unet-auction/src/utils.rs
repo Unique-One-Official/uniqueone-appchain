@@ -86,9 +86,9 @@ pub fn calc_current_price<T: Config>(
 	current_block: BlockNumberOf<T>,
 ) -> Balance {
 	if current_block <= created_block {
-		return max_price
+		return max_price;
 	} else if current_block > deadline {
-		return min_price
+		return min_price;
 	}
 
 	let created_block: BlockNumber = created_block.saturated_into();
@@ -140,9 +140,7 @@ pub mod test_helper {
 	#[macro_export]
 	macro_rules! balances {
 		($amount: expr) => {
-			unet_traits::constants_types::ACCURACY
-				.saturating_mul($amount)
-				.saturated_into()
+			unet_traits::constants_types::ACCURACY.saturating_mul($amount).saturated_into()
 		};
 	}
 

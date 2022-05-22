@@ -1,6 +1,6 @@
 use impl_trait_for_tuples::impl_for_tuples;
-use unet_orml_utilities::with_transaction_result;
 use sp_runtime::DispatchResult;
+use unet_orml_utilities::with_transaction_result;
 
 pub trait MergeAccount<AccountId> {
 	fn merge_account(source: &AccountId, dest: &AccountId) -> DispatchResult;

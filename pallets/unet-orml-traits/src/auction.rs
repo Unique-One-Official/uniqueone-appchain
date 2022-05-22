@@ -1,5 +1,6 @@
 use crate::Change;
 use codec::{Decode, Encode, FullCodec};
+pub use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{AtLeast32Bit, Bounded, MaybeSerializeDeserialize},
 	DispatchError, DispatchResult, RuntimeDebug,
@@ -9,7 +10,6 @@ use sp_std::{
 	fmt::Debug,
 	result,
 };
-pub use scale_info::TypeInfo;
 
 /// Auction info.
 #[cfg_attr(feature = "std", derive(PartialEq, Eq))]
@@ -36,7 +36,13 @@ pub trait Auction<AccountId, BlockNumber> {
 		+ TypeInfo
 		+ Debug;
 	/// The price to bid.
-	type Balance: AtLeast32Bit + FullCodec + Copy + MaybeSerializeDeserialize + Debug + Default + TypeInfo;
+	type Balance: AtLeast32Bit
+		+ FullCodec
+		+ Copy
+		+ MaybeSerializeDeserialize
+		+ Debug
+		+ Default
+		+ TypeInfo;
 
 	/// The auction info of `id`
 	fn auction_info(

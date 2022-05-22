@@ -60,8 +60,7 @@ pub fn frontier_database_dir(config: &Configuration) -> std::path::PathBuf {
 		.as_ref()
 		.map(|base_path| base_path.config_dir(config.chain_spec.id()))
 		.unwrap_or_else(|| {
-			BasePath::from_project("", "", "uniqueone")
-				.config_dir(config.chain_spec.id())
+			BasePath::from_project("", "", "uniqueone").config_dir(config.chain_spec.id())
 		});
 	config_dir.join("frontier").join("db")
 }

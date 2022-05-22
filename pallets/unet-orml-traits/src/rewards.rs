@@ -1,7 +1,7 @@
 use codec::FullCodec;
+pub use scale_info::TypeInfo;
 use sp_runtime::traits::{AtLeast32BitUnsigned, MaybeSerializeDeserialize};
 use sp_std::{fmt::Debug, vec::Vec};
-pub use scale_info::TypeInfo;
 
 /// Hooks to manage reward pool
 pub trait RewardHandler<AccountId, BlockNumber> {
@@ -9,13 +9,24 @@ pub trait RewardHandler<AccountId, BlockNumber> {
 	type Share: AtLeast32BitUnsigned + Default + Copy + MaybeSerializeDeserialize + Debug + TypeInfo;
 
 	/// The reward balance type
-	type Balance: AtLeast32BitUnsigned + Default + Copy + MaybeSerializeDeserialize + Debug + TypeInfo;
+	type Balance: AtLeast32BitUnsigned
+		+ Default
+		+ Copy
+		+ MaybeSerializeDeserialize
+		+ Debug
+		+ TypeInfo;
 
 	/// The reward pool ID type
 	type PoolId: Copy + FullCodec;
 
 	/// The currency type
-	type CurrencyId: FullCodec + Eq + PartialEq + Copy + MaybeSerializeDeserialize + Debug + TypeInfo;
+	type CurrencyId: FullCodec
+		+ Eq
+		+ PartialEq
+		+ Copy
+		+ MaybeSerializeDeserialize
+		+ Debug
+		+ TypeInfo;
 
 	/// Accumulate rewards
 	fn accumulate_reward(

@@ -1,10 +1,10 @@
 use codec::{Decode, Encode, FullCodec};
+pub use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{AtLeast32BitUnsigned, MaybeSerializeDeserialize, Zero},
 	DispatchResult, RuntimeDebug,
 };
 use sp_std::{fmt::Debug, vec::Vec};
-pub use scale_info::TypeInfo;
 
 /// Abstraction over a non-fungible token system.
 #[allow(clippy::upper_case_acronyms)]
