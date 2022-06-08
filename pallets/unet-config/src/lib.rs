@@ -253,6 +253,30 @@ pub mod pallet {
 			IsWhiteListActivated::<T>::put(!IsWhiteListActivated::<T>::get());
 			Ok((None, Pays::No).into())
 		}
+
+		/// Set royalties rate
+		#[pallet::weight((100_000, DispatchClass::Operational))]
+		#[transactional]
+		pub fn set_royalties_rate(
+			origin: OriginFor<T>,
+			royalties_rate: PerU16,
+		) -> DispatchResultWithPostInfo {
+		  	ensure_root(origin)?;
+			RoyaltiesRate::<T>::put(royalties_rate);
+			Ok((None, Pays::No).into())
+		}
+
+		/// Set platform fee rate
+		#[pallet::weight((100_000, DispatchClass::Operational))]
+		#[transactional]
+		pub fn set_platform_fee_rate(
+			origin: OriginFor<T>,
+			platform_fee_rate: PerU16,
+		) -> DispatchResultWithPostInfo {
+		  	ensure_root(origin)?;
+			PlatformFeeRate::<T>::put(platform_fee_rate);
+			Ok((None, Pays::No).into())
+		}
 	}
 }
 
