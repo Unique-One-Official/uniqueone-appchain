@@ -135,7 +135,7 @@ pub type Executive = frame_executive::Executive<
 	Block,
 	frame_system::ChainContext<Runtime>,
 	Runtime,
-	AllPallets,
+	AllPalletsWithSystem,
 >;
 /// Council instance type.
 pub type CouncilInstance = pallet_collective::Instance1;
