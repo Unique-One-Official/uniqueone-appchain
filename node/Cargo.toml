@@ -89,25 +89,6 @@ pallet-contracts-rpc = { git = 'https://github.com/paritytech/substrate.git', br
 pallet-octopus-appchain = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.18' }
 pallet-octopus-lpos = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.18' }
 
-# Frontier Dependencies
-## Frontier Primitive Dependencies
-fp-consensus = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-fp-rpc = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-fp-storage = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-
-## Frontier Client Dependencies
-fc-db = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-fc-mapping-sync = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-fc-consensus = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-fc-rpc = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-fc-rpc-core = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-
-## Frontier Pallet Dependencies
-pallet-dynamic-fee = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-pallet-base-fee = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-pallet-ethereum = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-pallet-evm = { git = "https://github.com/PureStake/frontier.git", branch = "moonbeam-polkadot-v0.9.18" }
-
 # Local Dependencies
 ## Unet Pallet Dependencies
 unet-traits = {  path = '../pallets/unet-traits' }

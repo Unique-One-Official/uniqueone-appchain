@@ -2,9 +2,6 @@
 
 Unique One Network Appchain runtime uses the following pallets to provide the necessary NFT related functions
 
-## Pallet Ethereum & EVM
-These modules enable the appchain with Ethereum Solidity smart contracts capability.
-
 ## Pallet Contract
 This module provides functionality for the runtime to deploy and execute WebAssembly smart-contracts.
 

@@ -1,6 +1,5 @@
 use hex_literal::hex;
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeMap, str::FromStr};
 
 use sc_chain_spec::ChainSpecExtension;
 use sc_service::{ChainType, Properties};
@@ -9,7 +8,7 @@ use beefy_primitives::crypto::AuthorityId as BeefyId;
 use sp_consensus_babe::AuthorityId as BabeId;
 use sp_core::{
 	crypto::{Ss58Codec, UncheckedInto},
-	sr25519, Pair, Public, H160, U256,
+	sr25519, Pair, Public,
 };
 use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::{
@@ -24,9 +23,8 @@ use uniqueone_appchain_runtime::{
 	currency::{OCTS, UNITS as UNET},
 	opaque::{Block, SessionKeys},
 	AccountId, BabeConfig, Balance, BalancesConfig, CouncilCollectiveConfig, DemocracyConfig,
-	EVMConfig, EthereumChainIdConfig, EthereumConfig, GenesisConfig, OctopusAppchainConfig,
-	OctopusLposConfig, SessionConfig, Signature, SudoConfig, SystemConfig,
-	TechComitteeCollectiveConfig, TokensConfig, UnetConfConfig, UnetNftConfig,
+	GenesisConfig, OctopusAppchainConfig, OctopusLposConfig, SessionConfig, Signature, SudoConfig,
+	SystemConfig, TechComitteeCollectiveConfig, TokensConfig, UnetConfConfig, UnetNftConfig,
 	BABE_GENESIS_EPOCH_CONFIG, WASM_BINARY,
 };
 
@@ -225,7 +223,6 @@ pub fn staging_testnet_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-				388,
 			)
 		},
 		// Bootnodes
@@ -300,7 +297,6 @@ pub fn development_testnet_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-				387,
 			)
 		},
 		// Bootnodes
@@ -375,7 +371,6 @@ pub fn local_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-				386,
 			)
 		},
 		// Bootnodes
@@ -448,7 +443,6 @@ pub fn development_config() -> Result<ChainSpec, String> {
 					// Era Payout
 					68_493 * UNET,
 				),
-				385,
 			)
 		},
 		// Bootnodes
@@ -483,7 +477,6 @@ fn genesis(
 	tech_comittee_members: Vec<AccountId>,
 	endowed_accounts: Vec<(AccountId, Balance)>,
 	appchain_config: (String, String, Balance, Balance),
-	chain_id: u64,
 ) -> GenesisConfig {
 	GenesisConfig {
 		system: SystemConfig {
@@ -535,25 +528,6 @@ fn genesis(
 			members: tech_comittee_members,
 		},
 		democracy: DemocracyConfig::default(),
-		ethereum_chain_id: EthereumChainIdConfig { chain_id },
-		base_fee: Default::default(),
-		dynamic_fee: Default::default(),
-		evm: EVMConfig {
-			accounts: {
-				let mut map = BTreeMap::new();
-				map.insert(
-					H160::from_str("6be02d1d3665660d22ff9624b7be0551ee1ac91b").expect("internal H160 is valid; qed"),
-					pallet_evm::GenesisAccount {
-						balance: U256::from(5_000 * UNET),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map
-			},
-		},
-		ethereum: EthereumConfig {},
 		sudo: SudoConfig { key: Some(root_key) },
 		// TODO: make this dynamic, put on params
 		tokens: TokensConfig {
