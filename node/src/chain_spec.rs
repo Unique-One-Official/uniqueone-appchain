@@ -17,7 +17,7 @@ use sp_runtime::{
 };
 
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
-use pallet_octopus_appchain::AuthorityId as OctopusId;
+use pallet_octopus_appchain::sr25519::AuthorityId as OctopusId;
 
 use uniqueone_appchain_runtime::{
 	currency::{OCTS, UNITS as UNET},
@@ -494,7 +494,7 @@ fn genesis(
 		beefy: Default::default(),
 		octopus_appchain: OctopusAppchainConfig {
 			anchor_contract: appchain_config.0,
-			asset_id_by_name: vec![(appchain_config.1, 0)],
+			asset_id_by_token_id: vec![(appchain_config.1, 0)],
 			premined_amount: appchain_config.2,
 			validators: initial_authorities.iter().map(|x| (x.0.clone(), x.6)).collect(),
 		},
