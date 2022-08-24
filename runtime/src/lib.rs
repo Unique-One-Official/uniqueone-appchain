@@ -71,7 +71,6 @@ use pallet_grandpa::{
 };
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use pallet_mmr_primitives as mmr;
-use pallet_octopus_appchain::AuthorityId as OctopusId;
 use pallet_session::historical as pallet_session_historical;
 use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
 
@@ -243,7 +242,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 114,
+	spec_version: 115,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -494,7 +493,7 @@ where
 }
 
 impl offchain::AppCrypto<<Signature as Verify>::Signer, Signature> for OctopusAppCrypto {
-	type RuntimeAppPublic = OctopusId;
+	type RuntimeAppPublic = pallet_octopus_appchain::sr25519::AuthorityId;
 	type GenericSignature = sr25519::Signature;
 	type GenericPublic = sr25519::Public;
 }
@@ -513,8 +512,12 @@ impl pallet_babe::Config for Runtime {
 	type EpochChangeTrigger = ExternalTrigger;
 	type EpochDuration = EpochDuration;
 	type ExpectedBlockTime = ExpectedBlockTime;
-	type HandleEquivocation =
-		pallet_babe::EquivocationHandler<Self::KeyOwnerIdentification, (), ReportLongevity>;
+	type HandleEquivocation = pallet_babe::EquivocationHandler<
+		Self::KeyOwnerIdentification,
+		pallet_octopus_lpos::FilterHistoricalOffences<OctopusLpos, Offences>,
+		ReportLongevity,
+	>;
+
 	type KeyOwnerIdentification = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
 		KeyTypeId,
 		BabeId,
@@ -590,8 +593,11 @@ impl pallet_assets::Config<OctopusAssetsInstance> for Runtime {
 impl pallet_grandpa::Config for Runtime {
 	type Call = Call;
 	type Event = Event;
-	type HandleEquivocation =
-		pallet_grandpa::EquivocationHandler<Self::KeyOwnerIdentification, (), ReportLongevity>;
+	type HandleEquivocation = pallet_grandpa::EquivocationHandler<
+		Self::KeyOwnerIdentification,
+		pallet_octopus_lpos::FilterHistoricalOffences<OctopusLpos, Offences>,
+		ReportLongevity,
+	>;
 	type KeyOwnerIdentification = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
 		KeyTypeId,
 		GrandpaId,
@@ -618,10 +624,17 @@ impl pallet_im_online::Config for Runtime {
 	type MaxPeerDataEncodingSize = MaxPeerDataEncodingSize;
 	type MaxPeerInHeartbeats = MaxPeerInHeartbeats;
 	type NextSessionRotation = Babe;
-	type ReportUnresponsiveness = ();
+	type ReportUnresponsiveness =
+		pallet_octopus_lpos::FilterHistoricalOffences<OctopusLpos, Offences>;
 	type UnsignedPriority = ImOnlineUnsignedPriority;
 	type ValidatorSet = Historical;
-	type WeightInfo = ();
+	type WeightInfo = pallet_im_online::weights::SubstrateWeight<Runtime>;
+}
+
+impl pallet_offences::Config for Runtime {
+	type Event = Event;
+	type IdentificationTuple = pallet_session::historical::IdentificationTuple<Self>;
+	type OnOffenceHandler = ();
 }
 
 impl pallet_beefy::Config for Runtime {
@@ -668,11 +681,12 @@ parameter_types! {
 }
 
 impl pallet_octopus_appchain::Config for Runtime {
+	type AppCrypto = OctopusAppCrypto;
 	type Assets = OctopusAssets;
 	type AssetBalance = AssetBalance;
 	type AssetId = AssetId;
-	type AssetIdByName = OctopusAppchain;
-	type AuthorityId = OctopusAppCrypto;
+	type AssetIdByTokenId = OctopusAppchain;
+	type AuthorityId = pallet_octopus_appchain::sr25519::AuthorityId;
 	type Call = Call;
 	type ClassId = ClassId;
 	type Convertor = ();
@@ -686,7 +700,7 @@ impl pallet_octopus_appchain::Config for Runtime {
 	type Uniques = Uniques;
 	type UnsignedPriority = UnsignedPriority;
 	type UpwardMessagesInterface = OctopusUpwardMessages;
-	type WeightInfo = ();
+	type WeightInfo = pallet_octopus_appchain::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -708,7 +722,7 @@ impl pallet_octopus_lpos::Config for Runtime {
 	type UnixTime = Timestamp;
 	type UpwardMessagesInterface = OctopusUpwardMessages;
 	type ValidatorsProvider = OctopusAppchain;
-	type WeightInfo = ();
+	type WeightInfo = pallet_octopus_lpos::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -719,7 +733,7 @@ impl pallet_octopus_upward_messages::Config for Runtime {
 	type Call = Call;
 	type Event = Event;
 	type UpwardMessagesLimit = UpwardMessagesLimit;
-	type WeightInfo = ();
+	type WeightInfo = pallet_octopus_upward_messages::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -1364,6 +1378,7 @@ construct_runtime!(
 		Proxy: pallet_proxy::{Call, Event<T>, Pallet, Storage},
 		Contracts: pallet_contracts::{Call, Event<T>, Pallet, Storage},
 		Uniques: pallet_uniques::{Call, Event<T>, Pallet, Storage},
+		Offences: pallet_offences::{Event, Pallet, Storage},
 		Currencies: unet_orml_currencies::{Call, Event<T>, Pallet},
 		Tokens: unet_orml_tokens::{Config<T>, Event<T>, Pallet, Storage},
 		OrmlNFT: unet_orml_nft::{Config<T>, Pallet, Storage},
