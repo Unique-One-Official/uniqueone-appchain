@@ -29,6 +29,31 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="stable-polkadot-v0.9.18" />
+                    <option name="lastUsedInstant" value="1661523846" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="polkadot-v0.9.18-2" />
+                    <option name="lastUsedInstant" value="1661523845" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.cargo/git/checkouts/substrate-7e08433d4c370a21/afb74de/frame/uniques/src/functions.rs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -47,12 +72,19 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "Git.Branch.Popup.ShowAllRemotes": "true",
     "last_opened_file_path": "/Users/duonghb53/UniqueOneNetwork/uniqueone-appchain",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
     "org.rust.disableDetachedFileInspection/Users/duonghb53/UniqueOneNetwork/uniqueone-appchain/node/src/chain_spec.rs": "true",
     "settings.editor.selected.configurable": "language.rust.rustfmt"
 =======
+=======
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+>>>>>>> 1ec6105 (change node version)
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
@@ -79,8 +111,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1648274239124</updated>
+      <workItem from="1661523923892" duration="982000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
