@@ -8333,6 +8333,7 @@ dependencies = [
 name = "unet-config"
 version = "1.0.0"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "pallet-balances",
@@ -8353,6 +8354,7 @@ dependencies = [
 name = "unet-nft"
 version = "1.0.0"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "pallet-balances",
@@ -8375,6 +8377,7 @@ dependencies = [
 name = "unet-order"
 version = "1.0.0"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "pallet-balances",

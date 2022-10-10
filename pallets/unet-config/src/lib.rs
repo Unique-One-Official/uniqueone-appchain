@@ -14,6 +14,10 @@ use unet_traits::{
 	time, CategoryData, NFTMetadata, UnetConfig,
 };
 
+mod benchmarking;
+mod weights;
+use crate::weights::WeightInfo;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
@@ -21,6 +25,8 @@ pub mod pallet {
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		/// Weight information for extrinsics in this pallet.
+		type WeightInfo: weights::WeightInfo;
 	}
 
 	#[pallet::error]
@@ -175,7 +181,7 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		/// add an account into whitelist
-		#[pallet::weight((100_000, DispatchClass::Operational))]
+		#[pallet::weight(T::WeightInfo::add_whitelist())]
 		#[transactional]
 		pub fn add_whitelist(
 			origin: OriginFor<T>,
@@ -187,7 +193,7 @@ pub mod pallet {
 		}
 
 		/// remove an account from whitelist
-		#[pallet::weight((100_000, DispatchClass::Operational))]
+		#[pallet::weight(T::WeightInfo::remove_whitelist())]
 		#[transactional]
 		pub fn remove_whitelist(
 			origin: OriginFor<T>,
@@ -203,7 +209,7 @@ pub mod pallet {
 		/// A Selling NFT should belong to a category.
 		///
 		/// - `metadata`: metadata
-		#[pallet::weight((100_000, DispatchClass::Operational, Pays::Yes))]
+		#[pallet::weight(T::WeightInfo::create_category())]
 		#[transactional]
 		pub fn create_category(
 			origin: OriginFor<T>,
@@ -218,7 +224,7 @@ pub mod pallet {
 		///
 		/// - `category_id`: category ID
 		/// - `metadata`: metadata
-		#[pallet::weight((100_000, DispatchClass::Operational, Pays::Yes))]
+		#[pallet::weight(T::WeightInfo::update_category())]
 		#[transactional]
 		pub fn update_category(
 			origin: OriginFor<T>,
@@ -234,7 +240,7 @@ pub mod pallet {
 			Ok((None, Pays::No).into())
 		}
 
-		#[pallet::weight((100_000, DispatchClass::Operational, Pays::Yes))]
+		#[pallet::weight(T::WeightInfo::update_auction_close_delay())]
 		#[transactional]
 		pub fn update_auction_close_delay(
 			origin: OriginFor<T>,
@@ -246,7 +252,7 @@ pub mod pallet {
 		}
 
 		/// En/disable feature whitelist check
-		#[pallet::weight((100_000, DispatchClass::Operational))]
+		#[pallet::weight(T::WeightInfo::en_disable_whitelist())]
 		#[transactional]
 		pub fn en_disable_whitelist(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
