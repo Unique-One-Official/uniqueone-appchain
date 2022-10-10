@@ -25,6 +25,7 @@ pallet-proxy = { default-features = false, git = 'https://github.com/paritytech/
 pallet-timestamp = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
 unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
 unet-traits = { default-features = false, path = "../unet-traits" }
+frame-benchmarking = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18', optional = true }
 
 [dev-dependencies]
 sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
@@ -49,3 +50,4 @@ std = [
     "unet-orml-traits/std",
 	"unet-traits/std",
 ]
+runtime-benchmarks = ["frame-benchmarking"]

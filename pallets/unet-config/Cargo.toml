@@ -24,6 +24,7 @@ frame-system = { default-features = false, git = 'https://github.com/paritytech/
 pallet-proxy = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
 pallet-timestamp = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
 unet-traits = { default-features = false, path = "../unet-traits" }
+frame-benchmarking = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18', optional = true }
 
 [dev-dependencies]
 sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
@@ -44,3 +45,4 @@ std = [
     "pallet-timestamp/std",
     "unet-traits/std",
 ]
+runtime-benchmarks = ["frame-benchmarking"]

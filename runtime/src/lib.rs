@@ -136,6 +136,20 @@ pub struct BaseFeeThreshold;
 pub struct RuntimeGasWeightMapping;
 pub struct EthereumTransactionConverter;
 
+#[cfg(feature = "runtime-benchmarks")]
+#[macro_use]
+extern crate frame_benchmarking;
+
+#[cfg(feature = "runtime-benchmarks")]
+mod benches {
+	define_benchmarks!(
+		[unet_auction, UnetAuction]
+		// [unet_nft, UnetNft]
+		[unet_config, UnetConf]
+		[unet_order, UnetOrder]
+	);
+}
+
 /// The type used to represent the kinds of proxying allowed.
 #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
 #[derive(
@@ -1127,6 +1141,7 @@ impl unet_orml_nft::Config for Runtime {
 
 impl unet_config::Config for Runtime {
 	type Event = Event;
+	type WeightInfo = ();
 }
 
 parameter_types! {
@@ -1145,6 +1160,7 @@ impl unet_nft::Config for Runtime {
 	type ModuleId = NftModuleId;
 	type Currency = Balances;
 	type MultiCurrency = Currencies;
+	type WeightInfo = ();
 }
 
 impl unet_order::Config for Runtime {
@@ -1156,6 +1172,7 @@ impl unet_order::Config for Runtime {
 	type NFT = UnetNft;
 	type ExtraConfig = UnetConf;
 	type TreasuryPalletId = TreasuryId;
+	type WeightInfo = ();
 }
 
 impl unet_auction::Config for Runtime {
@@ -1512,13 +1529,16 @@ impl_runtime_apis! {
 			use frame_benchmarking::baseline::Pallet as BaselineBench;
 			use frame_support::traits::StorageInfoTrait;
 			use frame_system_benchmarking::Pallet as SystemBench;
+			use unet_auction::Pallet as UnetAuctionBench;
 
 			let mut list = Vec::<BenchmarkList>::new();
 
-			list_benchmark!(list, extra, frame_benchmarking, BaselineBench::<Runtime>);
-			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
-			list_benchmark!(list, extra, pallet_balances, Balances);
-			list_benchmark!(list, extra, pallet_timestamp, Timestamp);
+			// list_benchmark!(list, extra, frame_benchmarking, BaselineBench::<Runtime>);
+			// list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
+			// list_benchmark!(list, extra, pallet_balances, Balances);
+			// list_benchmark!(list, extra, pallet_timestamp, Timestamp);
+			// list_benchmark!(list, extra, unet_auction, UnetAuction);
+			list_benchmarks!(list, extra);
 
 			let storage_info = AllPalletsWithSystem::storage_info();
 
@@ -1531,6 +1551,7 @@ impl_runtime_apis! {
 			use frame_benchmarking::{add_benchmark, Benchmarking, BenchmarkBatch, TrackedStorageKey};
 			impl frame_benchmarking::baseline::Config for Runtime {}
 			use frame_system_benchmarking::Pallet as SystemBench;
+			use frame_benchmarking::baseline::Pallet as BaselineBench;
 			impl frame_system_benchmarking::Config for Runtime {}
 
 			let whitelist: Vec<TrackedStorageKey> = vec![
@@ -1549,10 +1570,13 @@ impl_runtime_apis! {
 			let mut batches = Vec::<BenchmarkBatch>::new();
 			let params = (&config, &whitelist);
 
-			add_benchmark!(params, batches, frame_benchmarking, BaselineBench::<Runtime>);
-			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
-			add_benchmark!(params, batches, pallet_balances, Balances);
-			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
+			// add_benchmark!(params, batches, frame_benchmarking, BaselineBench::<Runtime>);
+			// add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
+			// add_benchmark!(params, batches, pallet_balances, Balances);
+			// add_benchmark!(params, batches, pallet_timestamp, Timestamp);
+			// add_benchmark!(params, batches, unet_auction, UnetAuction);
+
+			add_benchmarks!(params, batches);
 
 			Ok(batches)
 		}
