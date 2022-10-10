@@ -245,4 +245,13 @@ runtime-benchmarks = [
     'pallet-society/runtime-benchmarks',
     'pallet-utility/runtime-benchmarks',
     'pallet-identity/runtime-benchmarks',
+
+    # EVM Pallet
+    'pallet-ethereum/runtime-benchmarks',
+
+    # Custom Pallets
+    'unet-auction/runtime-benchmarks',
+	'unet-nft/runtime-benchmarks',
+	'unet-config/runtime-benchmarks',
+	'unet-order/runtime-benchmarks',
 ]

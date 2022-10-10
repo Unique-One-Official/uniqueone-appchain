@@ -19,6 +19,13 @@ pub use unet_traits::*;
 
 pub use pallet::*;
 
+pub mod utils;
+pub use utils::*;
+
+mod benchmarking;
+mod weights;
+use crate::weights::WeightInfo;
+
 #[derive(Encode, Decode, Clone, RuntimeDebug, PartialEq, Eq, TypeInfo)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct Order<CurrencyId, BlockNumber, ClassId, TokenId> {
@@ -123,6 +130,9 @@ pub mod pallet {
 		/// The treasury's pallet id, used for deriving its sovereign account ID.
 		#[pallet::constant]
 		type TreasuryPalletId: Get<frame_support::PalletId>;
+
+		/// Weight information for extrinsics in this pallet.
+		type WeightInfo: weights::WeightInfo;
 	}
 
 	#[pallet::error]
@@ -237,7 +247,7 @@ pub mod pallet {
 		/// - `price`: nfts' price.
 		/// - `deadline`: deadline
 		/// - `items`: a list of `(class_id, token_id, quantity, price)`
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::submit_order(items.len() as u32))]
 		#[transactional]
 		pub fn submit_order(
 			origin: OriginFor<T>,
@@ -287,7 +297,7 @@ pub mod pallet {
 		///
 		/// - `order_id`: order id
 		/// - `order_owner`: token owner
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::take_order())]
 		#[transactional]
 		pub fn take_order(
 			origin: OriginFor<T>,
@@ -342,7 +352,7 @@ pub mod pallet {
 		/// remove an order by order owner.
 		///
 		/// - `order_id`: order id
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::remove_order())]
 		#[transactional]
 		pub fn remove_order(
 			origin: OriginFor<T>,
@@ -357,7 +367,7 @@ pub mod pallet {
 		/// remove an offer by offer owner.
 		///
 		/// - `offer_id`: offer id
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::remove_offer())]
 		#[transactional]
 		pub fn remove_offer(
 			origin: OriginFor<T>,
@@ -369,7 +379,7 @@ pub mod pallet {
 			Ok(().into())
 		}
 
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::submit_offer(items.len() as u32))]
 		#[transactional]
 		pub fn submit_offer(
 			origin: OriginFor<T>,
@@ -414,7 +424,7 @@ pub mod pallet {
 		///
 		/// - `offer_id`: offer id
 		/// - `offer_owner`: token owner
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::take_offer())]
 		#[transactional]
 		pub fn take_offer(
 			origin: OriginFor<T>,

@@ -31,6 +31,11 @@ pub type CurrencyIdOf<T> = <<T as pallet::Config>::MultiCurrency as MultiCurrenc
 >>::CurrencyId;
 pub type BlockNumberOf<T> = <T as frame_system::Config>::BlockNumber;
 
+// mod benchmarking;
+// mod utils;
+mod default_weight;
+use crate::default_weight::WeightInfo;
+
 #[derive(Encode, Decode, Clone, Copy, PartialEq, Eq, RuntimeDebug, TypeInfo)]
 enum Releases {
 	V1_0_0,
@@ -183,6 +188,8 @@ pub mod pallet {
 
 		/// The currency mechanism.
 		type Currency: ReservableCurrency<Self::AccountId>;
+		/// Weight information for extrinsics in this pallet.
+		type WeightInfo: WeightInfo;
 	}
 
 	#[pallet::error]

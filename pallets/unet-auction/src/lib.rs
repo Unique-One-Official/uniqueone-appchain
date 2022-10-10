@@ -19,15 +19,12 @@ use unet_traits::{
 	*,
 };
 
-//mod benchmarking;
-//mod british_tests;
-//mod dutch_tests;
-//mod mock;
+mod benchmarking;
 
 pub mod weights;
 use crate::weights::WeightInfo;
 
-mod utils;
+pub mod utils;
 pub use utils::*;
 
 mod types;
@@ -292,7 +289,7 @@ pub mod pallet {
 			Ok(().into())
 		}
 
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::bid_dutch_auction())]
 		#[transactional]
 		pub fn bid_dutch_auction(
 			origin: OriginFor<T>,
@@ -402,7 +399,7 @@ pub mod pallet {
 		}
 
 		/// redeem
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::redeem_dutch_auction())]
 		#[transactional]
 		pub fn redeem_dutch_auction(
 			origin: OriginFor<T>,
@@ -446,7 +443,7 @@ pub mod pallet {
 		}
 
 		/// remove a dutch auction by auction owner.
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::remove_dutch_auction())]
 		#[transactional]
 		pub fn remove_dutch_auction(
 			origin: OriginFor<T>,
@@ -469,7 +466,7 @@ pub mod pallet {
 		/// - `deadline`: A block number which represents the end of the auction activity.
 		/// - `allow_delay`: If ture, in some cases the deadline will be extended.
 		/// - `items`: Nft list.
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::submit_british_auction(items.len() as u32))]
 		#[transactional]
 		#[allow(clippy::too_many_arguments)]
 		pub fn submit_british_auction(
@@ -545,7 +542,7 @@ pub mod pallet {
 		}
 
 		/// Bid
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::bid_british_auction())]
 		#[transactional]
 		pub fn bid_british_auction(
 			origin: OriginFor<T>,
@@ -625,7 +622,7 @@ pub mod pallet {
 		}
 
 		/// redeem
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::redeem_british_auction())]
 		#[transactional]
 		pub fn redeem_british_auction(
 			origin: OriginFor<T>,
@@ -672,7 +669,7 @@ pub mod pallet {
 		}
 
 		/// remove an auction by auction owner.
-		#[pallet::weight(100_000)]
+		#[pallet::weight(T::WeightInfo::remove_british_auction())]
 		#[transactional]
 		pub fn remove_british_auction(
 			origin: OriginFor<T>,
