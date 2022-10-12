@@ -10,10 +10,12 @@ use frame_system::pallet_prelude::*;
 pub use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{
-		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One, StaticLookup, Zero,
+		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One,
+		StaticLookup, Zero,
 	},
 	PerU16, RuntimeDebug, SaturatedConversion,
 };
+
 use sp_std::vec::Vec;
 use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
 
@@ -31,10 +33,11 @@ pub type CurrencyIdOf<T> = <<T as pallet::Config>::MultiCurrency as MultiCurrenc
 >>::CurrencyId;
 pub type BlockNumberOf<T> = <T as frame_system::Config>::BlockNumber;
 
-// mod benchmarking;
-// mod utils;
-mod default_weight;
-use crate::default_weight::WeightInfo;
+mod benchmarking;
+pub mod utils;
+pub use utils::*;
+mod weights;
+use crate::weights::WeightInfo;
 
 #[derive(Encode, Decode, Clone, Copy, PartialEq, Eq, RuntimeDebug, TypeInfo)]
 enum Releases {
@@ -188,8 +191,9 @@ pub mod pallet {
 
 		/// The currency mechanism.
 		type Currency: ReservableCurrency<Self::AccountId>;
+
 		/// Weight information for extrinsics in this pallet.
-		type WeightInfo: WeightInfo;
+		type WeightInfo: weights::WeightInfo;
 	}
 
 	#[pallet::error]
@@ -398,7 +402,7 @@ pub mod pallet {
 		/// - `properties`: class property, include `Transferable` `Burnable`
 		/// - `name`: class name, with len limitation.
 		/// - `description`: class description, with len limitation.
-		#[pallet::weight(100_000)]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::create_class())]
 		#[transactional]
 		pub fn create_class(
 			origin: OriginFor<T>,
@@ -423,7 +427,7 @@ pub mod pallet {
 		}
 
 		/// Update token royalty.
-		#[pallet::weight(100_000)]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::update_token_royalty())]
 		#[transactional]
 		pub fn update_token_royalty(
 			origin: OriginFor<T>,
@@ -459,7 +463,7 @@ pub mod pallet {
 		}
 
 		/// Update token royalty beneficiary.
-		#[pallet::weight(100_000)]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::update_token_royalty_beneficiary())]
 		#[transactional]
 		pub fn update_token_royalty_beneficiary(
 			origin: OriginFor<T>,
@@ -517,7 +521,7 @@ pub mod pallet {
 		/// Mint NFT token by a proxy account.
 		///
 		/// - `origin`: a proxy account
-		#[pallet::weight(100_000)]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::proxy_mint())]
 		#[transactional]
 		pub fn proxy_mint(
 			origin: OriginFor<T>,
@@ -540,7 +544,7 @@ pub mod pallet {
 		/// - `class_id`: class id
 		/// - `token_id`: token id
 		/// - `quantity`: quantity
-		#[pallet::weight(100_000)]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::transfer(items.len() as u32))]
 		#[transactional]
 		pub fn transfer(
 			origin: OriginFor<T>,
@@ -562,7 +566,7 @@ pub mod pallet {
 		/// - `class_id`: class id
 		/// - `token_id`: token id
 		/// - `quantity`: quantity
-		#[pallet::weight(100_000)]
+		#[pallet::weight(<T as pallet::Config>::WeightInfo::burn())]
 		#[transactional]
 		pub fn burn(
 			origin: OriginFor<T>,

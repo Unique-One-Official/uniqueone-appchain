@@ -165,7 +165,7 @@ extern crate frame_benchmarking;
 mod benches {
 	define_benchmarks!(
 		[unet_auction, UnetAuction]
-		// [unet_nft, UnetNft]
+		[unet_nft, UnetNft]
 		[unet_config, UnetConf]
 		[unet_order, UnetOrder]
 	);
