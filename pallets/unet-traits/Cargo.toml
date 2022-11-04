@@ -1,6 +1,6 @@
 [package]
 authors = ['Unique One <hello@uniqueone.network>']
-edition = '2018'
+edition = '2021'
 homepage = 'https://uniqueone.network'
 license = 'Apache-2.0'
 name = 'unet-traits'
@@ -17,10 +17,10 @@ serde = { version = '1.0.130', default-features = false, features = ['derive'], 
 scale-info = { version = '2.0.1', default-features = false, features = ['derive'] }
 enumflags2 = { version = "0.6.3" }
 
-sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-sp-core = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
+sp-std = { version = "4.0.0", default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.30' }
+sp-core = { version = "6.0.0", default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.30' }
+frame-support = { version = "4.0.0-dev", default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.30' }
+sp-runtime = { version = "6.0.0", default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.30' }
 unet-orml-traits = { default-features = false, path = "../unet-orml-traits" }
 contract-types = { path = "contract-types", default-features = false }
 log = { version = "0.4.14", default-features = false }

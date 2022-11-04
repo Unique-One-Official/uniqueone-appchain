@@ -165,7 +165,7 @@ pub mod pallet {
 			TokenData = TokenData<<Self as frame_system::Config>::AccountId, BlockNumberOf<Self>>,
 		> + pallet_proxy::Config
 	{
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		/// Extra Configurations
 		type ExtraConfig: UnetConfig<Self::AccountId, BlockNumberFor<Self>>;

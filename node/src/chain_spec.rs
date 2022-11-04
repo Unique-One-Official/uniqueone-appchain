@@ -10,7 +10,7 @@ use sp_core::{
 	crypto::{Ss58Codec, UncheckedInto},
 	sr25519, Pair, Public,
 };
-use sp_finality_grandpa::AuthorityId as GrandpaId;
+use grandpa_primitives::AuthorityId as GrandpaId;
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	PerU16,
@@ -58,7 +58,7 @@ fn session_keys(
 
 /// Generate a crypto pair from seed.
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
-	TPublic::Pair::from_string(&format!("//{}", seed), None)
+	TPublic::Pair::from_string(&format!("//{}", seed))
 		.expect("static values are valid; qed")
 		.public()
 }
