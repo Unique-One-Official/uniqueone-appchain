@@ -47,7 +47,7 @@ pub struct SubstrateWeight<T>(PhantomData<T>)
 	// Storage: UnetConf Categories (r:2 w:2)
 	// Storage: OrmlNFT Classes (r:0 w:1)
 	fn create_class() -> Weight {
-		95_000_000_u64
+		(Weight::from_ref_time(95_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(9_u64))
 			.saturating_add(T::DbWeight::get().writes(7_u64))
 	}
@@ -62,18 +62,18 @@ pub struct SubstrateWeight<T>(PhantomData<T>)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:0 w:1)
 	fn proxy_mint() -> Weight {
-		78_000_000_u64
+		(Weight::from_ref_time(78_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(8_u64))
 			.saturating_add(T::DbWeight::get().writes(7_u64))
 	}
 	// Storage: OrmlNFT Classes (r:1 w:0)	// Storage: OrmlNFT TokensByOwner (r:2 w:2)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:2)
 	fn transfer(c: u32, ) -> Weight {
-		0_u64			// Standard Error: 109_000
-			.saturating_add((22_088_000_u64).saturating_mul(c as Weight))
+		(Weight::from_ref_time(0_u64))			// Standard Error: 109_000
+			.saturating_add((Weight::from_ref_time(22_088_000_u64)).saturating_mul(c as u64))
 			.saturating_add(T::DbWeight::get().reads(1_u64))
-			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
-			.saturating_add(T::DbWeight::get().writes((4_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as u64)))
+			.saturating_add(T::DbWeight::get().writes((4_u64).saturating_mul(c as u64)))
 	}
 	// Storage: OrmlNFT Classes (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
@@ -81,20 +81,20 @@ pub struct SubstrateWeight<T>(PhantomData<T>)
 	// Storage: System Account (r:2 w:2)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn burn() -> Weight {
-		65_000_000_u64
+		(Weight::from_ref_time(65_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(5_u64))
 			.saturating_add(T::DbWeight::get().writes(6_u64))
 	}
 	// Storage: OrmlNFT Tokens (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:0)
 	fn update_token_royalty() -> Weight {
-		12_000_000_u64
+		(Weight::from_ref_time(12_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(2_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
 	// Storage: OrmlNFT Tokens (r:1 w:1)
 	fn update_token_royalty_beneficiary() -> Weight {
-		7_000_000_u64
+		(Weight::from_ref_time(7_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(1_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
@@ -111,7 +111,7 @@ impl WeightInfo for () {
 	// Storage: UnetConf Categories (r:2 w:2)
 	// Storage: OrmlNFT Classes (r:0 w:1)
 	fn create_class() -> Weight {
-		95_000_000_u64
+		(Weight::from_ref_time(95_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(9_u64))
 			.saturating_add(RocksDbWeight::get().writes(7_u64))
 	}
@@ -126,7 +126,7 @@ impl WeightInfo for () {
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:0 w:1)
 	fn proxy_mint() -> Weight {
-			78_000_000_u64
+		(Weight::from_ref_time(78_000_000_u64))
 				.saturating_add(RocksDbWeight::get().reads(8_u64))
 				.saturating_add(RocksDbWeight::get().writes(7_u64))
 	}
@@ -134,11 +134,11 @@ impl WeightInfo for () {
 	// Storage: OrmlNFT TokensByOwner (r:2 w:2)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:2)
 	fn transfer(c: u32, ) -> Weight {
-		0_u64			// Standard Error: 109_000
-			.saturating_add((22_088_000_u64).saturating_mul(c as Weight))
+		(Weight::from_ref_time(0_u64))			// Standard Error: 109_000
+			.saturating_add((Weight::from_ref_time(22_088_000_u64)).saturating_mul(c as u64))
 			.saturating_add(RocksDbWeight::get().reads(1_u64))
-			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
-			.saturating_add(RocksDbWeight::get().writes((4_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as u64)))
+			.saturating_add(RocksDbWeight::get().writes((4_u64).saturating_mul(c as u64)))
 	}
 	// Storage: OrmlNFT Classes (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
@@ -146,20 +146,20 @@ impl WeightInfo for () {
 	// Storage: System Account (r:2 w:2)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn burn() -> Weight {
-		65_000_000_u64
+		(Weight::from_ref_time(65_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(5_u64))
 			.saturating_add(RocksDbWeight::get().writes(6_u64))
 	}
 	// Storage: OrmlNFT Tokens (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:0)
 	fn update_token_royalty() -> Weight {
-		12_000_000_u64
+		(Weight::from_ref_time(12_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(2_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
 	// Storage: OrmlNFT Tokens (r:1 w:1)
 	fn update_token_royalty_beneficiary() -> Weight {
-		7_000_000_u64
+		(Weight::from_ref_time(7_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(1_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}

@@ -848,24 +848,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chain-extension"
-version = "1.0.0"
-dependencies = [
- "frame-support",
- "frame-system",
- "pallet-contracts",
- "pallet-randomness-collective-flip",
- "parity-scale-codec",
- "scale-info",
- "serde",
- "sp-core",
- "sp-runtime",
- "sp-std",
- "unet-nft",
- "unet-traits",
-]
-
-[[package]]
 name = "chrono"
 version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9215,7 +9197,6 @@ name = "uniqueone-appchain-runtime"
 version = "1.5.8"
 dependencies = [
  "beefy-primitives",
- "chain-extension",
  "frame-benchmarking",
  "frame-election-provider-support",
  "frame-executive",

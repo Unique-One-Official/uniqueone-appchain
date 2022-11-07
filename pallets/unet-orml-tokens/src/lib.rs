@@ -56,7 +56,7 @@ use sp_runtime::{
 		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, CheckedSub,
 		MaybeSerializeDeserialize, Member, Saturating, StaticLookup, Zero,
 	},
-	DispatchError, DispatchResult, RuntimeDebug,
+	DispatchError, DispatchResult, RuntimeDebug, FixedPointOperand
 };
 use sp_std::{
 	convert::{Infallible, TryFrom, TryInto},
@@ -173,7 +173,8 @@ pub mod pallet {
 			+ Default
 			+ Copy
 			+ MaybeSerializeDeserialize
-			+ MaxEncodedLen;
+			+ MaxEncodedLen
+			+ FixedPointOperand;
 
 		/// The amount type, should be signed version of `Balance`
 		type Amount: Signed

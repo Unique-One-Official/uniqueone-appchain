@@ -40,34 +40,34 @@ pub struct SubstrateWeight<T>(PhantomData<T>);
 impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: UnetConf AccountWhitelist (r:0 w:1)
 	fn add_whitelist() -> Weight {
-		13_000_000_u64
+		(Weight::from_ref_time(13_000_000_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))	}
 	// Storage: UnetConf AccountWhitelist (r:0 w:1)
 	fn remove_whitelist() -> Weight {
-		13_000_000_u64
+		(Weight::from_ref_time(13_000_000_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf NextId (r:1 w:1)
 	// Storage: UnetConf Categories (r:0 w:1)
 	fn create_category() -> Weight {
-		16_000_000_u64
+		(Weight::from_ref_time(16_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(1_u64))
 			.saturating_add(T::DbWeight::get().writes(2_u64))
 	}
 	// Storage: UnetConf Categories (r:1 w:1)
 	fn update_category() -> Weight {
-		16_000_000_u64
+		(Weight::from_ref_time(16_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(1_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf AuctionCloseDelay (r:0 w:1)
 	fn update_auction_close_delay() -> Weight {
-		1_000_000_u64
+		(Weight::from_ref_time(1_000_000_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf IsWhiteListActivated (r:1 w:1)
 	fn en_disable_whitelist() -> Weight {
-		4_000_000_u64
+		(Weight::from_ref_time(4_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(1_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
@@ -77,35 +77,35 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 impl WeightInfo for () {
 	// Storage: UnetConf AccountWhitelist (r:0 w:1)
 	fn add_whitelist() -> Weight {
-		13_000_000_u64
+		(Weight::from_ref_time(13_000_000_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf AccountWhitelist (r:0 w:1)
 	fn remove_whitelist() -> Weight {
-		13_000_000_u64
+		(Weight::from_ref_time(13_000_000_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf NextId (r:1 w:1)
 	// Storage: UnetConf Categories (r:0 w:1)
 	fn create_category() -> Weight {
-		16_000_000_u64
+		(Weight::from_ref_time(16_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(1_u64))
 			.saturating_add(RocksDbWeight::get().writes(2_u64))
 	}
 	// Storage: UnetConf Categories (r:1 w:1)
 	fn update_category() -> Weight {
-		16_000_000_u64
+		(Weight::from_ref_time(16_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(1_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf AuctionCloseDelay (r:0 w:1)
 	fn update_auction_close_delay() -> Weight {
-		1_000_000_u64
+		(Weight::from_ref_time(1_000_000_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetConf IsWhiteListActivated (r:1 w:1)
 	fn en_disable_whitelist() -> Weight {
-		4_000_000_u64
+		(Weight::from_ref_time(4_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(1_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}

@@ -4,7 +4,7 @@ panic = 'unwind'
 [workspace]
 members = [
     "node",
-	"pallets/chain-extension",
+	# "pallets/chain-extension",
 	"pallets/unet-orml-utilities",
 	"pallets/unet-orml-traits",
 	"pallets/unet-orml-nft",

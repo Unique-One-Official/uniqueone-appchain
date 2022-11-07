@@ -177,14 +177,14 @@ pub mod test_helper {
 		));
 	}
 
-	pub fn last_event<Runtime>() -> Runtime::Event
+	pub fn last_event<Runtime>() -> Runtime::RuntimeEvent
 	where
 		Runtime: frame_system::Config,
 	{
-		frame_system::Pallet::<Runtime>::events().pop().expect("Event expected").event
+		frame_system::Pallet::<Runtime>::events().pop().expect("RuntimeEvent expected").event
 	}
 
-	pub fn assert_last_event<T: Config>(generic_event: <T as Config>::Event) {
+	pub fn assert_last_event<T: Config>(generic_event: <T as Config>::RuntimeEvent) {
 		frame_system::Pallet::<T>::assert_last_event(generic_event.into());
 	}
 

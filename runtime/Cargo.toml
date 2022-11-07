@@ -100,7 +100,7 @@ unet-order = {  path = '../pallets/unet-order', default-features = false }
 unet-auction = {  path = '../pallets/unet-auction', default-features = false }
 unet-config = {  path = '../pallets/unet-config', default-features = false }
 unet-rpc-runtime-api = {  path = '../pallets/unet-rpc/runtime-api', default-features = false }
-chain-extension = {  path = '../pallets/chain-extension', default-features = false }
+# chain-extension = {  path = '../pallets/chain-extension', default-features = false }
 
 [features]
 default = ['std']
@@ -184,7 +184,7 @@ std = [
     'unet-auction/std',
     'unet-config/std',
     'unet-rpc-runtime-api/std',
-    'chain-extension/std',
+    # 'chain-extension/std',
 
 ]
 runtime-benchmarks = [
