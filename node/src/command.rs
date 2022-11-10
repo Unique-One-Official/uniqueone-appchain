@@ -1,7 +1,7 @@
 use crate::{
 	chain_spec,
 	cli::{Cli, Subcommand},
-	service,
+	service::{FullClient},
 };
 use sc_cli::{ChainSpec, RuntimeVersion, SubstrateCli};
 use sc_service::PartialComponents;
@@ -101,9 +101,13 @@ pub fn run() -> sc_cli::Result<()> {
 		Some(Subcommand::Revert(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, backend, .. } =
-					service::new_partial(&config, &cli)?;
-				Ok((cmd.run(client, backend), task_manager))
+				let PartialComponents { client, task_manager, backend, .. } = new_partial(&config)?;
+				let aux_revert = Box::new(|client: Arc<FullClient>, backend, blocks| {
+					sc_consensus_babe::revert(client.clone(), backend, blocks)?;
+					grandpa::revert(client, blocks)?;
+					Ok(())
+				});
+				Ok((cmd.run(client, backend, Some(aux_revert)), task_manager))
 			})
 		},
 		Some(Subcommand::Benchmark(cmd)) => {

@@ -64,7 +64,7 @@ pub fn new_partial(
 				sc_consensus_babe::BabeBlockImport<Block, FullClient, FullGrandpaBlockImport>,
 				grandpa::LinkHalf<Block, FullClient, FullSelectChain>,
 				sc_consensus_babe::BabeLink<Block>,
-				(BeefySignedCommitmentSender<Block>, BeefyBestBlockSender<Block>),
+				beefy_gadget::BeefyVoterLinks<Block>,
 			),
 			grandpa::SharedVoterState,
 			Option<Telemetry>,
@@ -121,6 +121,13 @@ pub fn new_partial(
 	)?;
 	let justification_import = grandpa_block_import.clone();
 
+	let (beefy_block_import, beefy_voter_links, beefy_rpc_links) =
+		beefy_gadget::beefy_block_import_and_links(
+			grandpa_block_import,
+			backend.clone(),
+			client.clone(),
+		);
+
 	let (block_import, babe_link) = sc_consensus_babe::block_import(
 		sc_consensus_babe::Config::get(&*client)?,
 		grandpa_block_import,
@@ -150,7 +157,7 @@ pub fn new_partial(
 		},
 		&task_manager.spawn_essential_handle(),
 		config.prometheus_registry(),
-		sp_consensus::CanAuthorWithNativeVersion::new(client.executor().clone()),
+		//sp_consensus::CanAuthorWithNativeVersion::new(client.executor().clone()),
 		telemetry.as_ref().map(|x| x.handle()),
 	)?;
 
@@ -288,7 +295,7 @@ pub fn new_full_base(
 		.extra_sets
 		.push(beefy_gadget::beefy_peers_set_config(beefy_protocol_name.clone()));
 
-	let (network, system_rpc_tx, network_starter) =
+	let (network, system_rpc_tx, tx_handler_controller, network_starter) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &config,
 			client: client.clone(),
@@ -322,10 +329,12 @@ pub fn new_full_base(
 		client: client.clone(),
 		keystore: keystore_container.sync_keystore(),
 		network: network.clone(),
-		rpc_extensions_builder: Box::new(rpc_extensions_builder),
+		rpc_builder: Box::new(rpc_extensions_builder),
+		//rpc_extensions_builder: Box::new(rpc_extensions_builder),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
 		system_rpc_tx,
+		tx_handler_controller,
 		telemetry: telemetry.as_mut(),
 	})?;
 
@@ -383,7 +392,7 @@ pub fn new_full_base(
 			force_authoring,
 			backoff_authoring_blocks,
 			babe_link,
-			can_author_with,
+			// can_author_with,
 			block_proposal_slot_portion: SlotProportion::new(0.5),
 			max_block_proposal_slot_portion: None,
 			telemetry: telemetry.as_ref().map(|x| x.handle()),
@@ -404,14 +413,16 @@ pub fn new_full_base(
 
 	let beefy_params = beefy_gadget::BeefyParams {
 		client: client.clone(),
-		backend,
+		backend: backend.clone(),
+		runtime: client.clone(),
 		key_store: keystore.clone(),
 		network: network.clone(),
-		signed_commitment_sender: beefy_links.0,
-		beefy_best_block_sender: beefy_links.1,
+		// signed_commitment_sender: beefy_links.0,
+		// beefy_best_block_sender: beefy_links.1,
 		min_block_delta: 8,
 		prometheus_registry: prometheus_registry.clone(),
 		protocol_name: beefy_protocol_name,
+		links: beefy_links,
 	};
 
 	let gadget = beefy_gadget::start_beefy_gadget::<_, _, _, _>(beefy_params);

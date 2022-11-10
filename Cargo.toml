@@ -17,7 +17,7 @@ members = [
 	"pallets/unet-config",
 	"pallets/unet-order",
 	"pallets/unet-auction",
-	"pallets/ethereum-chain-id",
+	# "pallets/ethereum-chain-id",
 	"runtime",
 ]
 

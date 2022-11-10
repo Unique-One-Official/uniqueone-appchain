@@ -13,8 +13,8 @@ use scale_info::TypeInfo;
 use beefy_primitives::{crypto::AuthorityId as BeefyId, mmr::MmrLeafVersion};
 use sp_api::impl_runtime_apis;
 use sp_consensus_babe::{
-	AllowedSlots::PrimaryAndSecondaryVRFSlots, BabeEpochConfiguration, BabeGenesisConfiguration,
-	Epoch, OpaqueKeyOwnershipProof, Slot,
+	AllowedSlots::PrimaryAndSecondaryVRFSlots, BabeConfiguration, BabeEpochConfiguration, Epoch,
+	OpaqueKeyOwnershipProof, Slot,
 };
 use sp_core::{
 	crypto::KeyTypeId,
@@ -43,18 +43,18 @@ use sp_version::RuntimeVersion;
 use frame_support::{
 	construct_runtime, parameter_types,
 	traits::{
-		ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, Imbalance, InstanceFilter,
+		AsEnsureOriginWithArg, ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, Imbalance, InstanceFilter,
 		KeyOwnerProofSystem, Nothing, OnUnbalanced,
 	},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
-		DispatchClass, IdentityFee, Weight,
+		DispatchClass, IdentityFee, Weight, ConstantMultiplier
 	},
 	PalletId,
 };
 use frame_system::{
 	limits::{BlockLength, BlockWeights},
-	offchain, EnsureRoot,
+	offchain, EnsureRoot, EnsureSigned
 };
 
 use pallet_babe::{AuthorityId as BabeId, ExternalTrigger};
@@ -64,9 +64,9 @@ use pallet_grandpa::{
 	fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
-use pallet_mmr_primitives as mmr;
 use pallet_session::historical as pallet_session_historical;
 use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
+use sp_mmr_primitives as mmr;
 
 // Local
 pub use unet_traits::constants_types::Amount;
@@ -118,7 +118,13 @@ pub type Executive = frame_executive::Executive<
 	frame_system::ChainContext<Runtime>,
 	Runtime,
 	AllPalletsWithSystem,
+	Migrations,
 >;
+
+// All migrations executed on runtime upgrade as a nested tuple of types implementing
+// `OnRuntimeUpgrade`.
+type Migrations = ();
+
 /// Council instance type.
 pub type CouncilInstance = pallet_collective::Instance1;
 /// Tech committee instancee type.
@@ -218,7 +224,7 @@ pub mod currency {
 
 	pub const TRANSACTION_BYTE_FEE: Balance = 10 * MILLICENTS * SUPPLY_FACTOR;
 	pub const STORAGE_BYTE_FEE: Balance = 100 * MILLICENTS * SUPPLY_FACTOR;
-	pub const EXISTENSIAL_DEPOSIT: Balance = 0;
+	pub const EXISTENSIAL_DEPOSIT: Balance = 1;
 
 	pub const fn deposit(items: u32, bytes: u32) -> Balance {
 		(items as Balance) * DOLLARS * SUPPLY_FACTOR + (bytes as Balance) * STORAGE_BYTE_FEE
@@ -340,8 +346,6 @@ parameter_types! {
 	pub const SS58Prefix: u16 = 42;
 	pub const Version: RuntimeVersion = VERSION;
 }
-
-const_assert!(NORMAL_DISPATCH_RATIO.deconstruct() >= AVERAGE_ON_INITIALIZE_RATIO.deconstruct());
 
 impl frame_system::Config for Runtime {
 	/// The basic call filter to use in dispatchable.
@@ -536,12 +540,12 @@ impl pallet_timestamp::Config for Runtime {
 	type MinimumPeriod = MinimumPeriod;
 	type Moment = Moment;
 	type OnTimestampSet = Babe;
-	type WeightInfo = ();
+	type WeightInfo = pallet_timestamp::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
-	pub const ClassDeposit: Balance = 100 * currency::DOLLARS;
-	pub const InstanceDeposit: Balance = currency::DOLLARS;
+	pub const CollectionDeposit: Balance = 100 * DOLLARS;
+	pub const ItemDeposit: Balance = 1 * DOLLARS;
 	pub const KeyLimit: u32 = 32;
 	pub const ValueLimit: u32 = 256;
 }
@@ -549,7 +553,7 @@ parameter_types! {
 type CollectionId = u128;
 type ItemId = u128;
 
-impl pallet_uniques::Config<OctopusAssetsInstance> for Runtime {
+impl pallet_uniques::Config<pallet_uniques::Instance1> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type CollectionId = CollectionId;
 	type ItemId = ItemId;
@@ -685,7 +689,7 @@ impl pallet_mmr::Config for Runtime {
 
 parameter_types! {
 	pub const GracePeriod: u32 = 10;
-	pub const OctopusAppchainPalletId: PalletId = PalletId(*b"py/octps");
+	pub const OctopusPalletId: PalletId = PalletId(*b"py/octps");
 	pub const RequestEventLimit: u32 = 10;
 	pub const UnsignedPriority: u64 = 1 << 21;
 }
@@ -702,7 +706,7 @@ impl pallet_octopus_appchain::Config for Runtime {
 	type UnsignedPriority = UnsignedPriority;
 	type RequestEventLimit = RequestEventLimit;
 	type MaxValidators = MaxAuthorities;
-	// type WeightInfo = pallet_octopus_appchain::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_octopus_appchain::weights::SubstrateWeight<Runtime>;
 }
 
 impl pallet_octopus_bridge::Config for Runtime {
@@ -719,7 +723,7 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type ItemId = ItemId;
 	type Nonfungibles = OctopusUniques;
 	type Convertor = ();
-	// type WeightInfo = ();
+	type WeightInfo = pallet_octopus_bridge::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -738,7 +742,7 @@ impl pallet_octopus_lpos::Config for Runtime {
 	type AppchainInterface = OctopusAppchain;
 	type UpwardMessagesInterface = OctopusUpwardMessages;
 	type PalletId = OctopusPalletId;
-	// type WeightInfo = pallet_octopus_lpos::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_octopus_lpos::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -751,7 +755,7 @@ impl pallet_octopus_upward_messages::Config for Runtime {
 	type Hashing = Keccak256;
 	type MaxMessagePayloadSize = MaxMessagePayloadSize;
 	type MaxMessagesPerCommit = MaxMessagesPerCommit;
-	// type WeightInfo = pallet_octopus_upward_messages::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_octopus_upward_messages::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -779,32 +783,7 @@ impl pallet_session::Config for Runtime {
 	type SessionManager = pallet_session_historical::NoteHistoricalRoot<Self, OctopusLpos>;
 	type SessionHandler = <opaque::SessionKeys as OpaqueKeys>::KeyTypeIdProviders;
 	type Keys = opaque::SessionKeys;
-	type WeightInfo = ();
-}
-
-impl<R> OnUnbalanced<NegativeImbalance<R>> for DealWithFees<R>
-where
-	R: pallet_balances::Config + pallet_treasury::Config,
-	pallet_treasury::Pallet<R>: OnUnbalanced<NegativeImbalance<R>>,
-{
-	fn on_unbalanceds<B>(mut fees_then_tips: impl Iterator<Item = NegativeImbalance<R>>) {
-		if let Some(fees) = fees_then_tips.next() {
-			// for fees, 80% are burned, 20% to the treasury
-			let (_, to_treasury) = fees.ration(80, 20);
-			// Balances pallet automatically burns dropped Negative Imbalances by decreasing
-			// total_supply accordingly
-			<pallet_treasury::Pallet<R> as OnUnbalanced<_>>::on_unbalanced(to_treasury);
-		}
-	}
-
-	// this is called from pallet_evm for Ethereum-based transactions
-	// (technically, it calls on_unbalanced, which calls this when non-zero)
-	fn on_nonzero_unbalanced(amount: NegativeImbalance<R>) {
-		// Balances pallet automatically burns dropped Negative Imbalances by decreasing
-		// total_supply accordingly
-		let (_, to_treasury) = amount.ration(80, 20);
-		<pallet_treasury::Pallet<R> as OnUnbalanced<_>>::on_unbalanced(to_treasury);
-	}
+	type WeightInfo = pallet_session::weights::SubstrateWeight<Runtime>;
 }
 
 parameter_types! {
@@ -943,12 +922,6 @@ impl pallet_democracy::Config for Runtime {
 		pallet_collective::EnsureProportionAtLeast<AccountId, TechCommitteeInstance, 3, 5>;
 	type InstantAllowed = InstantAllowed;
 	type FastTrackVotingPeriod = FastTrackVotingPeriod;
-	// To cancel a proposal which has been passed, 2/3 of the council must agree to it.
-	type CancellationOrigin = EnsureOneOf<
-		EnsureRoot<AccountId>,
-		pallet_collective::EnsureProportionAtLeast<AccountId, CouncilInstance, 3, 5>,
-	>;
-	type BlacklistOrigin = EnsureRoot<AccountId>;
 	// To cancel a proposal before it has been passed, the technical committee must be unanimous or
 	// Root must agree.
 	type CancelProposalOrigin = EnsureOneOf<
@@ -1047,7 +1020,10 @@ impl InstanceFilter<RuntimeCall> for ProxyType {
 			),
 			ProxyType::Staking => matches!(c, RuntimeCall::Utility(..)),
 			ProxyType::CancelProxy => {
-				matches!(c, RuntimeCall::Proxy(pallet_proxy::RuntimeCall::reject_announcement { .. }))
+				matches!(
+					c,
+					RuntimeCall::Proxy(pallet_proxy::RuntimeCall::reject_announcement { .. })
+				)
 			},
 			ProxyType::Balances => {
 				matches!(c, RuntimeCall::Balances(..) | RuntimeCall::Utility(..))
@@ -1221,45 +1197,48 @@ construct_runtime!(
 		NodeBlock = opaque::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic
 	{
-		System: frame_system::{RuntimeCall, Config, Event<T>, Pallet, Storage},
+		System: frame_system::{Call, Config, Event<T>, Pallet, Storage},
 		RandomnessCollectiveFlip: pallet_randomness_collective_flip::{Pallet, Storage},
-		Balances: pallet_balances::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage},
+		Balances: pallet_balances::{Call, Config<T>, Event<T>, Pallet, Storage},
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage},
-		Babe: pallet_babe::{RuntimeCall, Config, Pallet, Storage, ValidateUnsigned},
-		Timestamp: pallet_timestamp::{RuntimeCall, Inherent, Pallet, Storage},
-		OctopusAssets: pallet_assets::<Instance1>::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage},
-		Grandpa: pallet_grandpa::{RuntimeCall, Config, Event, Pallet, Storage, ValidateUnsigned},
-		ImOnline: pallet_im_online::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},
+		Babe: pallet_babe::{Call, Config, Pallet, Storage, ValidateUnsigned},
+		Timestamp: pallet_timestamp::{Call, Inherent, Pallet, Storage},
+		OctopusAssets: pallet_assets::<OctopusAssetsInstance>::{Call, Config<T>, Event<T>, Pallet, Storage},
+		Grandpa: pallet_grandpa::{Call, Config, Event, Pallet, Storage, ValidateUnsigned},
+		ImOnline: pallet_im_online::{Call, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},
 		Beefy: pallet_beefy::{Config<T>, Pallet, Storage},
 		MmrLeaf: pallet_beefy_mmr::{Pallet, Storage},
 		Mmr: pallet_mmr::{Pallet, Storage},
-		OctopusAppchain: pallet_octopus_appchain::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},
-		OctopusLpos: pallet_octopus_lpos::{RuntimeCall, Config, Event<T>, Pallet, Storage},
-		OctopusUpwardMessages: pallet_octopus_upward_messages::{RuntimeCall, Event<T>, Pallet, Storage},
-		Authorship: pallet_authorship::{RuntimeCall, Inherent, Pallet, Storage},
+		OctopusAppchain: pallet_octopus_appchain::{Call, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},
+		OctopusBridge: pallet_octopus_bridge::{Call, Config, Event<T>, Pallet, Storage},
+		OctopusLpos: pallet_octopus_lpos::{Call, Event<T>, Pallet, Storage},
+		OctopusUpwardMessages: pallet_octopus_upward_messages::{Call, Event<T>, Pallet, Storage},
+		Authorship: pallet_authorship::{Call, Inherent, Pallet, Storage},
 		Historical: pallet_session_historical::{Pallet},
-		Session: pallet_session::{RuntimeCall, Event, Config<T>, Pallet, Storage},
-		Treasury: pallet_treasury::{RuntimeCall, Config, Event<T>, Pallet, Storage},
-		Identity: pallet_identity::{RuntimeCall, Event<T>, Pallet, Storage},
-		CouncilCollective: pallet_collective::<Instance1>::{RuntimeCall, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
-		TechComitteeCollective: pallet_collective::<Instance2>::{RuntimeCall, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
-		Democracy: pallet_democracy::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage},
-		Utility: pallet_utility::{RuntimeCall, Event, Pallet},
-		Scheduler: pallet_scheduler::{RuntimeCall, Event<T>, Pallet, Storage},
-		Sudo: pallet_sudo::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage},
-		Proxy: pallet_proxy::{RuntimeCall, Event<T>, Pallet, Storage},
-		Contracts: pallet_contracts::{RuntimeCall, Event<T>, Pallet, Storage},
-		Uniques: pallet_uniques::{RuntimeCall, Event<T>, Pallet, Storage},
+		Session: pallet_session::{Call, Event, Config<T>, Pallet, Storage},
+		Treasury: pallet_treasury::{Call, Config, Event<T>, Pallet, Storage},
+		Identity: pallet_identity::{Call, Event<T>, Pallet, Storage},
+		CouncilCollective: pallet_collective::<Instance1>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
+		TechComitteeCollective: pallet_collective::<Instance2>::{Call, Config<T>, Event<T>, Origin<T>, Pallet, Storage},
+		Democracy: pallet_democracy::{Call, Config<T>, Event<T>, Pallet, Storage},
+		Utility: pallet_utility::{Call, Event, Pallet},
+		Scheduler: pallet_scheduler::{Call, Event<T>, Pallet, Storage},
+		Sudo: pallet_sudo::{Call, Config<T>, Event<T>, Pallet, Storage},
+		Proxy: pallet_proxy::{Call, Event<T>, Pallet, Storage},
+		Contracts: pallet_contracts::{Call, Event<T>, Pallet, Storage},
+		OctopusUniques: pallet_uniques::{Call, Event<T>, Pallet, Storage},
 		Offences: pallet_offences::{Event, Pallet, Storage},
-		Currencies: unet_orml_currencies::{RuntimeCall, Event<T>, Pallet},
+		Currencies: unet_orml_currencies::{Call, Event<T>, Pallet},
 		Tokens: unet_orml_tokens::{Config<T>, Event<T>, Pallet, Storage},
 		OrmlNFT: unet_orml_nft::{Config<T>, Pallet, Storage},
-		UnetConf: unet_config::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage},
-		UnetNft: unet_nft::{RuntimeCall, Event<T>, Config<T>, Pallet, Storage},
-		UnetOrder: unet_order::{RuntimeCall, Config<T>, Event<T>, Pallet, Storage},
-		UnetAuction: unet_auction::{RuntimeCall, Event<T>, Config<T>, Pallet, Storage},
+		UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
+		UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
+		UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
+		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},
 	}
 );
+
+pub type MmrHashing = <Runtime as pallet_mmr::Config>::Hashing;
 
 impl_runtime_apis! {
 	impl sp_api::Core<Block> for Runtime {
@@ -1320,13 +1299,13 @@ impl_runtime_apis! {
 	}
 
 	impl sp_consensus_babe::BabeApi<Block> for Runtime {
-		fn configuration() -> BabeGenesisConfiguration {
+		fn configuration() -> BabeConfiguration {
 			// The choice of `c` parameter (where `1 - c` represents the
 			// probability of a slot being empty), is done in accordance to the
 			// slot duration and expected target block time, for safely
 			// resisting network delays of maximum two seconds.
 			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
-			BabeGenesisConfiguration {
+			BabeConfiguration {
 				slot_duration: Babe::slot_duration(),
 				epoch_length: EpochDuration::get(),
 				c: BABE_GENESIS_EPOCH_CONFIG.c,
@@ -1352,6 +1331,8 @@ impl_runtime_apis! {
 			_slot: Slot,
 			authority_id: BabeId,
 		) -> Option<OpaqueKeyOwnershipProof> {
+			use codec::Encode;
+
 			Historical::prove((sp_consensus_babe::KEY_TYPE, authority_id))
 				.map(|p| p.encode())
 				.map(OpaqueKeyOwnershipProof::new)
@@ -1410,6 +1391,8 @@ impl_runtime_apis! {
 			_set_id: fg_primitives::SetId,
 			authority_id: GrandpaId,
 		) -> Option<fg_primitives::OpaqueKeyOwnershipProof> {
+			use codec::Encode;
+			
 			Historical::prove((fg_primitives::KEY_TYPE, authority_id))
 				.map(|p| p.encode())
 				.map(fg_primitives::OpaqueKeyOwnershipProof::new)
@@ -1437,7 +1420,7 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl pallet_mmr_primitives::MmrApi<Block, Hash> for Runtime {
+	impl mmr::MmrApi<Block, Hash> for Runtime {
 		fn generate_proof(leaf_index: u64)
 			-> Result<(mmr::EncodableOpaqueLeaf, mmr::Proof<Hash>), mmr::Error>
 		{
@@ -1466,7 +1449,7 @@ impl_runtime_apis! {
 		) -> Result<(), mmr::Error> {
 			type MmrHashing = <Runtime as pallet_mmr::Config>::Hashing;
 			let node = mmr::DataOrHash::Data(leaf.into_opaque_leaf());
-			pallet_mmr::verify_leaf_proof::<MmrHashing, _>(root, node, proof)
+			pallet_mmr::verify_leaves_proof::<MmrHashing, _>(root, node, proof)
 		}
 	}
 

@@ -494,11 +494,17 @@ fn genesis(
 		beefy: Default::default(),
 		octopus_appchain: OctopusAppchainConfig {
 			anchor_contract: appchain_config.0,
-			asset_id_by_token_id: vec![(appchain_config.1, 0)],
-			premined_amount: appchain_config.2,
+			//asset_id_by_token_id: vec![(appchain_config.1, 0)],
+			//premined_amount: appchain_config.2,
 			validators: initial_authorities.iter().map(|x| (x.0.clone(), x.6)).collect(),
 		},
-		octopus_lpos: OctopusLposConfig { era_payout: appchain_config.3, ..Default::default() },
+		octopus_bridge: OctopusBridgeConfig {
+			premined_amount: 1024 * DOLLARS,
+			asset_id_by_token_id: vec![("usdn.testnet".to_string(), 0)],
+		},
+		octopus_lpos: OctopusLposConfig { 
+			era_payout: appchain_config.3, ..Default::default() 
+		},
 		octopus_assets: Default::default(),
 		session: SessionConfig {
 			keys: initial_authorities
