@@ -10,7 +10,7 @@ use sp_core::{
 	crypto::{Ss58Codec, UncheckedInto},
 	sr25519, Pair, Public,
 };
-use sp_finality_grandpa::AuthorityId as GrandpaId;
+use sc_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	PerU16,
@@ -21,10 +21,11 @@ use pallet_octopus_appchain::sr25519::AuthorityId as OctopusId;
 
 use uniqueone_appchain_runtime::{
 	currency::{OCTS, UNITS as UNET},
-	opaque::{Block, SessionKeys},
+	Block, SessionKeys,
 	AccountId, BabeConfig, Balance, BalancesConfig, CouncilCollectiveConfig, DemocracyConfig,
-	GenesisConfig, OctopusAppchainConfig, OctopusLposConfig, SessionConfig, Signature, SudoConfig,
-	SystemConfig, TechComitteeCollectiveConfig, //TokensConfig, UnetConfConfig, UnetNftConfig,
+	GenesisConfig, OctopusAppchainConfig, OctopusBridgeConfig, OctopusLposConfig, OctopusUpwardMessagesConfig, SessionConfig, Signature, SudoConfig,
+	SystemConfig, TechComitteeCollectiveConfig, ImOnlineConfig, GrandpaConfig, 
+	//TokensConfig, UnetConfConfig, UnetNftConfig,
 	BABE_GENESIS_EPOCH_CONFIG, WASM_BINARY,
 };
 
@@ -489,16 +490,19 @@ fn genesis(
 			authorities: Default::default(),
 			epoch_config: Some(BABE_GENESIS_EPOCH_CONFIG),
 		},
-		grandpa: Default::default(),
-		im_online: Default::default(),
+		im_online: ImOnlineConfig { keys: vec![] },
+		grandpa: GrandpaConfig { authorities: vec![] },
 		beefy: Default::default(),
 		octopus_appchain: OctopusAppchainConfig {
 			anchor_contract: appchain_config.0,
-			asset_id_by_token_id: vec![(appchain_config.1, 0)],
-			premined_amount: appchain_config.2,
 			validators: initial_authorities.iter().map(|x| (x.0.clone(), x.6)).collect(),
 		},
+		octopus_bridge: OctopusBridgeConfig {
+			premined_amount: appchain_config.2,
+			asset_id_by_token_id: vec![(appchain_config.1, 0)],
+		},
 		octopus_lpos: OctopusLposConfig { era_payout: appchain_config.3, ..Default::default() },
+		octopus_upward_messages: OctopusUpwardMessagesConfig { interval: 1 },
 		octopus_assets: Default::default(),
 		session: SessionConfig {
 			keys: initial_authorities
