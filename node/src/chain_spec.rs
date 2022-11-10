@@ -24,7 +24,7 @@ use uniqueone_appchain_runtime::{
 	opaque::{Block, SessionKeys},
 	AccountId, BabeConfig, Balance, BalancesConfig, CouncilCollectiveConfig, DemocracyConfig,
 	GenesisConfig, OctopusAppchainConfig, OctopusLposConfig, SessionConfig, Signature, SudoConfig,
-	SystemConfig, TechComitteeCollectiveConfig, TokensConfig, UnetConfConfig, UnetNftConfig,
+	SystemConfig, TechComitteeCollectiveConfig, //TokensConfig, UnetConfConfig, UnetNftConfig,
 	BABE_GENESIS_EPOCH_CONFIG, WASM_BINARY,
 };
 
@@ -530,75 +530,75 @@ fn genesis(
 		democracy: DemocracyConfig::default(),
 		sudo: SudoConfig { key: Some(root_key) },
 		// TODO: make this dynamic, put on params
-		tokens: TokensConfig {
-			endowed_accounts: Default::default(),
-		},
-		orml_nft: Default::default(),
-		unet_conf: UnetConfConfig {
-			white_list: Default::default(),
-			auction_close_delay: unet_traits::time::MINUTES * 10,
-			category_list: vec![
-				b"Arts".to_vec(),
-				b"Animation".to_vec(),
-				b"Manga".to_vec(),
-				b"Meme".to_vec(),
-				b"Trading Cards".to_vec(),
-				b"Collectibles".to_vec(),
-				b"Unique".to_vec(),
-				b"Audio".to_vec(),
-				b"Video".to_vec(),
-				b"3D".to_vec(),
-			],
-			..Default::default()
-		},
-		unet_nft: UnetNftConfig {
-			classes: vec![
-				// Unique One Default Collection
-				unet_traits::ClassConfig {
-					class_id: 0,
-					class_metadata: String::from_utf8(
-						br#"{\"image\":\"https://img.unique.one/ipfs/QmQxTW2N5YSPSaA4gmD5ZjTyB7CCYAG51ooAtn5cCzNEG7\"}"#.to_vec(),
-					)
-					.unwrap(),
-					category_ids: vec![0],
-					name: String::from_utf8(b"Unique One".to_vec()).unwrap(),
-					description: String::from_utf8(b"Unique One Collection".to_vec()).unwrap(),
-					properties: 1 | 2,  // 1 = Transferable, 2 = Burnable
-					royalty_rate: PerU16::from_percent(0),
-					admins: vec![
-						AccountId::from_ss58check(
-							"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
-						)
-						.unwrap(),
-					],
-					tokens: vec![
-						unet_traits::TokenConfig {
-							token_id: 0,
-							token_metadata: String::from_utf8(
-								br#"{\"name\":\"Unique One\",\"description\":\"Unique.One is a next generation decentralised NFT arts marketplace for the growing world of digital artists and collectors.\",\"image\":\"https://img.unique.one/ipfs/QmQxTW2N5YSPSaA4gmD5ZjTyB7CCYAG51ooAtn5cCzNEG7\"}"#.to_vec(),
-							)
-							.unwrap(),
-							royalty_rate: PerU16::from_percent(10),
-							token_owner: AccountId::from_ss58check(
-								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
-							)
-							.unwrap(),
-							token_creator: AccountId::from_ss58check(
-								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
-							)
-							.unwrap(),
-							royalty_beneficiary: AccountId::from_ss58check(
-								"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
-							)
-							.unwrap(),
-							quantity: 1000,
-						},
-					],
-				},
-			],
-			..Default::default()
-		},
-		unet_order: Default::default(),
-		unet_auction: Default::default(),
+		// tokens: TokensConfig {
+		// 	endowed_accounts: Default::default(),
+		// },
+		// orml_nft: Default::default(),
+		// unet_conf: UnetConfConfig {
+		// 	white_list: Default::default(),
+		// 	auction_close_delay: unet_traits::time::MINUTES * 10,
+		// 	category_list: vec![
+		// 		b"Arts".to_vec(),
+		// 		b"Animation".to_vec(),
+		// 		b"Manga".to_vec(),
+		// 		b"Meme".to_vec(),
+		// 		b"Trading Cards".to_vec(),
+		// 		b"Collectibles".to_vec(),
+		// 		b"Unique".to_vec(),
+		// 		b"Audio".to_vec(),
+		// 		b"Video".to_vec(),
+		// 		b"3D".to_vec(),
+		// 	],
+		// 	..Default::default()
+		// },
+		// unet_nft: UnetNftConfig {
+		// 	classes: vec![
+		// 		// Unique One Default Collection
+		// 		unet_traits::ClassConfig {
+		// 			class_id: 0,
+		// 			class_metadata: String::from_utf8(
+		// 				br#"{\"image\":\"https://img.unique.one/ipfs/QmQxTW2N5YSPSaA4gmD5ZjTyB7CCYAG51ooAtn5cCzNEG7\"}"#.to_vec(),
+		// 			)
+		// 			.unwrap(),
+		// 			category_ids: vec![0],
+		// 			name: String::from_utf8(b"Unique One".to_vec()).unwrap(),
+		// 			description: String::from_utf8(b"Unique One Collection".to_vec()).unwrap(),
+		// 			properties: 1 | 2,  // 1 = Transferable, 2 = Burnable
+		// 			royalty_rate: PerU16::from_percent(0),
+		// 			admins: vec![
+		// 				AccountId::from_ss58check(
+		// 					"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+		// 				)
+		// 				.unwrap(),
+		// 			],
+		// 			tokens: vec![
+		// 				unet_traits::TokenConfig {
+		// 					token_id: 0,
+		// 					token_metadata: String::from_utf8(
+		// 						br#"{\"name\":\"Unique One\",\"description\":\"Unique.One is a next generation decentralised NFT arts marketplace for the growing world of digital artists and collectors.\",\"image\":\"https://img.unique.one/ipfs/QmQxTW2N5YSPSaA4gmD5ZjTyB7CCYAG51ooAtn5cCzNEG7\"}"#.to_vec(),
+		// 					)
+		// 					.unwrap(),
+		// 					royalty_rate: PerU16::from_percent(10),
+		// 					token_owner: AccountId::from_ss58check(
+		// 						"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+		// 					)
+		// 					.unwrap(),
+		// 					token_creator: AccountId::from_ss58check(
+		// 						"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+		// 					)
+		// 					.unwrap(),
+		// 					royalty_beneficiary: AccountId::from_ss58check(
+		// 						"5FbjQgSg97nvPsfuf21D886B26mwtNvZTgEfGfWR6gdNy3Tx",
+		// 					)
+		// 					.unwrap(),
+		// 					quantity: 1000,
+		// 				},
+		// 			],
+		// 		},
+		// 	],
+		// 	..Default::default()
+		// },
+		// unet_order: Default::default(),
+		// unet_auction: Default::default(),
 	}
 }
