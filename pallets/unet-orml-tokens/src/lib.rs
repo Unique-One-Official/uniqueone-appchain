@@ -36,34 +36,40 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![allow(clippy::unused_unit)]
+#![allow(clippy::comparison_chain)]
 
 pub use crate::imbalances::{NegativeImbalance, PositiveImbalance};
 
+use codec::MaxEncodedLen;
 use frame_support::{
-	ensure,
+	ensure, log,
 	pallet_prelude::*,
 	traits::{
-		BalanceStatus as Status, Currency as PalletCurrency, ExistenceRequirement, Get, Imbalance,
-		LockableCurrency as PalletLockableCurrency, ReservableCurrency as PalletReservableCurrency,
-		SignedImbalance, WithdrawReasons,
+		tokens::{fungible, fungibles, DepositConsequence, WithdrawConsequence},
+		BalanceStatus as Status, Contains, Currency as PalletCurrency, DefensiveSaturating,
+		ExistenceRequirement, Get, Imbalance, LockableCurrency as PalletLockableCurrency,
+		NamedReservableCurrency as PalletNamedReservableCurrency,
+		ReservableCurrency as PalletReservableCurrency, SignedImbalance, WithdrawReasons,
 	},
-	transactional, PalletId,
+	transactional, BoundedVec, PalletId,
 };
 use frame_system::{ensure_signed, pallet_prelude::*};
-pub use scale_info::TypeInfo;
+use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{
 		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, CheckedSub,
 		MaybeSerializeDeserialize, Member, Saturating, StaticLookup, Zero,
 	},
-	DispatchError, DispatchResult, RuntimeDebug,
+	ArithmeticError, DispatchError, DispatchResult, FixedPointOperand, RuntimeDebug,
 };
 use sp_std::{
+	cmp,
 	convert::{Infallible, TryFrom, TryInto},
 	marker,
 	prelude::*,
 	vec::Vec,
 };
+
 use unet_orml_traits::{
 	account::MergeAccount,
 	arithmetic::{self, Signed},
@@ -157,14 +163,17 @@ pub use pallet::*;
 pub mod pallet {
 	use super::*;
 
+	/// Weight functions needed for orml_tokens.
 	pub trait WeightInfo {
 		fn transfer() -> Weight;
 		fn transfer_all() -> Weight;
+		fn transfer_keep_alive() -> Weight;
+		fn force_transfer() -> Weight;
+		fn set_balance() -> Weight;
 	}
-
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		/// The balance type
 		type Balance: Parameter
@@ -173,7 +182,8 @@ pub mod pallet {
 			+ Default
 			+ Copy
 			+ MaybeSerializeDeserialize
-			+ MaxEncodedLen;
+			+ MaxEncodedLen
+			+ FixedPointOperand;
 
 		/// The amount type, should be signed version of `Balance`
 		type Amount: Signed

@@ -15,19 +15,21 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 codec = { package = 'parity-scale-codec', version = '3.0.0', default-features = false, features = ['derive', 'max-encoded-len'] }
 serde = { version = '1.0.130', default-features = false, features = ['derive'], optional = true }
-scale-info = { version = '2.0.1', default-features = false, features = ['derive'] }
+scale-info = { version = '2.1.2', default-features = false, features = ['derive'] }
 
-sp-std = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-sp-runtime = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-frame-support = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-frame-system = { default-features = false, git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
+
+sp-std = { version = "4.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+sp-core = { version = "6.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+frame-support = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+sp-runtime = { version = "6.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+frame-system = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
 
 [dev-dependencies]
-sp-io = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-sp-core = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-pallet-treasury = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
-pallet-elections-phragmen = { git = 'https://github.com/paritytech/substrate', branch = 'polkadot-v0.9.18' }
+sp-io = { version = "6.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
+sp-core = { version = "6.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+pallet-treasury = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+pallet-elections-phragmen = { version = "5.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 
 [features]
 default = ['std']
@@ -41,3 +43,4 @@ std = [
 	'unet-orml-traits/std',
 
 ]
+try-runtime = ["frame-support/try-runtime"]

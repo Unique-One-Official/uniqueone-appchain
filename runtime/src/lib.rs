@@ -80,8 +80,8 @@ use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
 use sp_mmr_primitives as mmr;
 
 // Local
-// pub use unet_traits::constants_types::Amount;
-// pub use unet_traits::constants_types::CurrencyId;
+pub use unet_traits::constants_types::Amount;
+pub use unet_traits::constants_types::CurrencyId;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -1173,44 +1173,44 @@ impl pallet_contracts::Config for Runtime {
 	type ContractAccessWeight = ();
 }
 
-// unet_orml_traits::parameter_type_with_key! {
-// 	pub ExistentialDeposits: |currency_id: CurrencyId| -> Balance {
-// 		if currency_id == &unet_traits::constants_types::NATIVE_CURRENCY_ID {
-// 			ExistentialDeposit::get()
-// 		} else  {
-// 			Default::default()
-// 		}
-// 	};
-// }
+unet_orml_traits::parameter_type_with_key! {
+	pub ExistentialDeposits: |currency_id: CurrencyId| -> Balance {
+		if currency_id == &unet_traits::constants_types::NATIVE_CURRENCY_ID {
+			ExistentialDeposit::get()
+		} else  {
+			Default::default()
+		}
+	};
+}
 
-// impl unet_orml_tokens::Config for Runtime {
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type Balance = Balance;
-// 	type Amount = Amount;
-// 	type CurrencyId = CurrencyId;
-// 	type WeightInfo = ();
-// 	type ExistentialDeposits = ExistentialDeposits;
-// 	type OnDust = ();
-// }
+impl unet_orml_tokens::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type Balance = Balance;
+	type Amount = Amount;
+	type CurrencyId = CurrencyId;
+	type WeightInfo = ();
+	type ExistentialDeposits = ExistentialDeposits;
+	type OnDust = ();
+}
 
-// parameter_types! {
-// 	pub const GetNativeCurrencyId: CurrencyId = unet_traits::constants_types::NATIVE_CURRENCY_ID;
-// }
+parameter_types! {
+	pub const GetNativeCurrencyId: CurrencyId = unet_traits::constants_types::NATIVE_CURRENCY_ID;
+}
 
-// pub type AdaptedBasicCurrency = unet_orml_currencies::BasicCurrencyAdapter<
-// 	Runtime,
-// 	Balances,
-// 	Amount,
-// 	unet_traits::constants_types::Moment,
-// >;
+pub type AdaptedBasicCurrency = unet_orml_currencies::BasicCurrencyAdapter<
+	Runtime,
+	Balances,
+	Amount,
+	unet_traits::constants_types::Moment,
+>;
 
-// impl unet_orml_currencies::Config for Runtime {
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type MultiCurrency = Tokens;
-// 	type NativeCurrency = AdaptedBasicCurrency;
-// 	type GetNativeCurrencyId = GetNativeCurrencyId;
-// 	type WeightInfo = ();
-// }
+impl unet_orml_currencies::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type MultiCurrency = Tokens;
+	type NativeCurrency = AdaptedBasicCurrency;
+	type GetNativeCurrencyId = GetNativeCurrencyId;
+	type WeightInfo = ();
+}
 
 // impl unet_orml_nft::Config for Runtime {
 // 	type ClassId = unet_traits::ClassId;
@@ -1219,10 +1219,10 @@ impl pallet_contracts::Config for Runtime {
 // 	type TokenData = unet_traits::TokenData<AccountId, BlockNumber>;
 // }
 
-// impl unet_config::Config for Runtime {
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type WeightInfo = ();
-// }
+impl unet_config::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type WeightInfo = ();
+}
 
 // parameter_types! {
 // 	pub const CreateClassDeposit: Balance = 20 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
@@ -1305,10 +1305,10 @@ construct_runtime!(
 		Sudo: pallet_sudo::{Call, Config<T>, Event<T>, Pallet, Storage},
 		Proxy: pallet_proxy::{Call, Event<T>, Pallet, Storage},
 		Contracts: pallet_contracts::{Call, Event<T>, Pallet, Storage},
-		// Currencies: unet_orml_currencies::{Call, Event<T>, Pallet},
-		// Tokens: unet_orml_tokens::{Config<T>, Event<T>, Pallet, Storage},
+		Currencies: unet_orml_currencies::{Call, Event<T>, Pallet},
+		Tokens: unet_orml_tokens::{Config<T>, Event<T>, Pallet, Storage},
 		// OrmlNFT: unet_orml_nft::{Config<T>, Pallet, Storage},
-		// UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
+		UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
 		// UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
 		// UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
 		// UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},

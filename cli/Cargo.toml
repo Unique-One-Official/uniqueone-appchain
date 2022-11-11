@@ -143,6 +143,11 @@ try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://gith
 sc-cli = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", optional = true }
 pallet-balances = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
 
+# Local Dependencies
+# Unet Pallet Dependencies
+unet-traits = {  path = '../pallets/unet-traits' }
+# unet-rpc = { path = "../pallets/unet-rpc" }
+
 [features]
 default = ["cli"]
 cli = [

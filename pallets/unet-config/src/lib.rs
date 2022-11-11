@@ -24,7 +24,7 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 		/// Weight information for extrinsics in this pallet.
 		type WeightInfo: weights::WeightInfo;
 	}
@@ -88,7 +88,7 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<T::BlockNumber> for Pallet<T> {
 		fn on_runtime_upgrade() -> Weight {
-			0
+			Weight::from_ref_time(0 as u64)
 		}
 		fn integrity_test() {}
 	}
@@ -189,7 +189,7 @@ pub mod pallet {
 		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			Self::do_add_whitelist(&who);
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		/// remove an account from whitelist
@@ -202,7 +202,7 @@ pub mod pallet {
 			ensure_root(origin)?;
 			AccountWhitelist::<T>::remove(&who);
 			Self::deposit_event(Event::RemoveWhitelist(who));
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		/// Create a common category for trading NFT.
@@ -217,7 +217,7 @@ pub mod pallet {
 		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			Self::do_create_category(metadata)?;
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		/// Update a common category.
@@ -237,7 +237,7 @@ pub mod pallet {
 				Categories::<T>::insert(category_id, info);
 				Self::deposit_event(Event::UpdatedCategory(category_id));
 			}
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		#[pallet::weight(T::WeightInfo::update_auction_close_delay())]
@@ -248,7 +248,7 @@ pub mod pallet {
 		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			AuctionCloseDelay::<T>::set(delay);
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		/// En/disable feature whitelist check
@@ -257,7 +257,7 @@ pub mod pallet {
 		pub fn en_disable_whitelist(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			IsWhiteListActivated::<T>::put(!IsWhiteListActivated::<T>::get());
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		/// Set royalties rate
@@ -269,7 +269,7 @@ pub mod pallet {
 		) -> DispatchResultWithPostInfo {
 		  	ensure_root(origin)?;
 			RoyaltiesRate::<T>::put(royalties_rate);
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 
 		/// Set platform fee rate
@@ -281,7 +281,7 @@ pub mod pallet {
 		) -> DispatchResultWithPostInfo {
 		  	ensure_root(origin)?;
 			PlatformFeeRate::<T>::put(platform_fee_rate);
-			Ok((None, Pays::No).into())
+			Ok((Pays::No).into())
 		}
 	}
 }

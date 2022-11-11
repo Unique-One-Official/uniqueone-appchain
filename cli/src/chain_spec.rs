@@ -5,12 +5,12 @@ use sc_chain_spec::ChainSpecExtension;
 use sc_service::{ChainType, Properties};
 
 use beefy_primitives::crypto::AuthorityId as BeefyId;
+use grandpa_primitives::AuthorityId as GrandpaId;
 use sp_consensus_babe::AuthorityId as BabeId;
 use sp_core::{
 	crypto::{Ss58Codec, UncheckedInto},
 	sr25519, Pair, Public,
 };
-use grandpa_primitives::AuthorityId as GrandpaId;
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	PerU16,
@@ -21,12 +21,30 @@ use pallet_octopus_appchain::sr25519::AuthorityId as OctopusId;
 
 use uniqueone_appchain_runtime::{
 	currency::{OCTS, UNITS as UNET},
-	Block, SessionKeys,
-	AccountId, BabeConfig, Balance, BalancesConfig, CouncilCollectiveConfig, DemocracyConfig,
-	GenesisConfig, OctopusAppchainConfig, OctopusBridgeConfig, OctopusLposConfig, OctopusUpwardMessagesConfig, SessionConfig, Signature, SudoConfig,
-	SystemConfig, TechComitteeCollectiveConfig, ImOnlineConfig, GrandpaConfig, 
-	//TokensConfig, UnetConfConfig, UnetNftConfig,
-	BABE_GENESIS_EPOCH_CONFIG, WASM_BINARY,
+	AccountId,
+	BabeConfig,
+	Balance,
+	BalancesConfig,
+	Block,
+	CouncilCollectiveConfig,
+	DemocracyConfig,
+	GenesisConfig,
+	GrandpaConfig,
+	ImOnlineConfig,
+	OctopusAppchainConfig,
+	OctopusBridgeConfig,
+	OctopusLposConfig,
+	OctopusUpwardMessagesConfig,
+	SessionConfig,
+	SessionKeys,
+	Signature,
+	SudoConfig,
+	SystemConfig,
+	TechComitteeCollectiveConfig,
+	TokensConfig,
+	UnetConfConfig, //UnetNftConfig,
+	BABE_GENESIS_EPOCH_CONFIG,
+	WASM_BINARY,
 };
 
 /// Node `ChainSpec` extensions.
@@ -480,9 +498,7 @@ fn genesis(
 	appchain_config: (String, String, Balance, Balance),
 ) -> GenesisConfig {
 	GenesisConfig {
-		system: SystemConfig {
-			code: wasm_binary.to_vec(),
-		},
+		system: SystemConfig { code: wasm_binary.to_vec() },
 		balances: BalancesConfig {
 			balances: endowed_accounts.iter().map(|x| (x.0.clone(), x.1)).collect(),
 		},
@@ -534,27 +550,25 @@ fn genesis(
 		democracy: DemocracyConfig::default(),
 		sudo: SudoConfig { key: Some(root_key) },
 		// TODO: make this dynamic, put on params
-		// tokens: TokensConfig {
-		// 	endowed_accounts: Default::default(),
-		// },
+		tokens: TokensConfig { endowed_accounts: Default::default() },
 		// orml_nft: Default::default(),
-		// unet_conf: UnetConfConfig {
-		// 	white_list: Default::default(),
-		// 	auction_close_delay: unet_traits::time::MINUTES * 10,
-		// 	category_list: vec![
-		// 		b"Arts".to_vec(),
-		// 		b"Animation".to_vec(),
-		// 		b"Manga".to_vec(),
-		// 		b"Meme".to_vec(),
-		// 		b"Trading Cards".to_vec(),
-		// 		b"Collectibles".to_vec(),
-		// 		b"Unique".to_vec(),
-		// 		b"Audio".to_vec(),
-		// 		b"Video".to_vec(),
-		// 		b"3D".to_vec(),
-		// 	],
-		// 	..Default::default()
-		// },
+		unet_conf: UnetConfConfig {
+			white_list: Default::default(),
+			auction_close_delay: unet_traits::time::MINUTES * 10,
+			category_list: vec![
+				b"Arts".to_vec(),
+				b"Animation".to_vec(),
+				b"Manga".to_vec(),
+				b"Meme".to_vec(),
+				b"Trading Cards".to_vec(),
+				b"Collectibles".to_vec(),
+				b"Unique".to_vec(),
+				b"Audio".to_vec(),
+				b"Video".to_vec(),
+				b"3D".to_vec(),
+			],
+			..Default::default()
+		},
 		// unet_nft: UnetNftConfig {
 		// 	classes: vec![
 		// 		// Unique One Default Collection

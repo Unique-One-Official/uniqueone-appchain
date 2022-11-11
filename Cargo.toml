@@ -6,6 +6,18 @@ members = [
     "primitives",
     "rpc",
     "runtime",
+	"pallets/unet-orml-utilities",
+	"pallets/unet-orml-traits",
+# 	# "pallets/unet-orml-nft",
+	"pallets/unet-orml-tokens",
+	"pallets/unet-orml-currencies",
+	"pallets/unet-traits",
+# 	# "pallets/unet-nft",
+# 	# "pallets/unet-rpc",
+# 	# "pallets/unet-rpc/runtime-api",
+	"pallets/unet-config",
+# 	# "pallets/unet-order",
+# 	# "pallets/unet-auction",
 ]
 [profile.release]
 panic = "unwind"
