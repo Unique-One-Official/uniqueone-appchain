@@ -20,7 +20,7 @@
 
 //! Service implementation. Specialized wrapper over substrate service.
 
-use appchain_barnacle_runtime::RuntimeApi;
+use uniqueone_appchain_runtime::RuntimeApi;
 use appchain_executor::ExecutorDispatch;
 use appchain_primitives::Block;
 use codec::Encode;
@@ -69,43 +69,43 @@ pub fn fetch_nonce(client: &FullClient, account: sp_core::sr25519::Pair) -> u32 
 pub fn create_extrinsic(
 	client: &FullClient,
 	sender: sp_core::sr25519::Pair,
-	function: impl Into<appchain_barnacle_runtime::RuntimeCall>,
+	function: impl Into<uniqueone_appchain_runtime::RuntimeCall>,
 	nonce: Option<u32>,
-) -> appchain_barnacle_runtime::UncheckedExtrinsic {
+) -> uniqueone_appchain_runtime::UncheckedExtrinsic {
 	let function = function.into();
 	let genesis_hash = client.block_hash(0).ok().flatten().expect("Genesis block exists; qed");
 	let best_hash = client.chain_info().best_hash;
 	let best_block = client.chain_info().best_number;
 	let nonce = nonce.unwrap_or_else(|| fetch_nonce(client, sender.clone()));
 
-	let period = appchain_barnacle_runtime::BlockHashCount::get()
+	let period = uniqueone_appchain_runtime::BlockHashCount::get()
 		.checked_next_power_of_two()
 		.map(|c| c / 2)
 		.unwrap_or(2) as u64;
 	let tip = 0;
-	let extra: appchain_barnacle_runtime::SignedExtra =
+	let extra: uniqueone_appchain_runtime::SignedExtra =
 		(
-			frame_system::CheckNonZeroSender::<appchain_barnacle_runtime::Runtime>::new(),
-			frame_system::CheckSpecVersion::<appchain_barnacle_runtime::Runtime>::new(),
-			frame_system::CheckTxVersion::<appchain_barnacle_runtime::Runtime>::new(),
-			frame_system::CheckGenesis::<appchain_barnacle_runtime::Runtime>::new(),
-			frame_system::CheckEra::<appchain_barnacle_runtime::Runtime>::from(
+			frame_system::CheckNonZeroSender::<uniqueone_appchain_runtime::Runtime>::new(),
+			frame_system::CheckSpecVersion::<uniqueone_appchain_runtime::Runtime>::new(),
+			frame_system::CheckTxVersion::<uniqueone_appchain_runtime::Runtime>::new(),
+			frame_system::CheckGenesis::<uniqueone_appchain_runtime::Runtime>::new(),
+			frame_system::CheckEra::<uniqueone_appchain_runtime::Runtime>::from(
 				generic::Era::mortal(period, best_block.saturated_into()),
 			),
-			frame_system::CheckNonce::<appchain_barnacle_runtime::Runtime>::from(nonce),
-			frame_system::CheckWeight::<appchain_barnacle_runtime::Runtime>::new(),
+			frame_system::CheckNonce::<uniqueone_appchain_runtime::Runtime>::from(nonce),
+			frame_system::CheckWeight::<uniqueone_appchain_runtime::Runtime>::new(),
 			pallet_transaction_payment::ChargeTransactionPayment::<
-				appchain_barnacle_runtime::Runtime,
+				uniqueone_appchain_runtime::Runtime,
 			>::from(tip),
 		);
 
-	let raw_payload = appchain_barnacle_runtime::SignedPayload::from_raw(
+	let raw_payload = uniqueone_appchain_runtime::SignedPayload::from_raw(
 		function.clone(),
 		extra.clone(),
 		(
 			(),
-			appchain_barnacle_runtime::VERSION.spec_version,
-			appchain_barnacle_runtime::VERSION.transaction_version,
+			uniqueone_appchain_runtime::VERSION.spec_version,
+			uniqueone_appchain_runtime::VERSION.transaction_version,
 			genesis_hash,
 			best_hash,
 			(),
@@ -115,10 +115,10 @@ pub fn create_extrinsic(
 	);
 	let signature = raw_payload.using_encoded(|e| sender.sign(e));
 
-	appchain_barnacle_runtime::UncheckedExtrinsic::new_signed(
+	uniqueone_appchain_runtime::UncheckedExtrinsic::new_signed(
 		function,
 		sp_runtime::AccountId32::from(sender.public()).into(),
-		appchain_barnacle_runtime::Signature::Sr25519(signature),
+		uniqueone_appchain_runtime::Signature::Sr25519(signature),
 		extra,
 	)
 }
@@ -566,7 +566,7 @@ pub fn new_full(
 #[cfg(test)]
 mod tests {
 	use crate::service::{new_full_base, NewFullBase};
-	use appchain_barnacle_runtime::{
+	use uniqueone_appchain_runtime::{
 		constants::{currency::CENTS, time::SLOT_DURATION},
 		Address, BalancesCall, RuntimeCall, UncheckedExtrinsic,
 	};

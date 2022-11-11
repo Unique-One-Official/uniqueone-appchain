@@ -8,7 +8,7 @@ edition = "2021"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 default-run = "uniqueone-appchain"
 homepage = "https://oct.network/"
-repository = "https://github.com/octopus-network/barnacle/"
+repository = "https://github.com/Unique-One-Official/uniqueone-appchain"
 
 [package.metadata.wasm-pack.profile.release]
 # `wasm-opt` has some problems on linux, see

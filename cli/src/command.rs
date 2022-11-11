@@ -22,7 +22,7 @@ use crate::{
 	service::{new_partial, FullClient},
 	Cli, Subcommand,
 };
-use appchain_barnacle_runtime::{ExistentialDeposit, RuntimeApi};
+use uniqueone_appchain_runtime::{ExistentialDeposit, RuntimeApi};
 use appchain_executor::ExecutorDispatch;
 use appchain_primitives::Block;
 use frame_benchmarking_cli::*;
@@ -34,7 +34,7 @@ use std::sync::Arc;
 
 impl SubstrateCli for Cli {
 	fn impl_name() -> String {
-		"Octopus Appchain Node".into()
+		"Unique One Appchain".into()
 	}
 
 	fn impl_version() -> String {
@@ -50,32 +50,29 @@ impl SubstrateCli for Cli {
 	}
 
 	fn support_url() -> String {
-		"support.anonymous.an".into()
+		"https://github.com/Unique-One-Official/uniqueone-appchain/issues/new".into()
 	}
 
 	fn copyright_start_year() -> i32 {
-		2019
+		2022
 	}
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
-		let spec = match id {
-			"" =>
-				return Err(
-					"Please specify which chain you want to run, e.g. --dev or --chain=local"
-						.into(),
-				),
-			"dev" => Box::new(chain_spec::development_config()),
-			"local" => Box::new(chain_spec::local_testnet_config()),
-			"octopus-testnet" => Box::new(chain_spec::octopus_testnet_config()?),
-			"octopus-mainnet" => Box::new(chain_spec::octopus_mainnet_config()?),
-			path =>
-				Box::new(chain_spec::ChainSpec::from_json_file(std::path::PathBuf::from(path))?),
-		};
-		Ok(spec)
+		Ok(match id {
+			"dev" => Box::new(chain_spec::development_config()?),
+			"local" | "" => Box::new(chain_spec::local_config()?),
+			"dev-testnet" => Box::new(chain_spec::development_testnet_config()?),
+			"stg-testnet" => Box::new(chain_spec::staging_testnet_config()?),
+			"testnet" => Box::new(chain_spec::testnet_config()?),
+			"mainnet" => Box::new(chain_spec::mainnet_config()?),
+			"octopus-testnet" => Box::new(chain_spec::testnet_config()?),
+			"octopus-mainnet" => Box::new(chain_spec::mainnet_config()?),
+			path => Box::new(chain_spec::ChainSpec::from_json_file(std::path::PathBuf::from(path))?),
+		})
 	}
 
 	fn native_runtime_version(_: &Box<dyn ChainSpec>) -> &'static RuntimeVersion {
-		&appchain_barnacle_runtime::VERSION
+		&uniqueone_appchain_runtime::VERSION
 	}
 }
 
