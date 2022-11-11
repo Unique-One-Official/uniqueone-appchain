@@ -1,25 +1,33 @@
-[profile.release]
-panic = 'unwind'
-
 [workspace]
 members = [
-    "node",
-	# "pallets/chain-extension",
-	# "pallets/unet-orml-utilities",
-	# "pallets/unet-orml-traits",
-	# "pallets/unet-orml-nft",
-	# "pallets/unet-orml-tokens",
-	# "pallets/unet-orml-currencies",
-	# "pallets/unet-traits",
-	# "pallets/unet-nft",
-	# "pallets/unet-rpc",
-	# "pallets/unet-rpc/runtime-api",
-	# "pallets/unet-config",
-	# "pallets/unet-order",
-	# "pallets/unet-auction",
-	# "pallets/ethereum-chain-id",
-	"runtime",
+    "cli",
+    "executor",
+    "inspect",
+    "primitives",
+    "rpc",
+    "runtime",
 ]
+[profile.release]
+panic = "unwind"
+
+# members = [
+#     "node",
+# 	# "pallets/chain-extension",
+# 	# "pallets/unet-orml-utilities",
+# 	# "pallets/unet-orml-traits",
+# 	# "pallets/unet-orml-nft",
+# 	# "pallets/unet-orml-tokens",
+# 	# "pallets/unet-orml-currencies",
+# 	# "pallets/unet-traits",
+# 	# "pallets/unet-nft",
+# 	# "pallets/unet-rpc",
+# 	# "pallets/unet-rpc/runtime-api",
+# 	# "pallets/unet-config",
+# 	# "pallets/unet-order",
+# 	# "pallets/unet-auction",
+# 	# "pallets/ethereum-chain-id",
+# 	"runtime",
+# ]
 
 [patch."https://github.com/purestake/substrate"]
 beefy-gadget = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
