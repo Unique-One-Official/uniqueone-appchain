@@ -34,6 +34,7 @@ codec = { package = "parity-scale-codec", version = "3.0.0" }
 serde = { version = "1.0.136", features = ["derive"] }
 jsonrpsee = { version = "0.15.1", features = ["server"] }
 log = "0.4.17"
+hex-literal = { version = '0.3.4' }
 
 # primitives
 sp-authority-discovery = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
