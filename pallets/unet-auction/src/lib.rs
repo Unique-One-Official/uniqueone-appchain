@@ -40,7 +40,7 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		/// MultiCurrency type for trading
 		type MultiCurrency: MultiReservableCurrency<Self::AccountId, Balance = Balance>;
@@ -147,7 +147,7 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<T::BlockNumber> for Pallet<T> {
 		fn on_runtime_upgrade() -> Weight {
-			0
+			Weight::from_ref_time(0 as u64)
 		}
 
 		fn integrity_test() {}
@@ -686,7 +686,7 @@ pub mod pallet {
 
 impl<T: Config> Pallet<T> {
 	pub fn treasury_account_id() -> T::AccountId {
-		sp_runtime::traits::AccountIdConversion::<T::AccountId>::into_account(
+		sp_runtime::traits::AccountIdConversion::<T::AccountId>::into_account_truncating(
 			&T::TreasuryPalletId::get(),
 		)
 	}

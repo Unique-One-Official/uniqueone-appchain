@@ -1,7 +1,7 @@
 [package]
 authors = ['Unique One <hello@uniqueone.network>']
 description = "Various utilities including `FixedU128` and `LinkedList`."
-edition = '2018'
+edition = '2021'
 homepage = 'https://uniqueone.network'
 license = 'Apache-2.0'
 name = 'unet-orml-utilities'

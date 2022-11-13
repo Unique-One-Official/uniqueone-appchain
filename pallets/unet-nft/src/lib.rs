@@ -165,7 +165,7 @@ pub mod pallet {
 			TokenData = TokenData<<Self as frame_system::Config>::AccountId, BlockNumberOf<Self>>,
 		> + pallet_proxy::Config
 	{
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		/// Extra Configurations
 		type ExtraConfig: UnetConfig<Self::AccountId, BlockNumberFor<Self>>;
@@ -258,7 +258,7 @@ pub mod pallet {
 				StorageVersion::<T>::put(Releases::V2_0_0);
 				migrations::do_migrate::<T>()
 			} else {
-				0
+				Weight::from_ref_time(0 as u64)
 			}
 		}
 
@@ -303,7 +303,7 @@ pub mod pallet {
 					Properties(<BitFlags<ClassProperty>>::from_bits(*properties).unwrap());
 				assert!(unet_orml_nft::Classes::<T>::get(*class_id).is_none(), "Dup class id");
 				unet_orml_nft::NextClassId::<T>::set(*class_id);
-				let owner: T::AccountId = T::ModuleId::get().into_sub_account(class_id);
+				let owner: T::AccountId = T::ModuleId::get().into_sub_account_truncating(class_id);
 				let (deposit, all_deposit) = Pallet::<T>::create_class_deposit_num_proxies(
 					class_metadata.len().saturated_into(),
 					name.len().saturated_into(),
@@ -582,7 +582,7 @@ pub mod pallet {
 				unet_orml_nft::Pallet::<T>::burn(&who, (class_id, token_id), quantity)?
 			{
 				if token_info.quantity.is_zero() {
-					let class_owner: T::AccountId = T::ModuleId::get().into_sub_account(class_id);
+					let class_owner: T::AccountId = T::ModuleId::get().into_sub_account_truncating(class_id);
 					let data: TokenData<T::AccountId, T::BlockNumber> = token_info.data;
 					// `repatriate_reserved` will check `to` account exist and return `DeadAccount`.
 					// `transfer` not do this check.
@@ -625,7 +625,7 @@ pub mod pallet {
 			ensure!(who == class_info.owner, Error::<T>::NoPermission);
 			ensure!(class_info.total_issuance == Zero::zero(), Error::<T>::CannotDestroyClass);
 
-			let owner: T::AccountId = T::ModuleId::get().into_sub_account(class_id);
+			let owner: T::AccountId = T::ModuleId::get().into_sub_account_truncating(class_id);
 			let data = class_info.data;
 			// `repatriate_reserved` will check `to` account exist and return `DeadAccount`.
 			// `transfer` not do this check.
@@ -761,7 +761,7 @@ impl<T: Config> Pallet<T> {
 		);
 
 		let next_id = unet_orml_nft::Pallet::<T>::next_class_id();
-		let owner: T::AccountId = T::ModuleId::get().into_sub_account(next_id);
+		let owner: T::AccountId = T::ModuleId::get().into_sub_account_truncating(next_id);
 		let (deposit, all_deposit) = Self::create_class_deposit(
 			metadata.len().saturated_into(),
 			name.len().saturated_into(),

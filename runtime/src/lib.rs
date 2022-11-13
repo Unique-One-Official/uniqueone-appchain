@@ -52,13 +52,14 @@ pub use sp_runtime::BuildStorage;
 
 use frame_support::{
 	construct_runtime, parameter_types,
+	dispatch::DispatchClass,
 	traits::{
 		AsEnsureOriginWithArg, ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, Imbalance,
 		InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced,
 	},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
-		ConstantMultiplier, DispatchClass, IdentityFee, Weight,
+		ConstantMultiplier, IdentityFee, Weight,
 	},
 	PalletId,
 };
@@ -257,7 +258,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 116,
+	spec_version: 117,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -733,6 +734,11 @@ impl pallet_octopus_appchain::Config for Runtime {
 	type WeightInfo = pallet_octopus_appchain::weights::SubstrateWeight<Runtime>;
 }
 
+parameter_types! {
+	pub const NativeTokenDecimals: u128 = 1_000_000_000_000_000_000;
+	pub const FeeTh: u64 = 300;
+}
+
 impl pallet_octopus_bridge::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type PalletId = OctopusPalletId;
@@ -747,6 +753,8 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type ItemId = ItemId;
 	type Nonfungibles = OctopusUniques;
 	type Convertor = ();
+	type NativeTokenDecimals = NativeTokenDecimals;
+	type Threshold = FeeTh;
 	type WeightInfo = pallet_octopus_bridge::weights::SubstrateWeight<Runtime>;
 }
 
@@ -1212,60 +1220,60 @@ impl unet_orml_currencies::Config for Runtime {
 	type WeightInfo = ();
 }
 
-// impl unet_orml_nft::Config for Runtime {
-// 	type ClassId = unet_traits::ClassId;
-// 	type TokenId = unet_traits::TokenId;
-// 	type ClassData = unet_traits::ClassData<BlockNumber>;
-// 	type TokenData = unet_traits::TokenData<AccountId, BlockNumber>;
-// }
+impl unet_orml_nft::Config for Runtime {
+	type ClassId = unet_traits::ClassId;
+	type TokenId = unet_traits::TokenId;
+	type ClassData = unet_traits::ClassData<BlockNumber>;
+	type TokenData = unet_traits::TokenData<AccountId, BlockNumber>;
+}
 
 impl unet_config::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo = ();
 }
 
-// parameter_types! {
-// 	pub const CreateClassDeposit: Balance = 20 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
-// 	pub const CreateTokenDeposit: Balance = 10 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
-// 	pub const MetaDataByteDeposit: Balance = 1 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
-// 	pub const NftModuleId: PalletId = PalletId(*b"unetnft*");
-// }
+parameter_types! {
+	pub const CreateClassDeposit: Balance = 20 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
+	pub const CreateTokenDeposit: Balance = 10 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
+	pub const MetaDataByteDeposit: Balance = 1 * currency::MILLICENTS * currency::SUPPLY_FACTOR;
+	pub const NftModuleId: PalletId = PalletId(*b"unetnft*");
+}
 
-// impl unet_nft::Config for Runtime {
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type ExtraConfig = UnetConf;
-// 	type CreateClassDeposit = CreateClassDeposit;
-// 	type MetaDataByteDeposit = MetaDataByteDeposit;
-// 	type CreateTokenDeposit = CreateTokenDeposit;
-// 	type ModuleId = NftModuleId;
-// 	type Currency = Balances;
-// 	type MultiCurrency = Currencies;
-// 	type WeightInfo = ();
-// }
+impl unet_nft::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type ExtraConfig = UnetConf;
+	type CreateClassDeposit = CreateClassDeposit;
+	type MetaDataByteDeposit = MetaDataByteDeposit;
+	type CreateTokenDeposit = CreateTokenDeposit;
+	type ModuleId = NftModuleId;
+	type Currency = Balances;
+	type MultiCurrency = Currencies;
+	type WeightInfo = ();
+}
 
-// impl unet_order::Config for Runtime {
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type MultiCurrency = Currencies;
-// 	type Currency = Balances;
-// 	type ClassId = unet_traits::ClassId;
-// 	type TokenId = unet_traits::TokenId;
-// 	type NFT = UnetNft;
-// 	type ExtraConfig = UnetConf;
-// 	type TreasuryPalletId = TreasuryId;
-// 	type WeightInfo = ();
-// }
+impl unet_order::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type MultiCurrency = Currencies;
+	type Currency = Balances;
+	type ClassId = unet_traits::ClassId;
+	type TokenId = unet_traits::TokenId;
+	type NFT = UnetNft;
+	type ExtraConfig = UnetConf;
+	type TreasuryPalletId = TreasuryId;
+	type WeightInfo = ();
+}
 
-// impl unet_auction::Config for Runtime {
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type MultiCurrency = Currencies;
-// 	type Currency = Balances;
-// 	type ClassId = unet_traits::ClassId;
-// 	type TokenId = unet_traits::TokenId;
-// 	type NFT = UnetNft;
-// 	type ExtraConfig = UnetConf;
-// 	type TreasuryPalletId = TreasuryId;
-// 	type WeightInfo = ();
-// }
+impl unet_auction::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type MultiCurrency = Currencies;
+	type Currency = Balances;
+	type ClassId = unet_traits::ClassId;
+	type TokenId = unet_traits::TokenId;
+	type NFT = UnetNft;
+	type ExtraConfig = UnetConf;
+	type TreasuryPalletId = TreasuryId;
+	type WeightInfo = ();
+}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -1307,11 +1315,11 @@ construct_runtime!(
 		Contracts: pallet_contracts::{Call, Event<T>, Pallet, Storage},
 		Currencies: unet_orml_currencies::{Call, Event<T>, Pallet},
 		Tokens: unet_orml_tokens::{Config<T>, Event<T>, Pallet, Storage},
-		// OrmlNFT: unet_orml_nft::{Config<T>, Pallet, Storage},
+		OrmlNFT: unet_orml_nft::{Config<T>, Pallet, Storage},
 		UnetConf: unet_config::{Call, Config<T>, Event<T>, Pallet, Storage},
-		// UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
-		// UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
-		// UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},
+		UnetNft: unet_nft::{Call, Event<T>, Config<T>, Pallet, Storage},
+		UnetOrder: unet_order::{Call, Config<T>, Event<T>, Pallet, Storage},
+		UnetAuction: unet_auction::{Call, Event<T>, Config<T>, Pallet, Storage},
 	}
 );
 

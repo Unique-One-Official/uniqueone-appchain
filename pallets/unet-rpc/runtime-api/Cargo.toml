@@ -1,6 +1,6 @@
 [package]
 authors = ['Unique One <hello@uniqueone.network>']
-edition = '2018'
+edition = '2021'
 homepage = 'https://uniqueone.network'
 license = 'Apache-2.0'
 name = 'unet-rpc-runtime-api'

@@ -48,12 +48,12 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: UnetAuction DutchAuctions (r:0 w:1)
 	// Storage: UnetAuction DutchAuctionBids (r:0 w:1)
 	fn submit_dutch_auction(c: u32, ) -> Weight {
-		33_399_000_u64			// Standard Error: 68_000
-			.saturating_add((10_193_000_u64).saturating_mul(c as Weight))
+		(Weight::from_ref_time(33_399_000_u64 as u64))			// Standard Error: 68_000
+			.saturating_add((Weight::from_ref_time(10_193_000_u64 as u64)).saturating_mul(c as u64))
 			.saturating_add(T::DbWeight::get().reads(3_u64))
-			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as u64)))
 			.saturating_add(T::DbWeight::get().writes(3_u64))
-			.saturating_add(T::DbWeight::get().writes((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().writes((1_u64).saturating_mul(c as u64)))
 	}
 	// Storage: UnetConf MaxCommissionRewardRate (r:1 w:0)
 	// Storage: UnetConf MinOrderDeposit (r:1 w:0)
@@ -64,24 +64,24 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: UnetAuction BritishAuctions (r:0 w:1)
 	// Storage: UnetAuction BritishAuctionBids (r:0 w:1)
 	fn submit_british_auction(c: u32, ) -> Weight {
-		30_629_000_u64			// Standard Error: 62_000
-			.saturating_add((10_074_000_u64).saturating_mul(c as Weight))
+		(Weight::from_ref_time(30_629_000_u64 as u64))			// Standard Error: 62_000
+			.saturating_add((Weight::from_ref_time(10_074_000_u64)).saturating_mul(c as u64))
 			.saturating_add(T::DbWeight::get().reads(4_u64))
-			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as u64)))
 			.saturating_add(T::DbWeight::get().writes(4_u64))
-			.saturating_add(T::DbWeight::get().writes((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().writes((1_u64).saturating_mul(c as u64)))
 	}
 	// Storage: UnetAuction DutchAuctions (r:1 w:0)
 	// Storage: UnetAuction DutchAuctionBids (r:1 w:1)
 	fn bid_dutch_auction() -> Weight {
-		33_000_000_u64
+		(Weight::from_ref_time(33_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(2_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetAuction BritishAuctions (r:1 w:0)
 	// Storage: UnetAuction BritishAuctionBids (r:1 w:1)
 	fn bid_british_auction() -> Weight {
-		33_000_000_u64
+		(Weight::from_ref_time(33_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(2_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
@@ -95,7 +95,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: OrmlNFT Classes (r:1 w:0)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn redeem_dutch_auction() -> Weight {
-		115_000_000_u64
+		(Weight::from_ref_time(115_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(10_u64))
 			.saturating_add(T::DbWeight::get().writes(7_u64))
 	}
@@ -108,7 +108,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: OrmlNFT Classes (r:1 w:0)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn redeem_british_auction() -> Weight {
-		113_000_000_u64
+		(Weight::from_ref_time(113_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(9_u64))
 			.saturating_add(T::DbWeight::get().writes(7_u64))
 	}
@@ -117,7 +117,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: System Account (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
 	fn remove_dutch_auction() -> Weight {
-		35_000_000_u64
+		(Weight::from_ref_time(35_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(4_u64))
 			.saturating_add(T::DbWeight::get().writes(4_u64))
 	}
@@ -126,7 +126,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: System Account (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
 	fn remove_british_auction() -> Weight {
-		35_000_000_u64
+		(Weight::from_ref_time(35_000_000_u64))
 			.saturating_add(T::DbWeight::get().reads(4_u64))
 			.saturating_add(T::DbWeight::get().writes(4_u64))
 	}
@@ -142,12 +142,12 @@ impl WeightInfo for () {
 	// Storage: UnetAuction DutchAuctions (r:0 w:1)
 	// Storage: UnetAuction DutchAuctionBids (r:0 w:1)
 	fn submit_dutch_auction(c: u32, ) -> Weight {
-		33_399_000_u64			// Standard Error: 68_000
-			.saturating_add((10_193_000_u64).saturating_mul(c as Weight))
+		(Weight::from_ref_time(33_399_000_u64))			// Standard Error: 68_000
+			.saturating_add((Weight::from_ref_time(10_193_000_u64)).saturating_mul(c as u64))
 			.saturating_add(RocksDbWeight::get().reads(3_u64))
-			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as u64)))
 			.saturating_add(RocksDbWeight::get().writes(3_u64))
-			.saturating_add(RocksDbWeight::get().writes((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().writes((1_u64).saturating_mul(c as u64)))
 	}
 	// Storage: UnetConf MaxCommissionRewardRate (r:1 w:0)
 	// Storage: UnetConf MinOrderDeposit (r:1 w:0)
@@ -158,22 +158,22 @@ impl WeightInfo for () {
 	// Storage: UnetAuction BritishAuctions (r:0 w:1)
 	// Storage: UnetAuction BritishAuctionBids (r:0 w:1)
 	fn submit_british_auction(c: u32, ) -> Weight {
-		30_629_000_u64			// Standard Error: 62_000
-			.saturating_add((10_074_000_u64).saturating_mul(c as Weight))
+		(Weight::from_ref_time(30_629_000_u64))			// Standard Error: 62_000
+			.saturating_add((Weight::from_ref_time(10_074_000_u64)).saturating_mul(c as u64))
 			.saturating_add(RocksDbWeight::get().reads(4_u64))
-			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as u64)))
 			.saturating_add(RocksDbWeight::get().writes(4_u64))
-			.saturating_add(RocksDbWeight::get().writes((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().writes((1_u64).saturating_mul(c as u64)))
 	}
 	// Storage: UnetAuction DutchAuctions (r:1 w:0)	// Storage: UnetAuction DutchAuctionBids (r:1 w:1)
 	fn bid_dutch_auction() -> Weight {
-		33_000_000_u64
+		(Weight::from_ref_time(33_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(2_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
 	// Storage: UnetAuction BritishAuctions (r:1 w:0)	// Storage: UnetAuction BritishAuctionBids (r:1 w:1)
 	fn bid_british_auction() -> Weight {
-		33_000_000_u64
+		(Weight::from_ref_time(33_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(2_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
 	}
@@ -187,7 +187,7 @@ impl WeightInfo for () {
 	// Storage: OrmlNFT Classes (r:1 w:0)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn redeem_dutch_auction() -> Weight {
-		115_000_000_u64
+		(Weight::from_ref_time(115_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(10_u64))
 			.saturating_add(RocksDbWeight::get().writes(7_u64))
 	}
@@ -200,14 +200,14 @@ impl WeightInfo for () {
 	// Storage: OrmlNFT Classes (r:1 w:0)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn redeem_british_auction() -> Weight {
-		113_000_000_u64
+		(Weight::from_ref_time(113_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(9_u64))
 			.saturating_add(RocksDbWeight::get().writes(7_u64))
 	}
 	// Storage: UnetAuction DutchAuctionBids (r:1 w:1)	// Storage: UnetAuction DutchAuctions (r:1 w:1)	// Storage: System Account (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
 	fn remove_dutch_auction() -> Weight {
-		35_000_000_u64
+		(Weight::from_ref_time(35_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(4_u64))
 			.saturating_add(RocksDbWeight::get().writes(4_u64))
 	}
@@ -216,7 +216,7 @@ impl WeightInfo for () {
 	// Storage: System Account (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
 	fn remove_british_auction() -> Weight {
-		35_000_000_u64
+		(Weight::from_ref_time(35_000_000_u64))
 			.saturating_add(RocksDbWeight::get().reads(4_u64))
 			.saturating_add(RocksDbWeight::get().writes(4_u64))
 	}

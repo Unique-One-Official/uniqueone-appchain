@@ -47,21 +47,21 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: UnetOrder Orders (r:0 w:1)
 	fn submit_order(c: u32, ) -> Weight {
 		Weight::from_ref_time(17_587_000_u64)			// Standard Error: 81_000
-			.saturating_add((10_585_000_u64).saturating_mul(c as Weight))
+			.saturating_add((Weight::from_ref_time(10_585_000_u64)).saturating_mul(c as u64))
 			.saturating_add(T::DbWeight::get().reads(4_u64))
-			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().reads((2_u64).saturating_mul(c as u64)))
 			.saturating_add(T::DbWeight::get().writes(3_u64))
-			.saturating_add(T::DbWeight::get().writes((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().writes((1_u64).saturating_mul(c as u64)))
 	}
 	// Storage: UnetConf MaxCommissionRewardRate (r:1 w:0)
 	// Storage: OrmlNFT Tokens (r:1 w:0)
 	// Storage: UnetConf NextId (r:1 w:1)
 	// Storage: UnetOrder Offers (r:0 w:1)
 	fn submit_offer(c: u32, ) -> Weight {
-		Weight::from_ref_time(17_587_000_u64)16_481_000_u64			// Standard Error: 54_000
-			.saturating_add((5_410_000_u64).saturating_mul(c as Weight))
+		Weight::from_ref_time(16_481_000_u64)			// Standard Error: 54_000
+			.saturating_add((Weight::from_ref_time(5_410_000_u64)).saturating_mul(c as u64))
 			.saturating_add(T::DbWeight::get().reads(2_u64))
-			.saturating_add(T::DbWeight::get().reads((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(T::DbWeight::get().reads((1_u64).saturating_mul(c as u64)))
 			.saturating_add(T::DbWeight::get().writes(2_u64))
 	}
 	// Storage: UnetOrder Orders (r:1 w:1)
@@ -72,7 +72,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: OrmlNFT Classes (r:1 w:0)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn take_order() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)112_000_000_u64
+		Weight::from_ref_time(112_000_000_u64)
 			.saturating_add(T::DbWeight::get().reads(8_u64))
 			.saturating_add(T::DbWeight::get().writes(6_u64))
 	}
@@ -84,7 +84,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: OrmlNFT TokensByOwner (r:2 w:2)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn take_offer() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)109_000_000_u64
+		Weight::from_ref_time(109_000_000_u64)
 			.saturating_add(T::DbWeight::get().reads(8_u64))
 			.saturating_add(T::DbWeight::get().writes(6_u64))
 	}
@@ -92,14 +92,14 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	// Storage: System Account (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
 	fn remove_order() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)35_000_000_u64
+		Weight::from_ref_time(35_000_000_u64)
 			.saturating_add(T::DbWeight::get().reads(3_u64))
 			.saturating_add(T::DbWeight::get().writes(3_u64))
 	}
 	// Storage: UnetOrder Offers (r:1 w:1)
 	// Storage: System Account (r:1 w:1)
 	fn remove_offer() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)29_000_000_u64
+		Weight::from_ref_time(29_000_000_u64)
 			.saturating_add(T::DbWeight::get().reads(2_u64))
 			.saturating_add(T::DbWeight::get().writes(2_u64))
 	}
@@ -115,22 +115,22 @@ impl WeightInfo for () {
 	// Storage: UnetConf NextId (r:1 w:1)
 	// Storage: UnetOrder Orders (r:0 w:1)
 	fn submit_order(c: u32, ) -> Weight {
-		Weight::from_ref_time(17_587_000_u64)17_587_000_u64			// Standard Error: 81_000
-			.saturating_add((10_585_000_u64).saturating_mul(c as Weight))
+		Weight::from_ref_time(17_587_000_u64)			// Standard Error: 81_000
+			.saturating_add((Weight::from_ref_time(10_585_000_u64)).saturating_mul(c as u64))
 			.saturating_add(RocksDbWeight::get().reads(4_u64))
-			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().reads((2_u64).saturating_mul(c as u64)))
 			.saturating_add(RocksDbWeight::get().writes(3_u64))
-			.saturating_add(RocksDbWeight::get().writes((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().writes((1_u64).saturating_mul(c as u64)))
 	}
 	// Storage: UnetConf MaxCommissionRewardRate (r:1 w:0)
 	// Storage: OrmlNFT Tokens (r:1 w:0)
 	// Storage: UnetConf NextId (r:1 w:1)
 	// Storage: UnetOrder Offers (r:0 w:1)
 	fn submit_offer(c: u32, ) -> Weight {
-		Weight::from_ref_time(17_587_000_u64)16_481_000_u64			// Standard Error: 54_000
-			.saturating_add((5_410_000_u64).saturating_mul(c as Weight))
+		Weight::from_ref_time(16_481_000_u64)			// Standard Error: 54_000
+			.saturating_add((Weight::from_ref_time(5_410_000_u64)).saturating_mul(c as u64))
 			.saturating_add(RocksDbWeight::get().reads(2_u64))
-			.saturating_add(RocksDbWeight::get().reads((1_u64).saturating_mul(c as Weight)))
+			.saturating_add(RocksDbWeight::get().reads((1_u64).saturating_mul(c as u64)))
 			.saturating_add(RocksDbWeight::get().writes(2_u64))
 	}
 	// Storage: UnetOrder Orders (r:1 w:1)
@@ -141,7 +141,7 @@ impl WeightInfo for () {
 	// Storage: OrmlNFT Classes (r:1 w:0)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn take_order() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)112_000_000_u64
+		Weight::from_ref_time(112_000_000_u64)
 			.saturating_add(RocksDbWeight::get().reads(8_u64))
 			.saturating_add(RocksDbWeight::get().writes(6_u64))
 	}
@@ -153,7 +153,7 @@ impl WeightInfo for () {
 	// Storage: OrmlNFT TokensByOwner (r:2 w:2)
 	// Storage: OrmlNFT OwnersByToken (r:0 w:1)
 	fn take_offer() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)109_000_000_u64
+		Weight::from_ref_time(109_000_000_u64)
 			.saturating_add(RocksDbWeight::get().reads(8_u64))
 			.saturating_add(RocksDbWeight::get().writes(6_u64))
 	}
@@ -161,14 +161,14 @@ impl WeightInfo for () {
 	// Storage: System Account (r:1 w:1)
 	// Storage: OrmlNFT TokensByOwner (r:1 w:1)
 	fn remove_order() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)35_000_000_u64
+		Weight::from_ref_time(35_000_000_u64)
 			.saturating_add(RocksDbWeight::get().reads(3_u64))
 			.saturating_add(RocksDbWeight::get().writes(3_u64))
 	}
 	// Storage: UnetOrder Offers (r:1 w:1)
 	// Storage: System Account (r:1 w:1)
 	fn remove_offer() -> Weight {
-		Weight::from_ref_time(17_587_000_u64)29_000_000_u64
+		Weight::from_ref_time(29_000_000_u64)
 			.saturating_add(RocksDbWeight::get().reads(2_u64))
 			.saturating_add(RocksDbWeight::get().writes(2_u64))
 	}

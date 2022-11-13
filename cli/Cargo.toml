@@ -78,7 +78,7 @@ pallet-transaction-payment = { version = "4.0.0-dev", git = "https://github.com/
 pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
 
 # node-specific dependencies
-uniqueone-appchain-runtime = { version = "1.5.8", path = "../runtime" }
+uniqueone-appchain-runtime = { path = "../runtime" }
 appchain-rpc = { version = "3.0.0-dev", path = "../rpc" }
 appchain-primitives = { version = "2.0.0", path = "../primitives" }
 appchain-executor = { version = "3.0.0-dev", path = "../executor" }
@@ -94,8 +94,15 @@ serde_json = "1.0.85"
 beefy-primitives = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
 beefy-gadget = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
 
-# octopus pallets
-pallet-octopus-appchain = { git = "https://github.com/octopus-network/octopus-pallets.git", branch = "main" }
+# Octopus Dependencies
+## Octopus Pallet Dependencies
+pallet-octopus-appchain = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main' }
+pallet-octopus-lpos = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main' }
+
+# Local Dependencies
+# Unet Pallet Dependencies
+unet-traits = {  path = '../pallets/unet-traits' }
+# unet-rpc = { path = "../pallets/unet-rpc" }
 
 [target.'cfg(any(target_arch="x86_64", target_arch="aarch64"))'.dependencies]
 appchain-executor = { version = "3.0.0-dev", path = "../executor", features = ["wasmtime"] }
@@ -143,10 +150,6 @@ try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://gith
 sc-cli = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", optional = true }
 pallet-balances = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
 
-# Local Dependencies
-# Unet Pallet Dependencies
-unet-traits = {  path = '../pallets/unet-traits' }
-# unet-rpc = { path = "../pallets/unet-rpc" }
 
 [features]
 default = ["cli"]
