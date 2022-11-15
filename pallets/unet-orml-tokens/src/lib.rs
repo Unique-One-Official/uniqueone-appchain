@@ -42,16 +42,14 @@ pub use crate::imbalances::{NegativeImbalance, PositiveImbalance};
 
 use codec::MaxEncodedLen;
 use frame_support::{
-	ensure, log,
+	ensure,
 	pallet_prelude::*,
 	traits::{
-		tokens::{fungible, fungibles, DepositConsequence, WithdrawConsequence},
-		BalanceStatus as Status, Contains, Currency as PalletCurrency, DefensiveSaturating,
+		BalanceStatus as Status, Currency as PalletCurrency,
 		ExistenceRequirement, Get, Imbalance, LockableCurrency as PalletLockableCurrency,
-		NamedReservableCurrency as PalletNamedReservableCurrency,
 		ReservableCurrency as PalletReservableCurrency, SignedImbalance, WithdrawReasons,
 	},
-	transactional, BoundedVec, PalletId,
+	transactional, PalletId,
 };
 use frame_system::{ensure_signed, pallet_prelude::*};
 use scale_info::TypeInfo;
@@ -60,10 +58,9 @@ use sp_runtime::{
 		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, CheckedSub,
 		MaybeSerializeDeserialize, Member, Saturating, StaticLookup, Zero,
 	},
-	ArithmeticError, DispatchError, DispatchResult, FixedPointOperand, RuntimeDebug,
+	DispatchError, DispatchResult, FixedPointOperand, RuntimeDebug,
 };
 use sp_std::{
-	cmp,
 	convert::{Infallible, TryFrom, TryInto},
 	marker,
 	prelude::*,

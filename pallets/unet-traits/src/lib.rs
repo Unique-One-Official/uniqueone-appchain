@@ -20,7 +20,7 @@ pub use log;
 
 pub type ResultPost<T> = sp_std::result::Result<
 	T,
-	sp_runtime::DispatchErrorWithPostInfo<frame_support::weights::PostDispatchInfo>,
+	sp_runtime::DispatchErrorWithPostInfo<frame_support::dispatch::PostDispatchInfo>,
 >;
 
 pub trait UnetConfig<AccountId, BlockNumber> {
