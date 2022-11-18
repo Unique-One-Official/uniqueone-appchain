@@ -15,7 +15,7 @@
 # direnv cache
 .direnv
 
-Cargo.lock
+# Cargo.lock
 
 scripts/*
 scripts/*.sh
