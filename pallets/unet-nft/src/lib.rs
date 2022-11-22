@@ -10,10 +10,13 @@ use frame_system::pallet_prelude::*;
 pub use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{
-		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One,
-		StaticLookup, Zero,
+		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One, StaticLookup, Zero,
 	},
 	PerU16, RuntimeDebug, SaturatedConversion,
+};
+
+use sp_std::{
+	convert::{From, TryInto},
 };
 
 use sp_std::vec::Vec;
@@ -32,6 +35,7 @@ pub type CurrencyIdOf<T> = <<T as pallet::Config>::MultiCurrency as MultiCurrenc
 	<T as frame_system::Config>::AccountId,
 >>::CurrencyId;
 pub type BlockNumberOf<T> = <T as frame_system::Config>::BlockNumber;
+type AccountIdLookupOf<T> = <<T as frame_system::Config>::Lookup as StaticLookup>::Source;
 
 mod benchmarking;
 pub mod utils;
@@ -191,6 +195,12 @@ pub mod pallet {
 
 		/// The currency mechanism.
 		type Currency: ReservableCurrency<Self::AccountId>;
+
+		/// Identifier for the collection of item.
+		type CollectionId: Member + Parameter + MaxEncodedLen + Copy;
+
+		/// The type used to identify a unique item within a collection.
+		type ItemId: Member + Parameter + MaxEncodedLen + Copy;
 
 		/// Weight information for extrinsics in this pallet.
 		type WeightInfo: weights::WeightInfo;
@@ -561,6 +571,20 @@ pub mod pallet {
 			Ok(().into())
 		}
 
+		#[pallet::weight(100_000)]
+		pub fn transfer_1(
+			origin: OriginFor<T>,
+			collection: T::CollectionId,
+			item: T::ItemId,
+			dest: AccountIdLookupOf<T>,
+		) -> DispatchResult {
+			let origin = ensure_signed(origin)?;
+			let dest = T::Lookup::lookup(dest)?;
+
+			Self::do_transfer(&origin, &dest, ClassId::from(collection), TokenId::from(item), TokenId::from(1u64))?;
+			Ok(())
+		}
+
 		/// Burn NFT token
 		///
 		/// - `class_id`: class id
@@ -582,7 +606,8 @@ pub mod pallet {
 				unet_orml_nft::Pallet::<T>::burn(&who, (class_id, token_id), quantity)?
 			{
 				if token_info.quantity.is_zero() {
-					let class_owner: T::AccountId = T::ModuleId::get().into_sub_account_truncating(class_id);
+					let class_owner: T::AccountId =
+						T::ModuleId::get().into_sub_account_truncating(class_id);
 					let data: TokenData<T::AccountId, T::BlockNumber> = token_info.data;
 					// `repatriate_reserved` will check `to` account exist and return `DeadAccount`.
 					// `transfer` not do this check.
@@ -1009,5 +1034,26 @@ impl<T: Config> unet_traits::UnetNft<T::AccountId, ClassIdOf<T>, TokenIdOf<T>> f
 		charge_royalty: Option<PerU16>,
 	) -> ResultPost<(T::AccountId, T::AccountId, ClassIdOf<T>, TokenIdOf<T>, TokenIdOf<T>)> {
 		Self::do_proxy_mint(delegate, to, class_id, metadata, quantity, charge_royalty)
+	}
+}
+
+impl std::convert::From<<T as Config>::CollectionId> for u64 {
+    fn from(self) -> Self {
+        self
+    }
+}
+
+impl std::convert::From<<T as Config>::ItemId> for u32 {
+    fn from(self) -> Self {
+        self
+    }
+}
+
+impl<CollectionId: From<u16>, ItemId: From<u16>> std::convert::From<<T as Config>::ItemId> for u32 {
+	fn collection(i: u16) -> CollectionId {
+		i.into()
+	}
+	fn item(i: u16) -> ItemId {
+		i.into()
 	}
 }

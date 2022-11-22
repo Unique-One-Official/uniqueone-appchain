@@ -80,7 +80,6 @@ pub use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdj
 use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
 use sp_mmr_primitives as mmr;
 
-use unet_order::UnetNft;
 // Local
 pub use unet_traits::constants_types::Amount;
 pub use unet_traits::constants_types::CurrencyId;
@@ -753,7 +752,7 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type CollectionId = CollectionId;
 	type ItemId = ItemId;
 	type Nonfungibles = OctopusUniques;
-	// type Nonfungibles_1 = UnetNft;
+	type NonfungiblesOrml = UnetNft;
 	type Convertor = ();
 	type NativeTokenDecimals = NativeTokenDecimals;
 	type Threshold = FeeTh;
@@ -1250,6 +1249,8 @@ impl unet_nft::Config for Runtime {
 	type ModuleId = NftModuleId;
 	type Currency = Balances;
 	type MultiCurrency = Currencies;
+	type CollectionId = unet_traits::ClassId;
+	type ItemId = unet_traits::TokenId;
 	type WeightInfo = ();
 }
 

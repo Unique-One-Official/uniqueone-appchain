@@ -127,15 +127,15 @@ pub mod pallet {
 				CollectionId = Self::CollectionId,
 			>;
 
-		// type Nonfungibles_1: nonfungibles::Inspect<
-		// 	Self::AccountId,
-		// 	ItemId = Self::ItemId,
-		// 	CollectionId = Self::CollectionId,
-		// > + nonfungibles::Transfer<
-		// 	Self::AccountId,
-		// 	ItemId = Self::ItemId,
-		// 	CollectionId = Self::CollectionId,
-		// >;
+		type NonfungiblesOrml: nonfungibles::Inspect<
+			Self::AccountId,
+			ItemId = Self::ItemId,
+			CollectionId = Self::CollectionId,
+		> + nonfungibles::Transfer<
+			Self::AccountId,
+			ItemId = Self::ItemId,
+			CollectionId = Self::CollectionId,
+		>;
 
 
 		type Convertor: ConvertIntoNep171<CollectionId = Self::CollectionId, ItemId = Self::ItemId>;
