@@ -79,6 +79,7 @@ use pallet_session::historical as pallet_session_historical;
 pub use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
 use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
 use sp_mmr_primitives as mmr;
+use pallet_octopus_bridge::impls::RmrkBaseMetadataConvertor;
 
 // Local
 pub use unet_traits::constants_types::Amount;
@@ -258,7 +259,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 117,
+	spec_version: 118,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -601,7 +602,7 @@ parameter_types! {
 	pub const AssetDeposit: Balance = 100 * currency::DOLLARS;
 	pub const MetadataDepositBase: Balance = 10 * currency::DOLLARS;
 	pub const MetadataDepositPerByte: Balance = currency::DOLLARS;
-	pub const StringLimit: u32 = 50;
+	pub const StringLimit: u32 = 2048;
 }
 
 impl pallet_assets::Config<pallet_assets::Instance1> for Runtime {
@@ -753,7 +754,7 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type ItemId = ItemId;
 	type Nonfungibles = OctopusUniques;
 	type NonfungiblesOrml = UnetNft;
-	type Convertor = ();
+	type Convertor = RmrkBaseMetadataConvertor<Runtime>;
 	type NativeTokenDecimals = NativeTokenDecimals;
 	type Threshold = FeeTh;
 	type WeightInfo = pallet_octopus_bridge::weights::SubstrateWeight<Runtime>;
@@ -778,7 +779,7 @@ impl pallet_octopus_lpos::Config for Runtime {
 }
 
 parameter_types! {
-	pub const MaxMessagePayloadSize: u32 = 256;
+	pub const MaxMessagePayloadSize: u32 = 2048;
 	pub const MaxMessagesPerCommit: u32 = 20;
 }
 
