@@ -1250,8 +1250,8 @@ impl unet_nft::Config for Runtime {
 	type ModuleId = NftModuleId;
 	type Currency = Balances;
 	type MultiCurrency = Currencies;
-	type CollectionId = unet_traits::ClassId;
-	type ItemId = unet_traits::TokenId;
+	type CollectionId = CollectionId;
+	type ItemId = ItemId;
 	type WeightInfo = ();
 }
 

@@ -3,7 +3,12 @@
 use frame_support::{
 	dispatch::DispatchResult,
 	pallet_prelude::*,
-	traits::{Currency, ExistenceRequirement::KeepAlive, ReservableCurrency},
+	traits::{
+		tokens::nonfungibles::{Inspect, Transfer},
+		Currency,
+		ExistenceRequirement::KeepAlive,
+		ReservableCurrency,
+	},
 	transactional, PalletId,
 };
 use frame_system::pallet_prelude::*;
@@ -15,9 +20,7 @@ use sp_runtime::{
 	PerU16, RuntimeDebug, SaturatedConversion,
 };
 
-use sp_std::{
-	convert::{From, TryInto},
-};
+use sp_std::convert::{From, TryInto};
 
 use sp_std::vec::Vec;
 use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
@@ -571,20 +574,6 @@ pub mod pallet {
 			Ok(().into())
 		}
 
-		#[pallet::weight(100_000)]
-		pub fn transfer_1(
-			origin: OriginFor<T>,
-			collection: T::CollectionId,
-			item: T::ItemId,
-			dest: AccountIdLookupOf<T>,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			let dest = T::Lookup::lookup(dest)?;
-
-			Self::do_transfer(&origin, &dest, ClassId::from(collection), TokenId::from(item), TokenId::from(1u64))?;
-			Ok(())
-		}
-
 		/// Burn NFT token
 		///
 		/// - `class_id`: class id
@@ -1037,23 +1026,79 @@ impl<T: Config> unet_traits::UnetNft<T::AccountId, ClassIdOf<T>, TokenIdOf<T>> f
 	}
 }
 
-impl std::convert::From<<T as Config>::CollectionId> for u64 {
-    fn from(self) -> Self {
-        self
-    }
-}
-
-impl std::convert::From<<T as Config>::ItemId> for u32 {
-    fn from(self) -> Self {
-        self
-    }
-}
-
-impl<CollectionId: From<u16>, ItemId: From<u16>> std::convert::From<<T as Config>::ItemId> for u32 {
-	fn collection(i: u16) -> CollectionId {
-		i.into()
+impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
+	fn transfer(
+		collection: &Self::CollectionId,
+		item: &Self::ItemId,
+		destination: &T::AccountId,
+	) -> DispatchResult {
+		//Self::do_transfer(*collection, *item, destination.clone(), |_, _| Ok(()))
+		unimplemented!();
 	}
-	fn item(i: u16) -> ItemId {
-		i.into()
+}
+
+impl<T: Config> Inspect<T::AccountId> for Pallet<T> {
+	type ItemId = T::ItemId;
+	type CollectionId = T::CollectionId;
+
+	fn owner(
+		collection: &Self::CollectionId,
+		item: &Self::ItemId,
+	) -> Option<T::AccountId> {
+		// Item::<T>::get(collection, item).map(|a| a.owner)
+		unimplemented!();
+	}
+
+	fn collection_owner(collection: &Self::CollectionId) -> Option<T::AccountId> {
+		// Collection::<T>::get(collection).map(|a| a.owner)
+		unimplemented!();
+	}
+
+	/// Returns the attribute value of `item` of `collection` corresponding to `key`.
+	///
+	/// When `key` is empty, we return the item metadata value.
+	///
+	/// By default this is `None`; no attributes are defined.
+	fn attribute(
+		collection: &Self::CollectionId,
+		item: &Self::ItemId,
+		key: &[u8],
+	) -> Option<Vec<u8>> {
+		if key.is_empty() {
+			// We make the empty key map to the item metadata value.
+			// ItemMetadataOf::<T>::get(collection, item).map(|m| m.data.into())
+		} else {
+			// let key = BoundedSlice::<_, _>::try_from(key).ok()?;
+			// Attribute::<T>::get((collection, Some(item), key)).map(|a| a.0.into())
+		}
+
+		unimplemented!();
+	}
+
+	/// Returns the attribute value of `item` of `collection` corresponding to `key`.
+	///
+	/// When `key` is empty, we return the item metadata value.
+	///
+	/// By default this is `None`; no attributes are defined.
+	fn collection_attribute(collection: &Self::CollectionId, key: &[u8]) -> Option<Vec<u8>> {
+		if key.is_empty() {
+			// We make the empty key map to the item metadata value.
+			// CollectionMetadataOf::<T>::get(collection).map(|m| m.data.into())
+		} else {
+			// let key = BoundedSlice::<_, _>::try_from(key).ok()?;
+			// Attribute::<T>::get((collection, Option::<T::ItemId>::None, key)).map(|a| a.0.into())
+		}
+		unimplemented!();
+	}
+
+	/// Returns `true` if the `item` of `collection` may be transferred.
+	///
+	/// Default implementation is that all items are transferable.
+	fn can_transfer(collection: &Self::CollectionId, item: &Self::ItemId) -> bool {
+		// match (Collection::<T>::get(collection), Item::<T>::get(collection, item)) {
+		// 	(Some(cd), Some(id)) if !cd.is_frozen && !id.is_frozen => true,
+		// 	_ => false,
+		// }
+		unimplemented!();
 	}
 }
