@@ -9599,6 +9599,7 @@ dependencies = [
  "pallet-balances",
  "pallet-proxy",
  "pallet-timestamp",
+ "pallet-uniques",
  "pallet-utility",
  "parity-scale-codec",
  "scale-info",

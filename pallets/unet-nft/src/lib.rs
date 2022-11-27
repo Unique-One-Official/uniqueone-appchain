@@ -4,6 +4,7 @@ use frame_support::{
 	dispatch::DispatchResult,
 	pallet_prelude::*,
 	traits::{
+		tokens::nonfungibles,
 		tokens::nonfungibles::{Inspect, Transfer},
 		Currency,
 		ExistenceRequirement::KeepAlive,
@@ -39,6 +40,12 @@ pub type CurrencyIdOf<T> = <<T as pallet::Config>::MultiCurrency as MultiCurrenc
 >>::CurrencyId;
 pub type BlockNumberOf<T> = <T as frame_system::Config>::BlockNumber;
 type AccountIdLookupOf<T> = <<T as frame_system::Config>::Lookup as StaticLookup>::Source;
+
+/// Identifier for the collection of item.
+pub type CollectionIdOf<T> = <T as pallet_uniques::Config>::CollectionId;
+
+/// The type used to identify a unique item within a collection.
+pub type ItemIdOf<T> = <T as pallet_uniques::Config>::ItemId;
 
 mod benchmarking;
 pub mod utils;
@@ -170,7 +177,7 @@ pub mod pallet {
 		+ unet_orml_nft::Config<
 			ClassData = ClassData<BlockNumberOf<Self>>,
 			TokenData = TokenData<<Self as frame_system::Config>::AccountId, BlockNumberOf<Self>>,
-		> + pallet_proxy::Config
+		> + pallet_proxy::Config //+ pallet_uniques::Config
 	{
 		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
@@ -199,11 +206,12 @@ pub mod pallet {
 		/// The currency mechanism.
 		type Currency: ReservableCurrency<Self::AccountId>;
 
-		/// Identifier for the collection of item.
-		type CollectionId: Member + Parameter + MaxEncodedLen + Copy;
-
-		/// The type used to identify a unique item within a collection.
-		type ItemId: Member + Parameter + MaxEncodedLen + Copy;
+		// type Nonfungibles: nonfungibles::Inspect<Self::AccountId, ItemId = ItemIdOf, CollectionId = CollectionIdOf>
+		// 	+ nonfungibles::Transfer<
+		// 		Self::AccountId,
+		// 		ItemId = ItemIdOf<T>,
+		// 		CollectionId = CollectionIdOf,
+		// 	>;
 
 		/// Weight information for extrinsics in this pallet.
 		type WeightInfo: weights::WeightInfo;
@@ -1026,7 +1034,7 @@ impl<T: Config> unet_traits::UnetNft<T::AccountId, ClassIdOf<T>, TokenIdOf<T>> f
 	}
 }
 
-impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
+impl<T: Config + pallet_uniques::Config> Transfer<T::AccountId> for Pallet<T> {
 	fn transfer(
 		collection: &Self::CollectionId,
 		item: &Self::ItemId,
@@ -1037,15 +1045,14 @@ impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
 	}
 }
 
-impl<T: Config> Inspect<T::AccountId> for Pallet<T> {
-	type ItemId = T::ItemId;
-	type CollectionId = T::CollectionId;
+impl<T: Config + pallet_uniques::Config> Inspect<T::AccountId> for Pallet<T> {
+	type ItemId = ItemIdOf<T>;
+	type CollectionId = CollectionIdOf<T>;
 
-	fn owner(
-		collection: &Self::CollectionId,
-		item: &Self::ItemId,
-	) -> Option<T::AccountId> {
+	fn owner(collection: &Self::CollectionId, item: &Self::ItemId) -> Option<T::AccountId> {
 		// Item::<T>::get(collection, item).map(|a| a.owner)
+		//let token = unet_orml_nft::Tokens::<T>::get(collection, item);
+
 		unimplemented!();
 	}
 
