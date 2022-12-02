@@ -88,7 +88,7 @@ pallet-offences-benchmarking = { version = "4.0.0-dev", git = "https://github.co
 # Octopus Dependencies
 ## Octopus Pallet Dependencies
 pallet-octopus-appchain = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
-pallet-octopus-bridge = { path = '../pallets/octopus-bridge', default-features = false }
+pallet-octopus-bridge = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
 pallet-octopus-lpos = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
 pallet-octopus-upward-messages = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
 
@@ -241,7 +241,7 @@ runtime-benchmarks = [
 	"pallet-octopus-lpos/runtime-benchmarks",
 	"pallet-octopus-bridge-benchmarking/runtime-benchmarks",
 	"pallet-octopus-appchain-benchmarking/runtime-benchmarks",
-    
+
     # Custom Pallets
     # 'unet-auction/runtime-benchmarks',
 	# 'unet-nft/runtime-benchmarks',

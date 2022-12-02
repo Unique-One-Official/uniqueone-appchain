@@ -22,7 +22,7 @@ frame-support = { git = "https://github.com/paritytech/substrate.git", branch = 
 frame-system = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false }
 
 pallet-octopus-appchain = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
-pallet-octopus-bridge = { default-features = false, path = "../../octopus-bridge" }
+pallet-octopus-bridge = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
 pallet-octopus-support = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
 pallet-assets = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false }
 pallet-uniques = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false }

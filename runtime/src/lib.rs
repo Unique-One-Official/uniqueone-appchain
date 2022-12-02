@@ -753,7 +753,6 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type CollectionId = CollectionId;
 	type ItemId = ItemId;
 	type Nonfungibles = OctopusUniques;
-	type NonfungiblesOrml = UnetNft;
 	type Convertor = RmrkBaseMetadataConvertor<Runtime>;
 	type NativeTokenDecimals = NativeTokenDecimals;
 	type Threshold = FeeTh;
