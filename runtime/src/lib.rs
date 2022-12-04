@@ -1631,30 +1631,30 @@ impl_runtime_apis! {
 		}
 	}
 
-	// impl unet_rpc_runtime_api::UnetApi<Block> for Runtime {
-	// 	fn mint_token_deposit(metadata_len: u32) -> Balance {
-	// 		UnetNft::mint_token_deposit(metadata_len)
-	// 	}
-	// 	fn add_class_admin_deposit(admin_count: u32) -> Balance {
-	// 		UnetNft::add_class_admin_deposit(admin_count)
-	// 	}
-	// 	fn create_class_deposit(metadata_len: u32, name_len: u32, description_len: u32) -> (Balance, Balance) {
-	// 		UnetNft::create_class_deposit(metadata_len, name_len, description_len)
-	// 	}
-	// 	fn get_dutch_auction_current_price(
-	// 		max_price: Balance, min_price: Balance,
-	// 		created_block: BlockNumber,
-	// 		deadline: BlockNumber,
-	// 		current_block: BlockNumber,
-	// 	) -> Balance {
-	// 		unet_auction::calc_current_price::<Runtime>(max_price, min_price, created_block, deadline, current_block)
-	// 	}
-	// 	fn get_auction_deadline(
-	// 		allow_delay: bool, deadline: BlockNumber, last_bid_block: BlockNumber
-	// 	) -> BlockNumber {
-	// 		unet_auction::get_deadline::<Runtime>(allow_delay, deadline, last_bid_block)
-	// 	}
-	// }
+	impl unet_rpc_runtime_api::UnetApi<Block> for Runtime {
+		fn mint_token_deposit(metadata_len: u32) -> Balance {
+			UnetNft::mint_token_deposit(metadata_len)
+		}
+		fn add_class_admin_deposit(admin_count: u32) -> Balance {
+			UnetNft::add_class_admin_deposit(admin_count)
+		}
+		fn create_class_deposit(metadata_len: u32, name_len: u32, description_len: u32) -> (Balance, Balance) {
+			UnetNft::create_class_deposit(metadata_len, name_len, description_len)
+		}
+		fn get_dutch_auction_current_price(
+			max_price: Balance, min_price: Balance,
+			created_block: BlockNumber,
+			deadline: BlockNumber,
+			current_block: BlockNumber,
+		) -> Balance {
+			unet_auction::calc_current_price::<Runtime>(max_price, min_price, created_block, deadline, current_block)
+		}
+		fn get_auction_deadline(
+			allow_delay: bool, deadline: BlockNumber, last_bid_block: BlockNumber
+		) -> BlockNumber {
+			unet_auction::get_deadline::<Runtime>(allow_delay, deadline, last_bid_block)
+		}
+	}
 
 	#[cfg(feature = "try-runtime")]
 	impl frame_try_runtime::TryRuntime<Block> for Runtime {

@@ -9690,6 +9690,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "unet-rpc-runtime-api"
+version = "1.0.0"
+dependencies = [
+ "sp-api",
+ "sp-core",
+ "sp-std",
+ "unet-traits",
+]
+
+[[package]]
 name = "unet-traits"
 version = "1.0.0"
 dependencies = [
@@ -9828,6 +9838,7 @@ dependencies = [
  "unet-orml-nft",
  "unet-orml-tokens",
  "unet-orml-traits",
+ "unet-rpc-runtime-api",
  "unet-traits",
 ]
 
