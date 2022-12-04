@@ -19,7 +19,6 @@ use sp_consensus_babe::{
 use sp_core::{
 	crypto::KeyTypeId,
 	sr25519,
-	//u32_trait::*,
 	OpaqueMetadata,
 	H256,
 };
@@ -36,7 +35,7 @@ use sp_runtime::{
 	Perquintill,
 };
 
-use sp_std::{marker::PhantomData, prelude::*};
+use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
@@ -54,8 +53,8 @@ use frame_support::{
 	construct_runtime, parameter_types,
 	dispatch::DispatchClass,
 	traits::{
-		AsEnsureOriginWithArg, ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, Imbalance,
-		InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced,
+		AsEnsureOriginWithArg, ConstU32, EitherOfDiverse, EqualPrivilegeOnly, Everything, Imbalance,
+		InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced, 
 	},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
@@ -68,7 +67,7 @@ use frame_system::{
 	offchain, EnsureRoot, EnsureSigned,
 };
 
-use pallet_babe::{AuthorityId as BabeId, ExternalTrigger};
+use pallet_babe::{AuthorityId as BabeId};
 use pallet_balances::NegativeImbalance;
 use pallet_contracts::weights::WeightInfo;
 use pallet_grandpa::{
@@ -153,11 +152,6 @@ pub type InstanceId = u128;
 
 pub struct DealWithFees<R>(sp_std::marker::PhantomData<R>);
 pub struct OctopusAppCrypto;
-pub struct FindAuthorTruncated<F>(PhantomData<F>);
-pub struct FixedGasPrice;
-pub struct BaseFeeThreshold;
-pub struct RuntimeGasWeightMapping;
-pub struct EthereumTransactionConverter;
 
 // #[cfg(feature = "runtime-benchmarks")]
 // #[macro_use]
@@ -259,7 +253,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 118,
+	spec_version: 119,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -994,13 +988,13 @@ impl pallet_democracy::Config for Runtime {
 	type InstantOrigin =
 		pallet_collective::EnsureProportionAtLeast<AccountId, TechCommitteeInstance, 3, 5>;
 	// To cancel a proposal which has been passed, 2/3 of the council must agree to it.
-	type CancellationOrigin = EnsureOneOf<
+	type CancellationOrigin = EitherOfDiverse<
 		EnsureRoot<AccountId>,
 		pallet_collective::EnsureProportionAtLeast<AccountId, CouncilInstance, 3, 5>,
 	>;
 	// To cancel a proposal before it has been passed, the technical committee must be unanimous or
 	// Root must agree.
-	type CancelProposalOrigin = EnsureOneOf<
+	type CancelProposalOrigin = EitherOfDiverse<
 		EnsureRoot<AccountId>,
 		pallet_collective::EnsureProportionAtLeast<AccountId, TechCommitteeInstance, 3, 5>,
 	>;
@@ -1249,8 +1243,6 @@ impl unet_nft::Config for Runtime {
 	type ModuleId = NftModuleId;
 	type Currency = Balances;
 	type MultiCurrency = Currencies;
-	// type CollectionId = CollectionId;
-	// type ItemId = ItemId;
 	type WeightInfo = ();
 }
 

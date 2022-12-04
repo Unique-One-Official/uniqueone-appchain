@@ -2,7 +2,7 @@
 
 use super::*;
 use frame_support::traits::tokens::nonfungibles::{Inspect, Transfer};
-use sp_runtime::{DispatchError, DispatchResult};
+use sp_runtime::DispatchResult;
 
 impl<T: Config> Inspect<<T as frame_system::Config>::AccountId> for Pallet<T> {
 	type ItemId = T::TokenId;
@@ -97,8 +97,8 @@ impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
 	) -> DispatchResult {
 		let from = unet_orml_nft::OwnersByToken::<T>::iter_key_prefix((class, instance))
 			.next()
-			.ok_or(Error::<T>::TokenNotFound)?;
-		Self::do_transfer(&from, &destination, *class, *instance, 1.into())?;
+			.ok_or(Error::<T>::TokenIdNotFound)?;
+		Self::do_transfer(&from, &destination, *class, *instance, 1u64.into())?;
 		Ok(())
 	}
 }

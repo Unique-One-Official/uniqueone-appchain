@@ -4,8 +4,6 @@ use frame_support::{
 	dispatch::DispatchResult,
 	pallet_prelude::*,
 	traits::{
-		tokens::nonfungibles,
-		tokens::nonfungibles::{Inspect, Transfer},
 		Currency,
 		ExistenceRequirement::KeepAlive,
 		ReservableCurrency,
@@ -39,13 +37,6 @@ pub type CurrencyIdOf<T> = <<T as pallet::Config>::MultiCurrency as MultiCurrenc
 	<T as frame_system::Config>::AccountId,
 >>::CurrencyId;
 pub type BlockNumberOf<T> = <T as frame_system::Config>::BlockNumber;
-type AccountIdLookupOf<T> = <<T as frame_system::Config>::Lookup as StaticLookup>::Source;
-
-/// Identifier for the collection of item.
-pub type CollectionIdOf<T> = <T as pallet_uniques::Config>::CollectionId;
-
-/// The type used to identify a unique item within a collection.
-pub type ItemIdOf<T> = <T as pallet_uniques::Config>::ItemId;
 
 mod benchmarking;
 pub mod utils;

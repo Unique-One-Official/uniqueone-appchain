@@ -27,7 +27,6 @@ pallet-timestamp = { version = "4.0.0-dev", git = 'https://github.com/paritytech
 unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
 unet-orml-nft = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-nft" }
 unet-traits = { default-features = false, path = "../unet-traits" }
-pallet-uniques = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false }
 
 [dev-dependencies]
 sp-io = { version = "6.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
@@ -45,7 +44,6 @@ std = [
     "frame-support/std",
     "frame-system/std",
     "pallet-proxy/std",
-    "pallet-uniques/std",
     "pallet-timestamp/std",
 	"unet-orml-traits/std",
     "unet-orml-nft/std",
