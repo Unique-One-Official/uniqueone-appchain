@@ -11,7 +11,12 @@ use frame_support::{
 	transactional, PalletId,
 };
 use frame_system::pallet_prelude::*;
-pub use scale_info::TypeInfo;
+use scale_info::{
+	prelude::string::{String, ToString},
+	TypeInfo,
+};
+use serde::Deserialize;
+use serde_json::json;
 use sp_runtime::{
 	traits::{
 		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One, StaticLookup, Zero,
@@ -45,6 +50,12 @@ mod weights;
 use crate::weights::WeightInfo;
 mod impl_nonfungibles;
 
+use pallet_octopus_support::{
+	log,
+	traits::ConvertIntoNep171,
+	types::Nep171TokenMetadata,
+};
+pub(crate) const LOG_TARGET: &'static str = "runtime::octopus-bridge";
 
 #[derive(Encode, Decode, Clone, Copy, PartialEq, Eq, RuntimeDebug, TypeInfo)]
 enum Releases {

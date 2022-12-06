@@ -1,7 +1,9 @@
 //! Implementations for `nonfungibles` traits.
 
 use super::*;
-use frame_support::traits::tokens::nonfungibles::{Inspect, Transfer};
+use frame_support::traits::tokens::{
+	nonfungibles::{Inspect, Transfer},
+};
 use sp_runtime::DispatchResult;
 
 impl<T: Config> Inspect<<T as frame_system::Config>::AccountId> for Pallet<T> {
@@ -100,5 +102,129 @@ impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
 			.ok_or(Error::<T>::TokenIdNotFound)?;
 		Self::do_transfer(&from, &destination, *class, *instance, 1u64.into())?;
 		Ok(())
+	}
+}
+
+// For the definition of base metadata, please refer to the following document:
+// 		https://github.com/unique_one-team/unique_one-spec/blob/master/standards/unique_one2.0.0/entities/metadata.md#schema-definition
+#[derive(Deserialize, RuntimeDebug)]
+struct UniqueOneBaseMetadata {
+	// NFT name, required
+	name: String,
+	// General notes, abstracts, or summaries about the contents of an NFT.
+	#[serde(default)]
+	description: String,
+
+	#[serde(default)]
+	image: String,
+
+	#[serde(default)]
+	#[serde(rename = "externalUrl")]
+	external_url: String,
+
+	#[serde(default)]
+	#[serde(rename = "alternativeImage")]
+	alternative_image: String,
+
+	#[serde(default)]
+	#[serde(rename = "imageMimeType")]
+	image_mime_type: String,
+
+	#[serde(default)]
+	#[serde(rename = "animationUrl")]
+	animation_url: String,
+
+	#[serde(default)]
+	#[serde(rename = "alternativeAnimationUrl")]
+	alternative_animation_url: String,
+
+	#[serde(default)]
+	#[serde(rename = "animationMimeType")]
+	animation_mime_type: String,
+
+	#[serde(default)]
+	attributes: Vec<Attribute>
+}
+
+#[derive(Deserialize, RuntimeDebug)]
+struct  Attribute {
+	#[serde(default)]
+	#[serde(rename = "traitType")]
+	trait_type: String,
+
+	#[serde(default)]
+	value: String,
+}
+
+pub struct UniqueOneBaseMetadataConvertor<T>(sp_std::marker::PhantomData<T>);
+impl<T> ConvertIntoNep171 for UniqueOneBaseMetadataConvertor<T>
+where
+	T: Config,
+{
+	type CollectionId = T::ClassId;
+	type ItemId = T::TokenId;
+
+	fn convert_into_nep171_metadata(
+		collection: Self::CollectionId,
+		item: Self::ItemId,
+	) -> Option<Nep171TokenMetadata> {
+		let mut data: Vec<u8> = Vec::new();
+		if let Some(attribute) = <Pallet<T> as Inspect<T::AccountId>>::attribute(
+			&collection,
+			&item,
+			&vec![],
+		) {
+			data.extend(attribute);
+		}
+
+		if data.is_empty() {
+			return None;
+		}
+
+		// parse vec to unique_one base metadata
+		let unique_one_metadata: UniqueOneBaseMetadata = match serde_json::from_slice(&data) {
+			Ok(metadata) => metadata,
+			Err(_) => {
+				log!(warn, "data : {:?}", data);
+				log!(warn, "Failed to parse data to unique_one base metadata");
+				return None;
+			},
+		};
+		log!(debug, "unique_one metadata is : {:?}", unique_one_metadata);
+
+		// Need Check:
+		// 		Can the name field be empty?
+		let title = (unique_one_metadata.name.len() != 0).then_some(unique_one_metadata.name);
+		let description =
+			(unique_one_metadata.description.len() != 0).then_some(unique_one_metadata.description);
+		let image = (unique_one_metadata.image.len() != 0).then_some(unique_one_metadata.image);
+
+		let extra = json!({
+			"externalUrl": unique_one_metadata.external_url,
+			"alternativeImage": unique_one_metadata.alternative_image,
+			"imageMimeType": unique_one_metadata.image_mime_type,
+			"animationUrl": unique_one_metadata.animation_url,
+			"alternativeAnimationUrl": unique_one_metadata.alternative_animation_url,
+			"animationMimeType": unique_one_metadata.animation_mime_type,
+		});
+
+		// parse unique_one base metadata to nep171 format
+		let metadata = Nep171TokenMetadata {
+			title,
+			description,
+			media: image,
+			media_hash: None,
+			copies: None,
+			issued_at: None,
+			expires_at: None,
+			starts_at: None,
+			updated_at: None,
+			extra: Some(extra.to_string()),
+			reference: None,
+			reference_hash: None,
+		};
+		log!(debug, "After, the Nep171 media data is {:?} ", metadata.clone());
+
+		Some(metadata)
 	}
 }
