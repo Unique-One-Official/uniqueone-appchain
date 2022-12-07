@@ -48,7 +48,7 @@ pub mod utils;
 pub use utils::*;
 mod weights;
 use crate::weights::WeightInfo;
-mod impl_nonfungibles;
+pub mod impl_nonfungibles;
 
 use pallet_octopus_support::{
 	log,

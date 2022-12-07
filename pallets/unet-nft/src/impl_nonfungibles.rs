@@ -143,7 +143,36 @@ struct UniqueOneBaseMetadata {
 	animation_mime_type: String,
 
 	#[serde(default)]
-	attributes: Vec<Attribute>
+	attributes: Vec<Attribute>,
+
+	// A broad definition of the type of content of the NFT.
+	#[serde(default)]
+	types: String,
+	// Metadata locale in ISO 639-1 format. For translations and localisation. e.g. en-GB, en, fr
+	#[serde(default)]
+	locale: String,
+	// A statement about the NFT license.
+	#[serde(default)]
+	license: String,
+	// A URI to a statement of license.
+	#[serde(default)]
+	#[serde(rename = "licenseUri")]
+	license_uri: String,
+	// A URI to a main media file of the NFT.
+	#[serde(default)]
+	#[serde(rename = "mediaUri")]
+	media_uri: String,
+	// A URI to an image of the NFT for wallets and client applications to have a scaled down image
+	// to present to end-users.
+	#[serde(default)]
+	#[serde(rename = "thumbnailUri")]
+	thumbnail_uri: String,
+	// A URI with additional information about the subject or content of the NFT.
+	#[serde(default)]
+	#[serde(rename = "externalUri")]
+	external_uri: String,
+	// Custom attributes about the subject or content of the asset.
+	// properties (object)
 }
 
 #[derive(Deserialize, RuntimeDebug)]

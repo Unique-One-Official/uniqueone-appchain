@@ -23,10 +23,10 @@ pub type Moment = u64;
 pub type Balance = u128;
 
 /// NFT class ID type.
-pub type ClassId = u32;
+pub type ClassId = u128;
 
 /// NFT token ID type.
-pub type TokenId = u64;
+pub type TokenId = u128;
 
 /// For counting NFTs.
 pub type Quantity = u64;
