@@ -78,7 +78,6 @@ use pallet_session::historical as pallet_session_historical;
 pub use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
 use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
 use sp_mmr_primitives as mmr;
-use pallet_octopus_bridge::impls::RmrkBaseMetadataConvertor;
 use unet_nft::impl_nonfungibles::UniqueOneBaseMetadataConvertor;
 
 // Local
@@ -254,7 +253,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 120,
+	spec_version: 121,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
