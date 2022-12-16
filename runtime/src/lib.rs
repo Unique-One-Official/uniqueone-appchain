@@ -253,7 +253,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 121,
+	spec_version: 122,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -569,26 +569,26 @@ parameter_types! {
 pub type CollectionId = u128;
 pub type ItemId = u128;
 
-impl pallet_uniques::Config<pallet_uniques::Instance1> for Runtime {
-	type RuntimeEvent = RuntimeEvent;
-	type CollectionId = CollectionId;
-	type ItemId = ItemId;
-	type Currency = Balances;
-	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
-	type CollectionDeposit = CollectionDeposit;
-	type ItemDeposit = ItemDeposit;
-	type MetadataDepositBase = MetadataDepositBase;
-	type AttributeDepositBase = MetadataDepositBase;
-	type DepositPerByte = MetadataDepositPerByte;
-	type StringLimit = StringLimit;
-	type KeyLimit = KeyLimit;
-	type ValueLimit = ValueLimit;
-	type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
-	#[cfg(feature = "runtime-benchmarks")]
-	type Helper = ();
-	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
-	type Locker = ();
-}
+// impl pallet_uniques::Config<pallet_uniques::Instance1> for Runtime {
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type CollectionId = CollectionId;
+// 	type ItemId = ItemId;
+// 	type Currency = Balances;
+// 	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+// 	type CollectionDeposit = CollectionDeposit;
+// 	type ItemDeposit = ItemDeposit;
+// 	type MetadataDepositBase = MetadataDepositBase;
+// 	type AttributeDepositBase = MetadataDepositBase;
+// 	type DepositPerByte = MetadataDepositPerByte;
+// 	type StringLimit = StringLimit;
+// 	type KeyLimit = KeyLimit;
+// 	type ValueLimit = ValueLimit;
+// 	type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
+// 	#[cfg(feature = "runtime-benchmarks")]
+// 	type Helper = ();
+// 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
+// 	type Locker = ();
+// }
 
 parameter_types! {
 	pub const ApprovalDeposit: Balance = currency::DOLLARS;
@@ -746,7 +746,7 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type Fungibles = OctopusAssets;
 	type CollectionId = CollectionId;
 	type ItemId = ItemId;
-	type Nonfungibles = OctopusUniques;
+	type Nonfungibles = UnetNft;
 	type Convertor = UniqueOneBaseMetadataConvertor<Runtime>;
 	type NativeTokenDecimals = NativeTokenDecimals;
 	type Threshold = FeeTh;
@@ -1283,7 +1283,6 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment::{Pallet, Event<T>, Storage},
 		Babe: pallet_babe::{Call, Config, Pallet, Storage, ValidateUnsigned},
 		Timestamp: pallet_timestamp::{Call, Inherent, Pallet, Storage},
-		OctopusUniques: pallet_uniques::<Instance1>::{Call, Event<T>, Pallet, Storage},
 		OctopusAssets: pallet_assets::<Instance1>::{Call, Config<T>, Event<T>, Pallet, Storage},
 		Grandpa: pallet_grandpa::{Call, Config, Event, Pallet, Storage, ValidateUnsigned},
 		ImOnline: pallet_im_online::{Call, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},

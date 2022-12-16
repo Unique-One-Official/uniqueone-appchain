@@ -81,7 +81,7 @@ pallet-identity = { version = "4.0.0-dev", git = 'https://github.com/paritytech/
 pallet-contracts = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 pallet-contracts-primitives = { version = "6.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 pallet-contracts-rpc-runtime-api = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
-pallet-uniques = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+# pallet-uniques = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 pallet-offences = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false }
 pallet-offences-benchmarking = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false, optional = true }
 
@@ -173,7 +173,7 @@ std = [
 	'pallet-contracts/std',
     'pallet-contracts-primitives/std',
     'pallet-contracts-rpc-runtime-api/std',
-	'pallet-uniques/std',
+	# 'pallet-uniques/std',
 	'pallet-offences/std',
     "pallet-offences-benchmarking?/std",
 
@@ -234,7 +234,7 @@ runtime-benchmarks = [
     'pallet-identity/runtime-benchmarks',
 	"pallet-offences-benchmarking/runtime-benchmarks",
 	"pallet-session-benchmarking/runtime-benchmarks",
-	"pallet-uniques/runtime-benchmarks",
+	# "pallet-uniques/runtime-benchmarks",
 
 	"pallet-octopus-upward-messages/runtime-benchmarks",
 	"pallet-octopus-lpos/runtime-benchmarks",
@@ -264,7 +264,7 @@ try-runtime = [
 	'pallet-sudo/try-runtime',
 	'pallet-timestamp/try-runtime',
 	'pallet-transaction-payment/try-runtime',
-	'pallet-uniques/try-runtime',
+	# 'pallet-uniques/try-runtime',
 ]
 # Force `sp-sandbox` to call into the host resident executor. One still need to make sure
 # that `sc-executor` gets the `wasmer-sandbox` feature which happens automatically when
