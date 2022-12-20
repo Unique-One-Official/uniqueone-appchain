@@ -15,7 +15,7 @@ use scale_info::{
 	prelude::string::{String, ToString},
 	TypeInfo,
 };
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use serde_json::json;
 use sp_runtime::{
 	traits::{

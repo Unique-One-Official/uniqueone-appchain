@@ -107,7 +107,8 @@ impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
 
 // For the definition of base metadata, please refer to the following document:
 // 		https://github.com/unique_one-team/unique_one-spec/blob/master/standards/unique_one2.0.0/entities/metadata.md#schema-definition
-#[derive(Deserialize, RuntimeDebug)]
+#[derive(Serialize, Deserialize, RuntimeDebug)]
+#[serde(rename_all = "snake_case")]
 struct UniqueOneBaseMetadata {
 	// NFT name, required
 	name: String,
@@ -119,37 +120,28 @@ struct UniqueOneBaseMetadata {
 	image: String,
 
 	#[serde(default)]
-	#[serde(rename = "externalUrl")]
 	external_url: String,
 
 	#[serde(default)]
-	#[serde(rename = "alternativeImage")]
 	alternative_image: String,
 
 	#[serde(default)]
-	#[serde(rename = "imageMimeType")]
 	image_mime_type: String,
 
 	#[serde(default)]
-	#[serde(rename = "animationUrl")]
 	animation_url: String,
 
 	#[serde(default)]
-	#[serde(rename = "alternativeAnimationUrl")]
 	alternative_animation_url: String,
 
 	#[serde(default)]
-	#[serde(rename = "animationMimeType")]
 	animation_mime_type: String,
-
-	#[serde(default)]
-	attributes: Vec<Attribute>,
 }
 
-#[derive(Deserialize, RuntimeDebug)]
+#[derive(Serialize, Deserialize, RuntimeDebug)]
+#[serde(rename_all = "snake_case")]
 struct  Attribute {
 	#[serde(default)]
-	#[serde(rename = "traitType")]
 	trait_type: String,
 
 	#[serde(default)]
