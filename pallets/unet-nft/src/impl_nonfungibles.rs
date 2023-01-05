@@ -1,9 +1,7 @@
 //! Implementations for `nonfungibles` traits.
 
 use super::*;
-use frame_support::traits::tokens::{
-	nonfungibles::{Inspect, Transfer},
-};
+use frame_support::traits::tokens::nonfungibles::{Inspect, Transfer};
 use sp_runtime::DispatchResult;
 
 impl<T: Config> Inspect<<T as frame_system::Config>::AccountId> for Pallet<T> {
@@ -100,7 +98,10 @@ impl<T: Config> Transfer<T::AccountId> for Pallet<T> {
 		let from = unet_orml_nft::OwnersByToken::<T>::iter_key_prefix((class, instance))
 			.next()
 			.ok_or(Error::<T>::TokenIdNotFound)?;
-		Self::do_transfer(&from, &destination, *class, *instance, 1u64.into())?;
+		let account_token = unet_orml_nft::TokensByOwner::<T>::get(&from, (class, instance))
+			.ok_or(Error::<T>::TokenIdNotFound)?;
+
+		Self::do_transfer(&from, &destination, *class, *instance, account_token.quantity.clone())?;
 		Ok(())
 	}
 }
@@ -140,7 +141,7 @@ struct UniqueOneBaseMetadata {
 
 #[derive(Serialize, Deserialize, RuntimeDebug)]
 #[serde(rename_all = "snake_case")]
-struct  Attribute {
+struct Attribute {
 	#[serde(default)]
 	trait_type: String,
 
@@ -161,11 +162,9 @@ where
 		item: Self::ItemId,
 	) -> Option<Nep171TokenMetadata> {
 		let mut data: Vec<u8> = Vec::new();
-		if let Some(attribute) = <Pallet<T> as Inspect<T::AccountId>>::attribute(
-			&collection,
-			&item,
-			&vec![],
-		) {
+		if let Some(attribute) =
+			<Pallet<T> as Inspect<T::AccountId>>::attribute(&collection, &item, &vec![])
+		{
 			data.extend(attribute);
 		}
 
