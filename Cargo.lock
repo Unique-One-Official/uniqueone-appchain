@@ -4941,7 +4941,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-appchain"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "base64",
  "frame-benchmarking",
@@ -4965,7 +4965,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-appchain-benchmarking"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4983,7 +4983,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-bridge"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "borsh",
  "frame-benchmarking",
@@ -5003,7 +5003,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-bridge-benchmarking"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -5021,7 +5021,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-lpos"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "borsh",
  "frame-benchmarking",
@@ -5043,7 +5043,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-support"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "borsh",
  "frame-support",
@@ -5056,7 +5056,7 @@ dependencies = [
 [[package]]
 name = "pallet-octopus-upward-messages"
 version = "4.0.0-pre.0"
-source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#fd8469a0ad6b250c5f6e887f7852a8cfa22a2e1d"
+source = "git+https://github.com/octopus-network/octopus-pallets.git?branch=main#d5582e7625c080e244d8cb5cd2d0260588c3a8c0"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
