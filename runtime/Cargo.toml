@@ -7,7 +7,7 @@ license = 'Apache-2.0'
 name = 'uniqueone-appchain-runtime'
 publish = false
 repository = 'https://github.com/Unique-One-Official/uniqueone-appchain'
-version = '1.5.9'
+version = '1.6.0'
 
 [package.metadata.docs.rs]
 targets = ['x86_64-unknown-linux-gnu']
@@ -81,20 +81,20 @@ pallet-identity = { version = "4.0.0-dev", git = 'https://github.com/paritytech/
 pallet-contracts = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 pallet-contracts-primitives = { version = "6.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 pallet-contracts-rpc-runtime-api = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
-pallet-uniques = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
+# pallet-uniques = { version = "4.0.0-dev", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
 pallet-offences = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false }
 pallet-offences-benchmarking = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", default-features = false, optional = true }
 
 # Octopus Dependencies
 ## Octopus Pallet Dependencies
-pallet-octopus-appchain = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
-pallet-octopus-bridge = { git = "https://github.com/octopus-network/octopus-pallets.git", default-features = false, branch = "main" }
-pallet-octopus-lpos = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
-pallet-octopus-upward-messages = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'main', default-features = false }
+pallet-octopus-appchain = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.30-1', default-features = false }
+pallet-octopus-bridge = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.30-1', default-features = false }
+pallet-octopus-lpos = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.30-1', default-features = false }
+pallet-octopus-upward-messages = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.30-1', default-features = false }
 
 # benchmarking
-pallet-octopus-bridge-benchmarking = { git = "https://github.com/octopus-network/octopus-pallets.git", branch = "main", default-features = false, optional = true }
-pallet-octopus-appchain-benchmarking = { git = "https://github.com/octopus-network/octopus-pallets.git", branch = "main", default-features = false, optional = true }
+pallet-octopus-bridge-benchmarking = { git = "https://github.com/octopus-network/octopus-pallets.git", branch = "release-v0.9.30-1", default-features = false, optional = true }
+pallet-octopus-appchain-benchmarking = { git = "https://github.com/octopus-network/octopus-pallets.git", branch = "release-v0.9.30-1", default-features = false, optional = true }
 
 # Local Dependencies
 ## Unet Pallet Dependencies
@@ -107,8 +107,7 @@ unet-nft = {  path = '../pallets/unet-nft', default-features = false }
 unet-order = {  path = '../pallets/unet-order', default-features = false }
 unet-auction = {  path = '../pallets/unet-auction', default-features = false }
 unet-config = {  path = '../pallets/unet-config', default-features = false }
-# unet-rpc-runtime-api = {  path = '../pallets/unet-rpc/runtime-api', default-features = false }
-# chain-extension = {  path = '../pallets/chain-extension', default-features = false }
+unet-rpc-runtime-api = {  path = '../pallets/unet-rpc/runtime-api', default-features = false }
 
 [features]
 default = ['std']
@@ -174,7 +173,7 @@ std = [
 	'pallet-contracts/std',
     'pallet-contracts-primitives/std',
     'pallet-contracts-rpc-runtime-api/std',
-	'pallet-uniques/std',
+	# 'pallet-uniques/std',
 	'pallet-offences/std',
     "pallet-offences-benchmarking?/std",
 
@@ -198,7 +197,7 @@ std = [
     'unet-order/std',
     'unet-auction/std',
     'unet-config/std',
-    # 'unet-rpc-runtime-api/std',
+    'unet-rpc-runtime-api/std',
     # 'chain-extension/std',
 
 ]
@@ -235,13 +234,13 @@ runtime-benchmarks = [
     'pallet-identity/runtime-benchmarks',
 	"pallet-offences-benchmarking/runtime-benchmarks",
 	"pallet-session-benchmarking/runtime-benchmarks",
-	"pallet-uniques/runtime-benchmarks",
+	# "pallet-uniques/runtime-benchmarks",
 
 	"pallet-octopus-upward-messages/runtime-benchmarks",
 	"pallet-octopus-lpos/runtime-benchmarks",
 	"pallet-octopus-bridge-benchmarking/runtime-benchmarks",
 	"pallet-octopus-appchain-benchmarking/runtime-benchmarks",
-    
+
     # Custom Pallets
     # 'unet-auction/runtime-benchmarks',
 	# 'unet-nft/runtime-benchmarks',
@@ -265,7 +264,7 @@ try-runtime = [
 	'pallet-sudo/try-runtime',
 	'pallet-timestamp/try-runtime',
 	'pallet-transaction-payment/try-runtime',
-	'pallet-uniques/try-runtime',
+	# 'pallet-uniques/try-runtime',
 ]
 # Force `sp-sandbox` to call into the host resident executor. One still need to make sure
 # that `sc-executor` gets the `wasmer-sandbox` feature which happens automatically when

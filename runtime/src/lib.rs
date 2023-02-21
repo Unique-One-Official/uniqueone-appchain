@@ -19,7 +19,6 @@ use sp_consensus_babe::{
 use sp_core::{
 	crypto::KeyTypeId,
 	sr25519,
-	//u32_trait::*,
 	OpaqueMetadata,
 	H256,
 };
@@ -36,7 +35,7 @@ use sp_runtime::{
 	Perquintill,
 };
 
-use sp_std::{marker::PhantomData, prelude::*};
+use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
@@ -54,7 +53,7 @@ use frame_support::{
 	construct_runtime, parameter_types,
 	dispatch::DispatchClass,
 	traits::{
-		AsEnsureOriginWithArg, ConstU32, EnsureOneOf, EqualPrivilegeOnly, Everything, Imbalance,
+		AsEnsureOriginWithArg, ConstU32, EitherOfDiverse, EqualPrivilegeOnly, Everything, Imbalance,
 		InstanceFilter, KeyOwnerProofSystem, Nothing, OnUnbalanced,
 	},
 	weights::{
@@ -68,7 +67,7 @@ use frame_system::{
 	offchain, EnsureRoot, EnsureSigned,
 };
 
-use pallet_babe::{AuthorityId as BabeId, ExternalTrigger};
+use pallet_babe::{AuthorityId as BabeId};
 use pallet_balances::NegativeImbalance;
 use pallet_contracts::weights::WeightInfo;
 use pallet_grandpa::{
@@ -79,7 +78,7 @@ use pallet_session::historical as pallet_session_historical;
 pub use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
 use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
 use sp_mmr_primitives as mmr;
-use pallet_octopus_bridge::impls::RmrkBaseMetadataConvertor;
+use unet_nft::impl_nonfungibles::UniqueOneBaseMetadataConvertor;
 
 // Local
 pub use unet_traits::constants_types::Amount;
@@ -153,11 +152,6 @@ pub type InstanceId = u128;
 
 pub struct DealWithFees<R>(sp_std::marker::PhantomData<R>);
 pub struct OctopusAppCrypto;
-pub struct FindAuthorTruncated<F>(PhantomData<F>);
-pub struct FixedGasPrice;
-pub struct BaseFeeThreshold;
-pub struct RuntimeGasWeightMapping;
-pub struct EthereumTransactionConverter;
 
 // #[cfg(feature = "runtime-benchmarks")]
 // #[macro_use]
@@ -259,7 +253,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 118,
+	spec_version: 126,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -575,26 +569,26 @@ parameter_types! {
 pub type CollectionId = u128;
 pub type ItemId = u128;
 
-impl pallet_uniques::Config<pallet_uniques::Instance1> for Runtime {
-	type RuntimeEvent = RuntimeEvent;
-	type CollectionId = CollectionId;
-	type ItemId = ItemId;
-	type Currency = Balances;
-	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
-	type CollectionDeposit = CollectionDeposit;
-	type ItemDeposit = ItemDeposit;
-	type MetadataDepositBase = MetadataDepositBase;
-	type AttributeDepositBase = MetadataDepositBase;
-	type DepositPerByte = MetadataDepositPerByte;
-	type StringLimit = StringLimit;
-	type KeyLimit = KeyLimit;
-	type ValueLimit = ValueLimit;
-	type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
-	#[cfg(feature = "runtime-benchmarks")]
-	type Helper = ();
-	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
-	type Locker = ();
-}
+// impl pallet_uniques::Config<pallet_uniques::Instance1> for Runtime {
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type CollectionId = CollectionId;
+// 	type ItemId = ItemId;
+// 	type Currency = Balances;
+// 	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+// 	type CollectionDeposit = CollectionDeposit;
+// 	type ItemDeposit = ItemDeposit;
+// 	type MetadataDepositBase = MetadataDepositBase;
+// 	type AttributeDepositBase = MetadataDepositBase;
+// 	type DepositPerByte = MetadataDepositPerByte;
+// 	type StringLimit = StringLimit;
+// 	type KeyLimit = KeyLimit;
+// 	type ValueLimit = ValueLimit;
+// 	type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
+// 	#[cfg(feature = "runtime-benchmarks")]
+// 	type Helper = ();
+// 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
+// 	type Locker = ();
+// }
 
 parameter_types! {
 	pub const ApprovalDeposit: Balance = currency::DOLLARS;
@@ -752,8 +746,8 @@ impl pallet_octopus_bridge::Config for Runtime {
 	type Fungibles = OctopusAssets;
 	type CollectionId = CollectionId;
 	type ItemId = ItemId;
-	type Nonfungibles = OctopusUniques;
-	type Convertor = RmrkBaseMetadataConvertor<Runtime>;
+	type Nonfungibles = UnetNft;
+	type Convertor = UniqueOneBaseMetadataConvertor<Runtime>;
 	type NativeTokenDecimals = NativeTokenDecimals;
 	type Threshold = FeeTh;
 	type WeightInfo = pallet_octopus_bridge::weights::SubstrateWeight<Runtime>;
@@ -994,13 +988,13 @@ impl pallet_democracy::Config for Runtime {
 	type InstantOrigin =
 		pallet_collective::EnsureProportionAtLeast<AccountId, TechCommitteeInstance, 3, 5>;
 	// To cancel a proposal which has been passed, 2/3 of the council must agree to it.
-	type CancellationOrigin = EnsureOneOf<
+	type CancellationOrigin = EitherOfDiverse<
 		EnsureRoot<AccountId>,
 		pallet_collective::EnsureProportionAtLeast<AccountId, CouncilInstance, 3, 5>,
 	>;
 	// To cancel a proposal before it has been passed, the technical committee must be unanimous or
 	// Root must agree.
-	type CancelProposalOrigin = EnsureOneOf<
+	type CancelProposalOrigin = EitherOfDiverse<
 		EnsureRoot<AccountId>,
 		pallet_collective::EnsureProportionAtLeast<AccountId, TechCommitteeInstance, 3, 5>,
 	>;
@@ -1289,7 +1283,6 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment::{Pallet, Event<T>, Storage},
 		Babe: pallet_babe::{Call, Config, Pallet, Storage, ValidateUnsigned},
 		Timestamp: pallet_timestamp::{Call, Inherent, Pallet, Storage},
-		OctopusUniques: pallet_uniques::<Instance1>::{Call, Event<T>, Pallet, Storage},
 		OctopusAssets: pallet_assets::<Instance1>::{Call, Config<T>, Event<T>, Pallet, Storage},
 		Grandpa: pallet_grandpa::{Call, Config, Event, Pallet, Storage, ValidateUnsigned},
 		ImOnline: pallet_im_online::{Call, Config<T>, Event<T>, Pallet, Storage, ValidateUnsigned},
@@ -1637,30 +1630,30 @@ impl_runtime_apis! {
 		}
 	}
 
-	// impl unet_rpc_runtime_api::UnetApi<Block> for Runtime {
-	// 	fn mint_token_deposit(metadata_len: u32) -> Balance {
-	// 		UnetNft::mint_token_deposit(metadata_len)
-	// 	}
-	// 	fn add_class_admin_deposit(admin_count: u32) -> Balance {
-	// 		UnetNft::add_class_admin_deposit(admin_count)
-	// 	}
-	// 	fn create_class_deposit(metadata_len: u32, name_len: u32, description_len: u32) -> (Balance, Balance) {
-	// 		UnetNft::create_class_deposit(metadata_len, name_len, description_len)
-	// 	}
-	// 	fn get_dutch_auction_current_price(
-	// 		max_price: Balance, min_price: Balance,
-	// 		created_block: BlockNumber,
-	// 		deadline: BlockNumber,
-	// 		current_block: BlockNumber,
-	// 	) -> Balance {
-	// 		unet_auction::calc_current_price::<Runtime>(max_price, min_price, created_block, deadline, current_block)
-	// 	}
-	// 	fn get_auction_deadline(
-	// 		allow_delay: bool, deadline: BlockNumber, last_bid_block: BlockNumber
-	// 	) -> BlockNumber {
-	// 		unet_auction::get_deadline::<Runtime>(allow_delay, deadline, last_bid_block)
-	// 	}
-	// }
+	impl unet_rpc_runtime_api::UnetApi<Block> for Runtime {
+		fn mint_token_deposit(metadata_len: u32) -> Balance {
+			UnetNft::mint_token_deposit(metadata_len)
+		}
+		fn add_class_admin_deposit(admin_count: u32) -> Balance {
+			UnetNft::add_class_admin_deposit(admin_count)
+		}
+		fn create_class_deposit(metadata_len: u32, name_len: u32, description_len: u32) -> (Balance, Balance) {
+			UnetNft::create_class_deposit(metadata_len, name_len, description_len)
+		}
+		fn get_dutch_auction_current_price(
+			max_price: Balance, min_price: Balance,
+			created_block: BlockNumber,
+			deadline: BlockNumber,
+			current_block: BlockNumber,
+		) -> Balance {
+			unet_auction::calc_current_price::<Runtime>(max_price, min_price, created_block, deadline, current_block)
+		}
+		fn get_auction_deadline(
+			allow_delay: bool, deadline: BlockNumber, last_bid_block: BlockNumber
+		) -> BlockNumber {
+			unet_auction::get_deadline::<Runtime>(allow_delay, deadline, last_bid_block)
+		}
+	}
 
 	#[cfg(feature = "try-runtime")]
 	impl frame_try_runtime::TryRuntime<Block> for Runtime {

@@ -13,7 +13,8 @@ targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
 codec = { package = 'parity-scale-codec', version = '3.0.0', default-features = false, features = ['derive', 'max-encoded-len'] }
-serde = { version = '1.0.130', default-features = false, features = ['derive'], optional = true }
+serde = { version = '1.0.130', default-features = false, features = ['derive'] }
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 scale-info = { version = '2.0.1', default-features = false, features = ['derive'] }
 
 sp-std = { version = "4.0.0", git = 'https://github.com/paritytech/substrate.git', branch = 'polkadot-v0.9.30', default-features = false }
@@ -27,6 +28,7 @@ pallet-timestamp = { version = "4.0.0-dev", git = 'https://github.com/paritytech
 unet-orml-traits = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-traits" }
 unet-orml-nft = { version = "0.4.1-dev", default-features = false, path = "../unet-orml-nft" }
 unet-traits = { default-features = false, path = "../unet-traits" }
+pallet-octopus-support = { git = 'https://github.com/octopus-network/octopus-pallets.git', branch = 'release-v0.9.30-1', default-features = false }
 
 [dev-dependencies]
 sp-io = { version = "6.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
@@ -36,7 +38,9 @@ pallet-utility = { version = "4.0.0-dev", git = 'https://github.com/paritytech/s
 [features]
 default = ['std']
 std = [
-	"serde",
+	"serde/std",
+    "serde_json/std",
+	"scale-info/std",
 	"codec/std",
     "sp-core/std",
 	"sp-std/std",
@@ -48,6 +52,7 @@ std = [
 	"unet-orml-traits/std",
     "unet-orml-nft/std",
     "unet-traits/std",
+    "pallet-octopus-support/std"
 ]
 runtime-benchmarks = ["frame-benchmarking"]
 try-runtime = ["frame-support/try-runtime"]

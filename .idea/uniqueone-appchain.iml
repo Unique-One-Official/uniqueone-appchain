@@ -20,6 +20,12 @@
       <sourceFolder url="file://$MODULE_DIR$/pallets/unet-traits/contract-types/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/pallets/unet-traits/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/runtime/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cli/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/executor/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/inspect/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/pallets/octopus-bridge/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/primitives/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rpc/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

@@ -3,18 +3,28 @@
 use frame_support::{
 	dispatch::DispatchResult,
 	pallet_prelude::*,
-	traits::{Currency, ExistenceRequirement::KeepAlive, ReservableCurrency},
+	traits::{
+		Currency,
+		ExistenceRequirement::KeepAlive,
+		ReservableCurrency,
+	},
 	transactional, PalletId,
 };
 use frame_system::pallet_prelude::*;
-pub use scale_info::TypeInfo;
+use scale_info::{
+	prelude::string::{String, ToString},
+	TypeInfo,
+};
+use serde::{Serialize, Deserialize};
+use serde_json::json;
 use sp_runtime::{
 	traits::{
-		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One,
-		StaticLookup, Zero,
+		AccountIdConversion, AtLeast32BitUnsigned, Bounded, CheckedAdd, One, StaticLookup, Zero,
 	},
 	PerU16, RuntimeDebug, SaturatedConversion,
 };
+
+use sp_std::convert::{From, TryInto};
 
 use sp_std::vec::Vec;
 use unet_orml_traits::{MultiCurrency, MultiReservableCurrency};
@@ -38,6 +48,14 @@ pub mod utils;
 pub use utils::*;
 mod weights;
 use crate::weights::WeightInfo;
+pub mod impl_nonfungibles;
+
+use pallet_octopus_support::{
+	log,
+	traits::ConvertIntoNep171,
+	types::Nep171TokenMetadata,
+};
+pub(crate) const LOG_TARGET: &'static str = "runtime::octopus-bridge";
 
 #[derive(Encode, Decode, Clone, Copy, PartialEq, Eq, RuntimeDebug, TypeInfo)]
 enum Releases {
@@ -163,7 +181,7 @@ pub mod pallet {
 		+ unet_orml_nft::Config<
 			ClassData = ClassData<BlockNumberOf<Self>>,
 			TokenData = TokenData<<Self as frame_system::Config>::AccountId, BlockNumberOf<Self>>,
-		> + pallet_proxy::Config
+		> + pallet_proxy::Config //+ pallet_uniques::Config
 	{
 		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
@@ -582,7 +600,8 @@ pub mod pallet {
 				unet_orml_nft::Pallet::<T>::burn(&who, (class_id, token_id), quantity)?
 			{
 				if token_info.quantity.is_zero() {
-					let class_owner: T::AccountId = T::ModuleId::get().into_sub_account_truncating(class_id);
+					let class_owner: T::AccountId =
+						T::ModuleId::get().into_sub_account_truncating(class_id);
 					let data: TokenData<T::AccountId, T::BlockNumber> = token_info.data;
 					// `repatriate_reserved` will check `to` account exist and return `DeadAccount`.
 					// `transfer` not do this check.
@@ -1011,3 +1030,4 @@ impl<T: Config> unet_traits::UnetNft<T::AccountId, ClassIdOf<T>, TokenIdOf<T>> f
 		Self::do_proxy_mint(delegate, to, class_id, metadata, quantity, charge_royalty)
 	}
 }
+

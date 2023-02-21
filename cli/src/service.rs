@@ -20,7 +20,6 @@
 
 //! Service implementation. Specialized wrapper over substrate service.
 
-use uniqueone_appchain_runtime::RuntimeApi;
 use appchain_executor::ExecutorDispatch;
 use appchain_primitives::Block;
 use codec::Encode;
@@ -35,6 +34,7 @@ use sp_api::ProvideRuntimeApi;
 use sp_core::crypto::Pair;
 use sp_runtime::{generic, traits::Block as BlockT, SaturatedConversion};
 use std::sync::Arc;
+use uniqueone_appchain_runtime::RuntimeApi;
 
 /// The full client type definition.
 pub type FullClient =
@@ -566,10 +566,6 @@ pub fn new_full(
 #[cfg(test)]
 mod tests {
 	use crate::service::{new_full_base, NewFullBase};
-	use uniqueone_appchain_runtime::{
-		constants::{currency::CENTS, time::SLOT_DURATION},
-		Address, BalancesCall, RuntimeCall, UncheckedExtrinsic,
-	};
 	use appchain_primitives::{Block, DigestItem, Signature};
 	use codec::Encode;
 	use sc_client_api::BlockBackend;
@@ -592,6 +588,10 @@ mod tests {
 	};
 	use sp_timestamp;
 	use std::sync::Arc;
+	use uniqueone_appchain_runtime::{
+		constants::{currency::CENTS, time::SLOT_DURATION},
+		Address, BalancesCall, RuntimeCall, UncheckedExtrinsic,
+	};
 
 	type AccountPublic = <Signature as Verify>::Signer;
 
@@ -689,7 +689,7 @@ mod tests {
 						sc_consensus_babe::authorship::claim_slot(slot.into(), &epoch, &keystore)
 							.map(|(digest, _)| digest)
 					{
-						break (babe_pre_digest, epoch_descriptor)
+						break (babe_pre_digest, epoch_descriptor);
 					}
 
 					slot += 1;
@@ -770,7 +770,7 @@ mod tests {
 				let check_era = frame_system::CheckEra::from(Era::Immortal);
 				let check_nonce = frame_system::CheckNonce::from(index);
 				let check_weight = frame_system::CheckWeight::new();
-				let tx_payment = pallet_asset_tx_payment::ChargeAssetTxPayment::from(0, None);
+				let tx_payment = pallet_transaction_payment::ChargeTransactionPayment::from(0);
 				let extra = (
 					check_non_zero_sender,
 					check_spec_version,

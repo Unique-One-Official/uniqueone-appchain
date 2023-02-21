@@ -49,6 +49,7 @@ pub mod pallet {
 			+ codec::FullCodec;
 		/// The token ID type
 		type TokenId: Parameter
+			+ From<u64>
 			+ Member
 			+ AtLeast32BitUnsigned
 			+ Default
