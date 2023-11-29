@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://files.unique.one/images/unet.png">
+<img src="https://files.unique.one/images/unet.png" height="128" width="128">
 </div>
 
 <div align="Center">
